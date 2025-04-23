@@ -11,7 +11,7 @@ class Graph
 public:
 	public:
 	Graph();
-	void Addgraph();
+	void Addgraph(int);
 	void displaygraph();
 };
 
