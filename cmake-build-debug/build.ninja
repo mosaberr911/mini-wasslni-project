@@ -57,6 +57,14 @@ build CMakeFiles/mini_wasslni_project.dir/main.cpp.obj: CXX_COMPILER__mini_wassl
   TARGET_COMPILE_PDB = CMakeFiles\mini_wasslni_project.dir\
   TARGET_PDB = mini_wasslni_project.pdb
 
+build CMakeFiles/mini_wasslni_project.dir/graph.cpp.obj: CXX_COMPILER__mini_wasslni_project_unscanned_Debug C$:/Users/A/CLionProjects/mini-wasslni-project/graph.cpp || cmake_object_order_depends_target_mini_wasslni_project
+  DEP_FILE = CMakeFiles\mini_wasslni_project.dir\graph.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\mini_wasslni_project.dir
+  OBJECT_FILE_DIR = CMakeFiles\mini_wasslni_project.dir
+  TARGET_COMPILE_PDB = CMakeFiles\mini_wasslni_project.dir\
+  TARGET_PDB = mini_wasslni_project.pdb
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target mini_wasslni_project
@@ -65,7 +73,7 @@ build CMakeFiles/mini_wasslni_project.dir/main.cpp.obj: CXX_COMPILER__mini_wassl
 #############################################
 # Link the executable mini_wasslni_project.exe
 
-build mini_wasslni_project.exe: CXX_EXECUTABLE_LINKER__mini_wasslni_project_Debug CMakeFiles/mini_wasslni_project.dir/main.cpp.obj
+build mini_wasslni_project.exe: CXX_EXECUTABLE_LINKER__mini_wasslni_project_Debug CMakeFiles/mini_wasslni_project.dir/main.cpp.obj CMakeFiles/mini_wasslni_project.dir/graph.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\mini_wasslni_project.dir
