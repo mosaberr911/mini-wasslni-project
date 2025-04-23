@@ -1,18 +1,19 @@
+#pragma once
+#include<iostream>
+#include<vector>
+#include<map>
+#include<set>
+#include<string>
+using namespace std;
 
-#ifndef MINI_WASSLNI_PROJECT_GRAPH_H
-#define MINI_WASSLNI_PROJECT_GRAPH_H
-
-#include "bits/stdc++.h"
 class Graph {
 private:
-    static const int N = 1e5 + 5;
-    bool vis[N];
-    int dis[N];
-    std::vector<std::pair<int, int>> adj[N];
+    map<string, vector<pair<string, int>>> adj;
+   map<string, bool> vis;
 public:
-    void dijkstra(int node); // declaration
-    Graph();
+    
+    void traverse_graph();
+    void BFS(const string& StartNode);
+    void DFS(const string& StartNode);
+    void Addgraph(int);
 };
-
-
-#endif
