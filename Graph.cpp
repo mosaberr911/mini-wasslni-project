@@ -6,6 +6,38 @@
 #include<string>
 #include<queue>
 using namespace std;
+Graph::Graph(){
+    for(auto [city,visit]:vis){
+        vis[city] = false;
+        dis[city] = INT_MAX;
+    }
+}
+void Graph::dijkstra(const string& start) {
+    priority_queue<pair<int, string>, vector<pair<int, string>>, greater<>> pq;
+    pq.push({0, start});
+    dis[start] = 0;
+
+    while (!pq.empty()) {
+        auto [cost, node] = pq.top();
+        pq.pop();
+        if (vis[node]) continue;
+        vis[node] = true;
+
+        for (auto &[neighbor, weight] : adj[node]) {
+            if (!vis[neighbor] && dis[node] + weight < dis[neighbor]) {
+                dis[neighbor] = dis[node] + weight;
+                pq.push({dis[neighbor], neighbor});
+            }
+        }
+    }
+
+    for (auto& [city, distance] : dis) {
+        cout << "Distance from " << start << " to " << city << " is: ";
+        if (distance == INT_MAX) cout << "INF" << endl;
+        else cout << distance << endl;
+    }
+}
+
 void Graph::traverse_graph() {
     int selection;
     bool x = true;
@@ -30,9 +62,8 @@ void Graph::traverse_graph() {
         }
     }
 }
-void Graph::DFS( const string& startNode) {
 
-  
+void Graph::DFS( const string& startNode) {
 	vis[startNode]=1;
 	for (auto [child, weight] : adj[startNode]) {
 		if (!vis[child])
@@ -71,6 +102,7 @@ void Graph::Addgraph(int edges) {
         adj[s1].push_back({ s2,w });
         adj[s2].push_back({ s1,w });
     }
+
 }
 
 void Graph::addCity(string cityName) {
@@ -107,7 +139,6 @@ void Graph::deleteCity(string cityName) {
     // remove city from adjacency list
     adj.erase(cityName);
 }
-
 bool Graph::containsCity(string cityName) {
     return adj.find(cityName) != adj.end();
 }
