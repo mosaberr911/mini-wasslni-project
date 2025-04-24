@@ -73,3 +73,41 @@ void Graph::Addgraph(int edges) {
     }
 }
 
+void Graph::addCity(string cityName) {
+    // check if city already exists in graph
+    if (containsCity(cityName))
+        throw runtime_error("City already exists in graph");
+    adj[cityName];
+}
+
+void Graph::deleteCity(string cityName) {
+    // check if city does not exist in graph
+    if (!containsCity(cityName))
+        throw runtime_error("City does not exists in graph");
+    // loop through adjacency list to find neighbors
+    for (auto& cityPair : adj) {
+        // assign "neighbour" to the city name
+        string neighbour = cityPair.first;
+
+        // check if city is not the one to be deleted
+        if (neighbour != cityName) {
+            // assign "neighborCities" to neighbors vector
+            auto &neighborCities = cityPair.second;
+            // loop through neighbors vector of the neighbour city
+            for (auto it = neighborCities.begin(); it != neighborCities.end();) {
+                // delete removed city from neighbor vector of the neighbour city
+                if (it->first == cityName)
+                    it = neighborCities.erase(it);
+                // increment iterator
+                else
+                    it++;
+            }
+        }
+    }
+    // remove city from adjacency list
+    adj.erase(cityName);
+}
+
+bool Graph::containsCity(string cityName) {
+    return adj.find(cityName) != adj.end();
+}

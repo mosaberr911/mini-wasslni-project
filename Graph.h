@@ -8,7 +8,7 @@ using namespace std;
 
 class Graph {
 private:
-    map<string, vector<pair<string, int>>> adj;
+    map<string, vector<pair<string, int> > > adj;
    map<string, bool> vis;
 public:
     
@@ -16,4 +16,7 @@ public:
     void BFS(const string& StartNode);
     void DFS(const string& StartNode);
     void Addgraph(int);
+    void addCity(string cityName);
+    void deleteCity(string cityName);
+    bool containsCity(string cityName);
 };
