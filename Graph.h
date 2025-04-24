@@ -17,7 +17,7 @@ public:
     void traverseGraph();
     void bfs(const string& StartNode);
     void dfs(const string& StartNode);
-    void addGraph(int);
+    void addGraph();
     void addCity(string cityName);
     void deleteCity(string cityName);
     bool containsCity(string cityName);
