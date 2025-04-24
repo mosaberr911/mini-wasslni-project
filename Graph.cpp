@@ -1,10 +1,5 @@
+#include "bits/stdc++.h"
 #include "Graph.h"
-#include<iostream>
-#include<vector>
-#include<map>
-#include<set>
-#include<string>
-#include<queue>
 using namespace std;
 Graph::Graph(){
     for(auto [city,visit]:vis){
@@ -38,7 +33,7 @@ void Graph::dijkstra(const string& start) {
     }
 }
 
-void Graph::traverse_graph() {
+void Graph::traverseGraph() {
     int selection;
     bool x = true;
     cout << "Enter your selection\n";
@@ -63,7 +58,7 @@ void Graph::traverse_graph() {
     }
 }
 
-void Graph::DFS( const string& startNode) {
+void Graph::dfs( const string& startNode) {
 	vis[startNode]=1;
 	for (auto [child, weight] : adj[startNode]) {
 		if (!vis[child])
@@ -74,7 +69,7 @@ void Graph::DFS( const string& startNode) {
 		}
 	}
 }
-void Graph::BFS(const string& startNode) {
+void Graph::bfs(const string& startNode) {
     queue<string> q;
     vis.clear();
     q.push(startNode);
@@ -93,7 +88,7 @@ void Graph::BFS(const string& startNode) {
     }
     cout << endl;
 }
-void Graph::Addgraph(int edges) {
+void Graph::addGraph(int edges) {
     while (edges--) {
         cout << "Enter the name of cities then distance\n";
         string s1, s2;

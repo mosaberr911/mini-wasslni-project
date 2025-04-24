@@ -14,10 +14,10 @@ private:
     map<string,int>dis;
 public:
     
-    void traverse_graph();
-    void BFS(const string& StartNode);
-    void DFS(const string& StartNode);
-    void Addgraph(int);
+    void traverseGraph();
+    void bfs(const string& StartNode);
+    void dfs(const string& StartNode);
+    void addGraph(int);
     void addCity(string cityName);
     void deleteCity(string cityName);
     bool containsCity(string cityName);
