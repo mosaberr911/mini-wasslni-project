@@ -126,7 +126,6 @@ void Graph::addCity(string cityName) {
         throw runtime_error("City already exists in graph");
     adj[cityName];
 }
-
 void Graph::deleteCity(string cityName) {
     // check if city does not exist in graph
     if (!containsCity(cityName))
