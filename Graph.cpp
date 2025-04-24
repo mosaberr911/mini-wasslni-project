@@ -154,6 +154,46 @@ void Graph::deleteCity(string cityName) {
     // remove city from adjacency list
     adj.erase(cityName);
 }
+
+void Graph::addEdge(string city1, string city2, float distance) 
+{
+
+    if (!containsCity(city1) || !containsCity(city2)) {
+        throw runtime_error("One or both cities do not exist.");
+    }//throw exeption if the either one of the cities doesn't exist
+
+    for (const auto& neighbor : adj[city1]) {
+        if (neighbor.first == city2) {
+            throw runtime_error("this edge already exists in graph");
+        }
+    }//check if the edge already exists
+
+    adj[city1].push_back({ city2 ,distance });
+    adj[city2].push_back({ city1 ,distance });
+}
+
+void Graph::deleteEdge(string city1, string city2) {
+    if (!containsCity(city1) || !containsCity(city2)) {
+        throw runtime_error("One or both cities do not exist.");
+    }//throw exeption if the either one of the cities doesn't exist
+
+    auto& neighbors1 = adj[city1];
+    for (auto it = neighbors1.begin(); it != neighbors1.end(); it++) {
+        if (it->first == city2) {
+            it = neighbors1.erase(it);
+            break;
+        }
+    }//removing 2nd city from 1st city adjacency matrix
+
+    auto& neighbors2 = adj[city2];
+    for (auto it = neighbors2.begin(); it != neighbors2.end(); ) {
+        if (it->first == city1) {
+            it = neighbors2.erase(it);
+            break;
+        }
+    }//removing 1st city from 2nd city adjacency matrix
+}
+
 bool Graph::containsCity(string cityName) {
     return adj.find(cityName) != adj.end();
 }
