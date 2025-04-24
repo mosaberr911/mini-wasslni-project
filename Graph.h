@@ -18,6 +18,7 @@ public:
     void bfs(const string& StartNode);
     void dfs(const string& StartNode);
     void addGraph();
+    void displayGraph();
     void addCity(string cityName);
     void deleteCity(string cityName);
     void addEdge(string city1, string city2, float distance);

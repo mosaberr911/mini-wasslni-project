@@ -51,11 +51,11 @@ void Graph::traverseGraph() {
         cout << "Enter start node: ";
         cin >> node;
         if (selection == 1) {
-            BFS(node);
+            bfs(node);
             x = false;
         }
         else if (selection == 2) {
-            DFS(node);
+            dfs(node);
             x = false;
         }
         else {
@@ -70,7 +70,7 @@ void Graph::dfs( const string& startNode) {
 		if (!vis[child])
 		{
             cout << child;
-			DFS(child);
+			dfs(child);
             vis[child]=1;
 		}
 	}
@@ -94,7 +94,7 @@ void Graph::bfs(const string& startNode) {
     }
     cout << endl;
 }
-void Graph::Addgraph() {
+void Graph::addGraph() {
 	char ch;
 	do {
 		string s1, s2;
@@ -108,7 +108,7 @@ void Graph::Addgraph() {
 	} while (ch == 'y' || ch == 'Y');
 }
 
-void Graph::displaygraph() {
+void Graph::displayGraph() {
 	auto it = adj.begin();
 	while (it != adj.end()) {
 		cout << it->first << " ";
