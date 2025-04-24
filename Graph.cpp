@@ -94,16 +94,30 @@ void Graph::bfs(const string& startNode) {
     }
     cout << endl;
 }
-void Graph::addGraph(int edges) {
-    while (edges--) {
-        cout << "Enter the name of cities then distance\n";
-        string s1, s2;
-        int w;
-        cin >> s1 >> s2 >> w;
-        adj[s1].push_back({ s2,w });
-        adj[s2].push_back({ s1,w });
-    }
+void Graph::Addgraph() {
+	char ch;
+	do {
+		string s1, s2;
+		int d;
+		cout << "Enter the name of cities then the distance\n";
+		cin >> s1 >> s2 >> d;
+		adj[s1].push_back({ s2,d });
+		adj[s2].push_back({ s1,d });
+		cout << "if you want to add more enter y";
+		cin >> ch;
+	} while (ch == 'y' || ch == 'Y');
+}
 
+void Graph::displaygraph() {
+	auto it = adj.begin();
+	while (it != adj.end()) {
+		cout << it->first << " ";
+		for (auto t : it->second) {
+			cout << "(" << t.first << ":" << t.second << ")";
+		}
+		cout << endl;
+		it++;
+	}
 }
 
 void Graph::addCity(string cityName) {
