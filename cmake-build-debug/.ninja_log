@@ -1,3 +1,22 @@
 # ninja log v6
 8	638	7668655153034891	CMakeFiles/mini_wasslni_project.dir/main.cpp.obj	20abf6b7fb66bf93
 640	873	7668655159360984	mini_wasslni_project.exe	5c8e93d9fe3e2900
+116	4687	7673023170589087	CMakeFiles/mini_wasslni_project.dir/main.cpp.obj	20abf6b7fb66bf93
+135	5168	7673023170768803	CMakeFiles/mini_wasslni_project.dir/Graph.cpp.obj	bda5fef56193c10e
+5169	5534	7673023221109006	mini_wasslni_project.exe	4b1dc7c07df27889
+7	3306	7673023815007832	CMakeFiles/mini_wasslni_project.dir/main.cpp.obj	20abf6b7fb66bf93
+3306	3566	7673023847999550	mini_wasslni_project.exe	4b1dc7c07df27889
+10	3437	7673027175218047	CMakeFiles/mini_wasslni_project.dir/main.cpp.obj	20abf6b7fb66bf93
+3438	3795	7673027209508236	mini_wasslni_project.exe	4b1dc7c07df27889
+4	3370	7673029348363065	CMakeFiles/mini_wasslni_project.dir/main.cpp.obj	20abf6b7fb66bf93
+3370	3744	7673029382021933	mini_wasslni_project.exe	4b1dc7c07df27889
+37	3926	7673031822984281	CMakeFiles/mini_wasslni_project.dir/main.cpp.obj	20abf6b7fb66bf93
+46	4457	7673031823074211	CMakeFiles/mini_wasslni_project.dir/Graph.cpp.obj	bda5fef56193c10e
+4457	4735	7673031867183944	mini_wasslni_project.exe	4b1dc7c07df27889
+94	3037	7673130592950453	CMakeFiles/mini_wasslni_project.dir/main.cpp.obj	20abf6b7fb66bf93
+103	3366	7673130593030494	CMakeFiles/mini_wasslni_project.dir/Graph.cpp.obj	bda5fef56193c10e
+49	2700	7673130858708214	CMakeFiles/mini_wasslni_project.dir/main.cpp.obj	20abf6b7fb66bf93
+57	3073	7673130858778078	CMakeFiles/mini_wasslni_project.dir/Graph.cpp.obj	bda5fef56193c10e
+3073	3306	7673130888938038	mini_wasslni_project.exe	4b1dc7c07df27889
+85	8877	7673133104135681	CMakeFiles/mini_wasslni_project.dir/main.cpp.obj	20abf6b7fb66bf93
+8878	10018	7673133192071496	mini_wasslni_project.exe	4b1dc7c07df27889

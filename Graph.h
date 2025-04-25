@@ -13,16 +13,15 @@ private:
     map<string, bool> vis;
     map<string,int>dis;
 public:
-    void traverseGraph();
-    void bfs(const string& StartNode);
-    void dfs(const string& StartNode);
-    void addGraph();
-    void displayGraph();
+    void traverseGraph();//
+    void bfs(const string& StartNode);//
+    void dfs(const string& StartNode);//
+    void addGraph();//
+    void displayGraph();//
     void addCity(string cityName);
     void deleteCity(string cityName);
     void addEdge(string city1, string city2, float distance);
     void deleteEdge(string city1, string city2);
-    bool containsCity(string cityName);
-    void dijkstra(const string& start); // declaration
-    Graph();
+    bool containsCity(string cityName);//
+    void dijkstra(const string& start); // declaration//
 };

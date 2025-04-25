@@ -7,16 +7,16 @@
 #include<string>
 #include<queue>
 using namespace std;
-Graph::Graph(){
-    for(auto [city,visit]:vis){
-        vis[city] = false;
-        dis[city] = INT_MAX;
-    }
-}
+
 void Graph::dijkstra(const string& start) {
-    priority_queue<pair<int, string>, vector<pair<int, string>>, greater<>> pq;
-    pq.push({0, start});
-    dis[start] = 0;
+    priority_queue<pair<float, string>, vector<pair<float, string>>, greater<>> pq;
+    for (auto& [node, _] : adj) {
+        dis[node] = 1e9;
+        vis[node] = false;
+    }
+
+    pq.push({0.0, start});
+    dis[start] = 0.0;
 
     while (!pq.empty()) {
         auto [cost, node] = pq.top();
@@ -24,7 +24,7 @@ void Graph::dijkstra(const string& start) {
         if (vis[node]) continue;
         vis[node] = true;
 
-        for (auto &[neighbor, weight] : adj[node]) {
+        for (auto& [neighbor, weight] : adj[node]) {
             if (!vis[neighbor] && dis[node] + weight < dis[neighbor]) {
                 dis[neighbor] = dis[node] + weight;
                 pq.push({dis[neighbor], neighbor});
@@ -34,10 +34,11 @@ void Graph::dijkstra(const string& start) {
 
     for (auto& [city, distance] : dis) {
         cout << "Distance from " << start << " to " << city << " is: ";
-        if (distance == INT_MAX) cout << "INF" << endl;
+        if (distance == 1e9) cout << "INF" << endl;
         else cout << distance << endl;
     }
 }
+
 
 void Graph::traverseGraph() {
     int selection;
