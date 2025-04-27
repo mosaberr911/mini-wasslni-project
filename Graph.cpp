@@ -162,6 +162,14 @@ void Graph::addEdge(string city1, string city2, float distance)
         throw runtime_error("One or both cities do not exist.");
     }//throw exeption if the either one of the cities doesn't exist
 
+    if (city1 == city2) {
+        throw runtime_error("Cannot add an edge between a city and itself.");
+	}//throw exception if the user tries to add an edge between a city and itself
+
+    if (distance < 0) {
+        throw runtime_error("Distance cannot be negative.");
+	}//throw exception if the user tries to add a negative distance
+
     for (const auto& neighbor : adj[city1]) {
         if (neighbor.first == city2) {
             throw runtime_error("this edge already exists in graph");
@@ -177,21 +185,38 @@ void Graph::deleteEdge(string city1, string city2) {
         throw runtime_error("One or both cities do not exist.");
     }//throw exeption if the either one of the cities doesn't exist
 
-    auto& neighbors1 = adj[city1];
-    for (auto it = neighbors1.begin(); it != neighbors1.end(); it++) {
-        if (it->first == city2) {
-            it = neighbors1.erase(it);
-            break;
-        }
-    }//removing 2nd city from 1st city adjacency matrix
+    if (city1 == city2) {
+        throw runtime_error("Cannot delete an edge between a city and itself.");
+    }//unnesseccary as we cannot add an edge between a city and itself but for safety
 
-    auto& neighbors2 = adj[city2];
-    for (auto it = neighbors2.begin(); it != neighbors2.end(); ) {
-        if (it->first == city1) {
-            it = neighbors2.erase(it);
+    bool edgeExists = false;
+    for (const auto& neighbor : adj[city1]) {
+        if (neighbor.first == city2) {
+            edgeExists = true;
             break;
         }
-    }//removing 1st city from 2nd city adjacency matrix
+    }//check if the edge exists
+
+    if (edgeExists) {
+        auto& neighbors1 = adj[city1];
+        for (auto it = neighbors1.begin(); it != neighbors1.end(); it++) {
+            if (it->first == city2) {
+                it = neighbors1.erase(it);
+                break;
+            }
+        }//removing 2nd city from 1st city adjacency matrix
+
+        auto& neighbors2 = adj[city2];
+        for (auto it = neighbors2.begin(); it != neighbors2.end(); ) {
+            if (it->first == city1) {
+                it = neighbors2.erase(it);
+                break;
+            }
+        }//removing 1st city from 2nd city adjacency matrix
+    }
+    else {
+        throw runtime_error("Edge does not exist.");
+	}//throw exception if the edge doesn't exist
 }
 
 bool Graph::containsCity(string cityName) {
