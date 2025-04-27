@@ -2,9 +2,14 @@
 #include<iostream>
 #include<vector>
 #include<map>
+#include <unordered_map>
 #include<set>
 #include<string>
 using namespace std;
+struct User {
+    string password;
+    string role;
+};
 
 class Graph {
 private:
