@@ -117,9 +117,20 @@ void Graph::addGraph() {
 		int d;
 		cout << "Enter the name of cities then the distance\n";
 		cin >> s1 >> s2 >> d;
+		if (s1 == s2) {
+			throw runtime_error("self loop not allowed");
+		}
+		if (d <= 0) {
+			throw runtime_error("the distance must be positive number\n");
+		}
+		for (const auto& neighbor : graph[s1]) {
+			if (neighbor.first == s2) {
+				throw runtime_error("this edge already exists in graph");
+			}
+		}
 		adj[s1].push_back({ s2,d });
 		adj[s2].push_back({ s1,d });
-		cout << "if you want to add more enter y";
+		cout << "if you want to add more enter y\n";
 		cin >> ch;
 	} while (ch == 'y' || ch == 'Y');
 }
@@ -181,8 +192,8 @@ void Graph::addEdge(string city1, string city2, float distance)
         throw runtime_error("Cannot add an edge between a city and itself.");
 	}//throw exception if the user tries to add an edge between a city and itself
 
-    if (distance < 0) {
-        throw runtime_error("Distance cannot be negative.");
+    if (distance <= 0) {
+        throw runtime_error("Distance must be positive.");
 	}//throw exception if the user tries to add a negative distance
 
     for (const auto& neighbor : adj[city1]) {
@@ -233,7 +244,24 @@ void Graph::deleteEdge(string city1, string city2) {
         throw runtime_error("Edge does not exist.");
 	}//throw exception if the edge doesn't exist
 }
+void Graph::modify_distance(string city1, string city2) {
+	cout << "Enter the new distance\n";
+	float dist;
+	cin >> dist;
+	for (auto& t : graph[city1]) {
+		if (t.first == city2) {
+			t.second = dist;
+			break;
+		}
+	}
+	for (auto& t : graph[city2]) {
+		if (t.first == city1) {
+			t.second = dist;
+			break;
+		}
+	}
 
+}
 bool Graph::containsCity(string cityName) {
     return adj.find(cityName) != adj.end();
 }
