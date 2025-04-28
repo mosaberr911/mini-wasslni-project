@@ -123,7 +123,7 @@ void Graph::addGraph() {
 		if (d <= 0) {
 			throw runtime_error("the distance must be positive number\n");
 		}
-		for (const auto& neighbor : graph[s1]) {
+		for (const auto& neighbor : adj[s1]) {
 			if (neighbor.first == s2) {
 				throw runtime_error("this edge already exists in graph");
 			}
@@ -248,13 +248,13 @@ void Graph::modify_distance(string city1, string city2) {
 	cout << "Enter the new distance\n";
 	float dist;
 	cin >> dist;
-	for (auto& t : graph[city1]) {
+	for (auto& t : adj[city1]) {
 		if (t.first == city2) {
 			t.second = dist;
 			break;
 		}
 	}
-	for (auto& t : graph[city2]) {
+	for (auto& t : adj[city2]) {
 		if (t.first == city1) {
 			t.second = dist;
 			break;
