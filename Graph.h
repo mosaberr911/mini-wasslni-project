@@ -17,6 +17,8 @@ private:
     map<string, vector<pair<string, float> > > adj;
     map<string, bool> vis;
     map<string,int>dis;
+    priority_queue<pair<float, string>, vector<pair<float, string>>, greater<>> pq;
+    unordered_map<string, string> parent;
 public:
     void traverseGraph();//
     void bfs(const string& StartNode);//
@@ -28,5 +30,5 @@ public:
     void addEdge(string city1, string city2, float distance);
     void deleteEdge(string city1, string city2);
     bool containsCity(string cityName);//
-    void dijkstra(const string& start); // declaration//
+    string dijkstra(const string& start,const string& end); // declaration//
 };

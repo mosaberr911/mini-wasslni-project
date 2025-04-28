@@ -8,16 +8,17 @@
 #include<queue>
 using namespace std;
 
-void Graph::dijkstra(const string& start) {
-    priority_queue<pair<float, string>, vector<pair<float, string>>, greater<>> pq;
+string Graph::dijkstra(const string& start, const string& end) {
+    if (adj.find(start) == adj.end() || adj.find(end) == adj.end()) {
+        return "Error";
+    }
     for (auto& [node, _] : adj) {
         dis[node] = 1e9;
         vis[node] = false;
     }
-
     pq.push({0.0, start});
     dis[start] = 0.0;
-
+    parent[start] = "";
     while (!pq.empty()) {
         auto [cost, node] = pq.top();
         pq.pop();
@@ -28,16 +29,30 @@ void Graph::dijkstra(const string& start) {
             if (!vis[neighbor] && dis[node] + weight < dis[neighbor]) {
                 dis[neighbor] = dis[node] + weight;
                 pq.push({dis[neighbor], neighbor});
+                parent[neighbor] = node;
             }
         }
     }
-
-    for (auto& [city, distance] : dis) {
-        cout << "Distance from " << start << " to " << city << " is: ";
-        if (distance == 1e9) cout << "INF" << endl;
-        else cout << distance << endl;
+    string result;
+    if (dis[end] == 1e9) {
+        result = "No path from " + start + " to " + end + ".";
+        return result;
     }
+    result = "Distance from " + start + " to " + end + " is: " + to_string(dis[end]) + "\n";
+    vector<string> path;
+    for (string at = end; !at.empty(); at = parent[at])
+        path.push_back(at);
+    reverse(path.begin(), path.end());
+
+    result += "Path: ";
+    for (int i = 0; i < path.size(); ++i) {
+        result += path[i];
+        if (i + 1 < path.size()) result += " -> ";
+    }
+    return result;
 }
+
+
 
 
 void Graph::traverseGraph() {
