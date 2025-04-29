@@ -2,6 +2,8 @@
 #include<iostream>
 #include<vector>
 #include<map>
+#include<fstream>
+#include<sstream>
 #include<string>
 #include "bits/stdc++.h"
 #include<queue>
@@ -263,4 +265,62 @@ void Graph::modify_distance(string city1, string city2) {
 }
 bool Graph::containsCity(string cityName) {
     return adj.find(cityName) != adj.end();
+}
+void Graph::write() {
+	ofstream output("data.txt", ios::app);
+	if (!output) {
+		cout << "fail not found";
+		return ;
+	}
+	else {
+		for (auto it = adj.begin();it != adj.end();it++) {
+			output << it->first << " ";
+			for (auto t : it->second) {
+				output << "(" << t.first << ":" << t.second << ")";
+
+			}
+			output << endl;
+		}
+	}
+	output.close();
+}
+void Graph::read() {
+	ifstream input("data.txt");
+	if (!input) {
+		cout << "File not found\n";
+		return;
+	}
+
+	adj.clear();  
+
+	string line;
+	while (getline(input, line)) {
+		if (line.empty()) continue;
+
+		istringstream iss(line);
+		string city;
+		iss >> city;
+
+		size_t pos = line.find(' ');
+		if (pos == string::npos) continue;
+
+		string connections = line.substr(pos + 1);
+
+		size_t start = 0;
+		while ((start = connections.find('(', start)) != string::npos) {
+			size_t end = connections.find(')', start);
+			if (end == string::npos) break;
+
+			string edge = connections.substr(start + 1, end - start - 1);  
+			size_t colon = edge.find(':');
+			if (colon != string::npos) {
+				string neighbor = edge.substr(0, colon);
+				float distance = stof(edge.substr(colon + 1));
+				adj[city].push_back({ neighbor, distance });
+			}
+			start = end + 1;
+		}
+	}
+
+	input.close();
 }
