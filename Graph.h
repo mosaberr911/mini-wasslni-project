@@ -25,6 +25,8 @@ public:
     void bfs(const string& StartNode);//
     void dfs(const string& StartNode);//
     void addGraph();//
+    void read();
+    void write();
     void displayGraph();//
     void modify_distance(string,string);
     void addCity(string cityName);
