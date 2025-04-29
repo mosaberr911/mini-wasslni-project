@@ -140,12 +140,13 @@ void ConsoleApp::adminMenu() {
         case 0:
             cout << "Logging out of Admin Menu.\n";////////////////mestany ashraf yekhalas el logout///////////////////
             break;
-        default:
+        default:{
             cout << "Invalid choice.\n";
-            }
+           }
         }
 
     } while (choice != 0);
+
 }
 
 void ConsoleApp::userMenu() {

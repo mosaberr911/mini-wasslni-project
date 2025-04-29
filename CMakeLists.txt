@@ -3,6 +3,14 @@ project(mini_wasslni_project)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(mini_wasslni_project main.cpp
-        Graph.cpp
-        Graph.h)
+# تحديد مسار Qt6Config.cmake
+set(Qt6_DIR "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6")
+
+# البحث عن Qt والمكتبات المطلوبة
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+
+# إضافة الملفات المصدرية
+add_executable(mini_wasslni_project main.cpp Graph.cpp Graph.h)
+
+# ربط Qt مع المشروع
+target_link_libraries(mini_wasslni_project Qt6::Widgets)

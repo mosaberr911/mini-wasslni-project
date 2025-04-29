@@ -4,7 +4,12 @@
 int main() {
     Graph graph ;
     graph.addGraph();
-    graph.displayGraph();
+    // cout aktar mn mra w 7tt el if you want to add more enter y
+    //graph.displayGraph();
+    // el modn btt3d b el3ks
+    //graph.dijkstra("a");
+    // graph.traverseGraph();
+    // ana rai7 fain
 
     // files hadling / exception handling / qt files  /
     // saber qt,code  :: gamil qt :: kyrollos files :: yaseen testing\exception handle  :: ashraf , sherif console app
@@ -13,13 +18,7 @@ int main() {
     return 0;
 }
 
-
-
-
-
-
-/*
-#include <iostream>
+/*#include <iostream>
 #include <fstream>
 #include <unordered_map>
 #include <string>
