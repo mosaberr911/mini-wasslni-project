@@ -155,22 +155,25 @@ void ConsoleApp::userMenu() {
 
     do {
         cout << "\n--- User Menu ---\n";
-        cout << "1. View Map\n2. Find Shortest Route (Dijkstra)\n3. Traverse Graph (BFS/DFS)\n0. Logout\n";
+        cout << "1. Add Graph\n2. View Map\n3. Find Shortest Route (Dijkstra)\n4. Traverse Graph (BFS/DFS)\n0. Logout\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
         switch (choice) {
         case 1:
+            g.addGraph();
+            break; 
+        case 2:
             g.displayGraph();
             break;
-        case 2:
+        case 3:
             cout << "Enter your current city: ";
             cin >> ws; getline(cin, currentLoc);
             cout << "Enter destination city: ";
             getline(cin, destination);
             g.dijkstra(currentLoc, destination);
             break;
-        case 3:
+        case 4:
             g.traverseGraph();
             break;
         case 0:
