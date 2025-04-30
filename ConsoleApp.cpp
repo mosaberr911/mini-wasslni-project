@@ -75,79 +75,25 @@ void ConsoleApp::login() {
     cout << "Enter your password: ";
     getline(cin, password);
 
+    while (password != users[username].password) {
+        cout << "Incorrect password.\n";
+        cout << "Re-enter your password: ";
+        getline(cin, password);
+    }
+
     if (password == users[username].password) {
         cout << "Welcome " << username << "!\n";
-        if (users[username].role == "admin") {
-            cout << "Accessing Admin Functions...\n";
-            // adminMenu(); // <<== you can call Admin Menu here
-        }
-        else {
+        if (users[username].role == "user") {
             cout << "Accessing User Functions...\n";
-            // userMenu(); // <<== you can call User Menu here
-        }
-    }
-    else {
-        cout << "Incorrect password.\n";
-        string forgot;
-        cout << "Forgot your password? (yes/no): ";
-        cin >> forgot;
-        if (forgot == "yes") {
-            cout << "Reset Password Function (Placeholder)\n";
+            userMenu();
         }
     }
 
 }
-
-void ConsoleApp::adminMenu() {
-    int choice;
-    string c1, c2;
-    float dist;
-
-    do {
-        cout << "\n--- Admin Menu ---\n";
-        cout << "1. Add City\n2. Delete City\n3. Add Road\n4. Delete Road\n5. View Map\n0. Logout\n";
-        cout << "Enter your choice: ";
-        cin >> choice;
-
-        switch (choice) {
-        case 1:
-            cout << "Enter city name: ";
-            cin >> ws; getline(cin, c1);
-            g.addCity(c1);
-            break;
-        case 2:
-            cout << "Enter city name to delete: ";
-            cin >> ws; getline(cin, c1);
-            g.deleteCity(c1);
-            break;
-        case 3:
-            cout << "Enter two cities and the distance: ";
-            cin >> ws; 
-            getline(cin, c1); getline(cin, c2);
-            cout << "Enter distance: ";
-            cin >> dist;
-            g.addEdge(c1, c2, dist);
-            break;
-        case 4:
-            cout << "Enter two cities to remove the road: ";
-            cin >> ws; getline(cin, c1);
-            getline(cin, c2);
-            g.deleteEdge(c1, c2);
-            break;
-        case 5:
-            g.displayGraph();
-            break;
-        case 0:
-            cout << "Logging out of Admin Menu.\n";////////////////mestany ashraf yekhalas el logout///////////////////
-            break;
-        default:{
-            cout << "Invalid choice.\n";
-           }
-        }
-
-    } while (choice != 0);
-
+void ConsoleApp::logout() {
+    cout << "\n Logging out... See you next time!\n";
 }
+
 
 void ConsoleApp::userMenu() {
     int choice;
@@ -155,7 +101,7 @@ void ConsoleApp::userMenu() {
 
     do {
         cout << "\n--- User Menu ---\n";
-        cout << "1. Add Graph\n2. View Map\n3. Find Shortest Route (Dijkstra)\n4. Traverse Graph (BFS/DFS)\n0. Logout\n";
+        cout << "1. Add Graph\n2. View Map\n3. Find Shortest Route (Dijkstra)\n4. Traverse Graph (BFS/DFS)\n5. Add City\n6. Delete City\n7. Add Road\n8. Delete Road\n0. Logout\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -176,8 +122,32 @@ void ConsoleApp::userMenu() {
         case 4:
             g.traverseGraph();
             break;
+        case 5:
+            cout << "Enter city name: ";
+            cin >> ws; getline(cin, c1);
+            g.addCity(c1);
+            break;
+        case 6:
+            cout << "Enter city name to delete: ";
+            cin >> ws; getline(cin, c1);
+            g.deleteCity(c1);
+            break;
+        case 7:
+            cout << "Enter two cities and the distance: ";
+            cin >> ws; 
+            getline(cin, c1); getline(cin, c2);
+            cout << "Enter distance: ";
+            cin >> dist;
+            g.addEdge(c1, c2, dist);
+            break;
+        case 8:
+            cout << "Enter two cities to remove the road: ";
+            cin >> ws; getline(cin, c1);
+            getline(cin, c2);
+            g.deleteEdge(c1, c2);
+            break;
         case 0:
-            cout << "Logging out of User Menu.\n";////////////////mestany ashraf yekhalas el logout///////////////////
+            logout();
             break;
         default:
             cout << "Invalid choice.\n";
