@@ -25,6 +25,8 @@ public:
     void bfs(const string& StartNode);//
     void dfs(const string& StartNode);//
     void addGraph();//
+    void dfspaths(string current, string destination, vector<string>& path);
+    void findallpaths(string , string );
     void read();
     void write();
     void displayGraph();//
