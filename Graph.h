@@ -17,12 +17,12 @@ private:
     priority_queue<pair<float, string>, vector<pair<float, string> >, greater<pair<float, string> > > pq;
     unordered_map<string, string> parent;
 public:
-    void traverseGraph();
-    void bfs(const string& StartNode);
-    void dfs(const string& StartNode);
-    void addGraph();
-    void dfsPaths(string current, string destination, vector<string> &path);
-    void findAllPaths(string city1, string city2);
+    void traverseGraph();//
+    void bfs(const string& StartNode);//
+    void dfs(const string& StartNode);//
+    void addGraph();//
+    void dfspaths(string current, string destination, vector<string>& path);
+    void findallpaths(string , string );
     void read();
     void write();
     void displayGraph();
