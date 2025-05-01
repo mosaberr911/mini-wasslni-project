@@ -4,11 +4,8 @@
 #include <unordered_map>
 #include<set>
 #include<string>
+#include "User.h"
 using namespace std;
-struct User {
-    string password;
-    string role;
-};
 
 class ConsoleApp {
 private:
@@ -19,6 +16,9 @@ public:
     void login();
     void saveUsers() const;
     void loadUsers();
-    void adminMenu();
-    void userMenu();
+    void userMenu(User&);
+    static void displayUserMenuOptions();
+    static int getValidatedMenuChoice(int min, int max);
+    static void executeUserMenuAction(int choice, User& thisUser);
+    void mainMenu();
 };

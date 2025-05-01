@@ -15,7 +15,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/addr2line.exe"
+			"value" : "CMAKE_ADDR2LINE-NOTFOUND"
 		},
 		{
 			"name" : "CMAKE_AR",
@@ -31,7 +31,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/ar.exe"
+			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar"
 		},
 		{
 			"name" : "CMAKE_BUILD_TYPE",
@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "c:/Users/A/CLionProjects/mini-wasslni-project/cmake-build-debug"
+			"value" : "/Users/mohamed/CLionProjects/mini-wasslni-project/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -79,7 +79,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "30"
+			"value" : "31"
 		},
 		{
 			"name" : "CMAKE_CACHE_PATCH_VERSION",
@@ -91,7 +91,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "5"
+			"value" : "6"
 		},
 		{
 			"name" : "CMAKE_COLOR_DIAGNOSTICS",
@@ -115,7 +115,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/cmake/win/x64/bin/cmake.exe"
+			"value" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake"
 		},
 		{
 			"name" : "CMAKE_CPACK_COMMAND",
@@ -127,7 +127,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/cmake/win/x64/bin/cpack.exe"
+			"value" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cpack"
 		},
 		{
 			"name" : "CMAKE_CTEST_COMMAND",
@@ -139,7 +139,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/cmake/win/x64/bin/ctest.exe"
+			"value" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/ctest"
 		},
 		{
 			"name" : "CMAKE_CXX_COMPILER",
@@ -155,39 +155,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/g++.exe"
-		},
-		{
-			"name" : "CMAKE_CXX_COMPILER_AR",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "A wrapper around 'ar' adding the appropriate '--plugin' option for the GCC compiler"
-				}
-			],
-			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/gcc-ar.exe"
-		},
-		{
-			"name" : "CMAKE_CXX_COMPILER_RANLIB",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "A wrapper around 'ranlib' adding the appropriate '--plugin' option for the GCC compiler"
-				}
-			],
-			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/gcc-ranlib.exe"
+			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++"
 		},
 		{
 			"name" : "CMAKE_CXX_FLAGS",
@@ -270,22 +238,6 @@
 			"value" : "-O2 -g -DNDEBUG"
 		},
 		{
-			"name" : "CMAKE_CXX_STANDARD_LIBRARIES",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Libraries linked by default with all C++ applications."
-				}
-			],
-			"type" : "STRING",
-			"value" : "-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32"
-		},
-		{
 			"name" : "CMAKE_C_COMPILER",
 			"properties" : 
 			[
@@ -299,39 +251,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/gcc.exe"
-		},
-		{
-			"name" : "CMAKE_C_COMPILER_AR",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "A wrapper around 'ar' adding the appropriate '--plugin' option for the GCC compiler"
-				}
-			],
-			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/gcc-ar.exe"
-		},
-		{
-			"name" : "CMAKE_C_COMPILER_RANLIB",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "A wrapper around 'ranlib' adding the appropriate '--plugin' option for the GCC compiler"
-				}
-			],
-			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/gcc-ranlib.exe"
+			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc"
 		},
 		{
 			"name" : "CMAKE_C_FLAGS",
@@ -414,22 +334,6 @@
 			"value" : "-O2 -g -DNDEBUG"
 		},
 		{
-			"name" : "CMAKE_C_STANDARD_LIBRARIES",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Libraries linked by default with all C applications."
-				}
-			],
-			"type" : "STRING",
-			"value" : "-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32"
-		},
-		{
 			"name" : "CMAKE_DLLTOOL",
 			"properties" : 
 			[
@@ -443,7 +347,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/dlltool.exe"
+			"value" : "CMAKE_DLLTOOL-NOTFOUND"
 		},
 		{
 			"name" : "CMAKE_EXECUTABLE_FORMAT",
@@ -455,7 +359,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "Unknown"
+			"value" : "MACHO"
 		},
 		{
 			"name" : "CMAKE_EXE_LINKER_FLAGS",
@@ -575,7 +479,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/A/CLionProjects/mini-wasslni-project/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "/Users/mohamed/CLionProjects/mini-wasslni-project/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -587,7 +491,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "Ninja"
+			"value" : "Unix Makefiles"
 		},
 		{
 			"name" : "CMAKE_GENERATOR_INSTANCE",
@@ -626,18 +530,6 @@
 			"value" : ""
 		},
 		{
-			"name" : "CMAKE_GNUtoMS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Convert GNU import libraries to MS format (requires Visual Studio)"
-				}
-			],
-			"type" : "BOOL",
-			"value" : "OFF"
-		},
-		{
 			"name" : "CMAKE_HAVE_LIBC_PTHREAD",
 			"properties" : 
 			[
@@ -659,7 +551,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Users/A/CLionProjects/mini-wasslni-project"
+			"value" : "/Users/mohamed/CLionProjects/mini-wasslni-project"
 		},
 		{
 			"name" : "CMAKE_INSTALL_BINDIR",
@@ -838,6 +730,22 @@
 			"value" : ""
 		},
 		{
+			"name" : "CMAKE_INSTALL_NAME_TOOL",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a program."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/install_name_tool"
+		},
+		{
 			"name" : "CMAKE_INSTALL_OLDINCLUDEDIR",
 			"properties" : 
 			[
@@ -863,7 +771,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/Program Files (x86)/mini_wasslni_project"
+			"value" : "/usr/local"
 		},
 		{
 			"name" : "CMAKE_INSTALL_RUNSTATEDIR",
@@ -943,19 +851,23 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/ld.exe"
+			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld"
 		},
 		{
 			"name" : "CMAKE_MAKE_PROGRAM",
 			"properties" : 
 			[
 				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
 					"name" : "HELPSTRING",
-					"value" : "make program"
+					"value" : "Path to a program."
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/ninja/win/x64/ninja.exe"
+			"value" : "/usr/bin/make"
 		},
 		{
 			"name" : "CMAKE_MODULE_LINKER_FLAGS",
@@ -1051,7 +963,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/nm.exe"
+			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/nm"
 		},
 		{
 			"name" : "CMAKE_NUMBER_OF_MAKEFILES",
@@ -1079,7 +991,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/objcopy.exe"
+			"value" : "CMAKE_OBJCOPY-NOTFOUND"
 		},
 		{
 			"name" : "CMAKE_OBJDUMP",
@@ -1095,7 +1007,43 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/objdump.exe"
+			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/objdump"
+		},
+		{
+			"name" : "CMAKE_OSX_ARCHITECTURES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Build architectures for OSX"
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_OSX_DEPLOYMENT_TARGET",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Minimum OS X version to target for deployment (at runtime); newer APIs weak linked. Set to empty string for default value."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_OSX_SYSROOT",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The product will be built against the headers and libraries located inside the indicated SDK."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk"
 		},
 		{
 			"name" : "CMAKE_PLATFORM_INFO_INITIALIZED",
@@ -1159,115 +1107,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/ranlib.exe"
-		},
-		{
-			"name" : "CMAKE_RC_COMPILER",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "RC compiler"
-				}
-			],
-			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/windres.exe"
-		},
-		{
-			"name" : "CMAKE_RC_COMPILER_WORKS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "1"
-		},
-		{
-			"name" : "CMAKE_RC_FLAGS",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Flags for Windows Resource Compiler during all build types."
-				}
-			],
-			"type" : "STRING",
-			"value" : ""
-		},
-		{
-			"name" : "CMAKE_RC_FLAGS_DEBUG",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Flags for Windows Resource Compiler during DEBUG builds."
-				}
-			],
-			"type" : "STRING",
-			"value" : ""
-		},
-		{
-			"name" : "CMAKE_RC_FLAGS_MINSIZEREL",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Flags for Windows Resource Compiler during MINSIZEREL builds."
-				}
-			],
-			"type" : "STRING",
-			"value" : ""
-		},
-		{
-			"name" : "CMAKE_RC_FLAGS_RELEASE",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Flags for Windows Resource Compiler during RELEASE builds."
-				}
-			],
-			"type" : "STRING",
-			"value" : ""
-		},
-		{
-			"name" : "CMAKE_RC_FLAGS_RELWITHDEBINFO",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Flags for Windows Resource Compiler during RELWITHDEBINFO builds."
-				}
-			],
-			"type" : "STRING",
-			"value" : ""
+			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib"
 		},
 		{
 			"name" : "CMAKE_READELF",
@@ -1283,7 +1123,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/readelf.exe"
+			"value" : "CMAKE_READELF-NOTFOUND"
 		},
 		{
 			"name" : "CMAKE_ROOT",
@@ -1295,7 +1135,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/cmake/win/x64/share/cmake-3.30"
+			"value" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1503,7 +1343,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files/JetBrains/CLion 2024.3.2/bin/mingw/bin/strip.exe"
+			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip"
 		},
 		{
 			"name" : "CMAKE_TAPI",
@@ -1519,7 +1359,19 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "CMAKE_TAPI-NOTFOUND"
+			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/tapi"
+		},
+		{
+			"name" : "CMAKE_UNAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "uname command"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/usr/bin/uname"
 		},
 		{
 			"name" : "CMAKE_VERBOSE_MAKEFILE",
@@ -1536,6 +1388,18 @@
 			],
 			"type" : "BOOL",
 			"value" : "FALSE"
+		},
+		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_OpenGL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding OpenGL"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/System/Library/Frameworks/OpenGL.framework][/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/System/Library/Frameworks/OpenGL.framework][c ][v()]"
 		},
 		{
 			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_Threads",
@@ -1562,6 +1426,18 @@
 			"value" : "[1][v()]"
 		},
 		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_WrapOpenGL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding WrapOpenGL"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[ON][v()]"
+		},
+		{
 			"name" : "HAVE_STDATOMIC",
 			"properties" : 
 			[
@@ -1572,6 +1448,82 @@
 			],
 			"type" : "INTERNAL",
 			"value" : "1"
+		},
+		{
+			"name" : "MACDEPLOYQT_EXECUTABLE",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a program."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/Users/mohamed/Qt/6.9.0/macos/bin/macdeployqt"
+		},
+		{
+			"name" : "OPENGL_GLU_INCLUDE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Include for the OpenGL GLU library"
+				}
+			],
+			"type" : "PATH",
+			"value" : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/System/Library/Frameworks/OpenGL.framework"
+		},
+		{
+			"name" : "OPENGL_INCLUDE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Include for OpenGL"
+				}
+			],
+			"type" : "PATH",
+			"value" : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/System/Library/Frameworks/OpenGL.framework"
+		},
+		{
+			"name" : "OPENGL_gl_LIBRARY",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "OpenGL GL library"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/System/Library/Frameworks/OpenGL.framework"
+		},
+		{
+			"name" : "OPENGL_glu_LIBRARY",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "OpenGL GLU library"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/System/Library/Frameworks/OpenGL.framework"
 		},
 		{
 			"name" : "QT_ADDITIONAL_HOST_PACKAGES_PREFIX_PATH",
@@ -1895,7 +1847,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_broken_threadlocal_dtors",
@@ -1907,7 +1859,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ON"
+			"value" : "OFF"
 		},
 		{
 			"name" : "QT_FEATURE_buttongroup",
@@ -1991,7 +1943,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_clock_monotonic",
@@ -2423,7 +2375,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ON"
+			"value" : "OFF"
 		},
 		{
 			"name" : "QT_FEATURE_direct2d1_1",
@@ -2435,7 +2387,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ON"
+			"value" : "OFF"
 		},
 		{
 			"name" : "QT_FEATURE_directfb",
@@ -2459,7 +2411,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ON"
+			"value" : "OFF"
 		},
 		{
 			"name" : "QT_FEATURE_directwrite3",
@@ -2471,7 +2423,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ON"
+			"value" : "OFF"
 		},
 		{
 			"name" : "QT_FEATURE_directwritecolrv1",
@@ -2495,7 +2447,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_dlopen",
@@ -2507,7 +2459,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_doc_snippets",
@@ -2579,7 +2531,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ON"
+			"value" : "OFF"
 		},
 		{
 			"name" : "QT_FEATURE_easingcurve",
@@ -2999,7 +2951,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_freetype",
@@ -3035,7 +2987,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_future",
@@ -3095,7 +3047,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_gif",
@@ -3155,7 +3107,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_graphicsview",
@@ -3467,7 +3419,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ON"
+			"value" : "OFF"
 		},
 		{
 			"name" : "QT_FEATURE_islamiccivilcalendar",
@@ -3623,7 +3575,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_libinput",
@@ -3683,7 +3635,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ON"
+			"value" : "OFF"
 		},
 		{
 			"name" : "QT_FEATURE_libudev",
@@ -3767,7 +3719,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_localtime_s",
@@ -3779,7 +3731,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ON"
+			"value" : "OFF"
 		},
 		{
 			"name" : "QT_FEATURE_lsx",
@@ -3839,7 +3791,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_memrchr",
@@ -3899,7 +3851,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_mimetype",
@@ -3995,7 +3947,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_network",
@@ -4271,7 +4223,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_poll_pollts",
@@ -4343,7 +4295,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_precompile_header",
@@ -4514,6 +4466,18 @@
 			"value" : "OFF"
 		},
 		{
+			"name" : "QT_FEATURE_qt_framework",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Qt feature: qt_framework (from target Qt6::Core)"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "ON"
+		},
+		{
 			"name" : "QT_FEATURE_qtgui_threadpool",
 			"properties" : 
 			[
@@ -4679,7 +4643,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_rubberband",
@@ -5015,7 +4979,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ON"
+			"value" : "OFF"
 		},
 		{
 			"name" : "QT_FEATURE_stack_protector",
@@ -5159,7 +5123,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_style_stylesheet",
@@ -5195,7 +5159,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ON"
+			"value" : "OFF"
 		},
 		{
 			"name" : "QT_FEATURE_style_windowsvista",
@@ -5207,7 +5171,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ON"
+			"value" : "OFF"
 		},
 		{
 			"name" : "QT_FEATURE_syntaxhighlighter",
@@ -5351,7 +5315,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_systemsemaphore",
@@ -5387,7 +5351,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_sysv_shm",
@@ -5399,7 +5363,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_tabbar",
@@ -5615,7 +5579,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ON"
+			"value" : "OFF"
 		},
 		{
 			"name" : "QT_FEATURE_timezone_tzdb",
@@ -5735,7 +5699,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "OFF"
+			"value" : "ON"
 		},
 		{
 			"name" : "QT_FEATURE_tslib",
@@ -5951,7 +5915,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "ON"
+			"value" : "OFF"
 		},
 		{
 			"name" : "QT_FEATURE_vxworksevdev",
@@ -6287,7 +6251,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6CorePrivate"
+			"value" : "/Users/mohamed/Qt/6.9.0/macos/lib/cmake/Qt6CorePrivate"
 		},
 		{
 			"name" : "Qt6CoreTools_DIR",
@@ -6299,7 +6263,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6CoreTools"
+			"value" : "/Users/mohamed/Qt/6.9.0/macos/lib/cmake/Qt6CoreTools"
 		},
 		{
 			"name" : "Qt6Core_DIR",
@@ -6311,19 +6275,43 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6Core"
+			"value" : "/Users/mohamed/Qt/6.9.0/macos/lib/cmake/Qt6Core"
 		},
 		{
-			"name" : "Qt6EntryPointPrivate_DIR",
+			"name" : "Qt6DBusPrivate_DIR",
 			"properties" : 
 			[
 				{
 					"name" : "HELPSTRING",
-					"value" : "The directory containing a CMake configuration file for Qt6EntryPointPrivate."
+					"value" : "The directory containing a CMake configuration file for Qt6DBusPrivate."
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6EntryPointPrivate"
+			"value" : "/Users/mohamed/Qt/6.9.0/macos/lib/cmake/Qt6DBusPrivate"
+		},
+		{
+			"name" : "Qt6DBusTools_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for Qt6DBusTools."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/Users/mohamed/Qt/6.9.0/macos/lib/cmake/Qt6DBusTools"
+		},
+		{
+			"name" : "Qt6DBus_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for Qt6DBus."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/Users/mohamed/Qt/6.9.0/macos/lib/cmake/Qt6DBus"
 		},
 		{
 			"name" : "Qt6GuiPrivate_DIR",
@@ -6335,7 +6323,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6GuiPrivate"
+			"value" : "/Users/mohamed/Qt/6.9.0/macos/lib/cmake/Qt6GuiPrivate"
 		},
 		{
 			"name" : "Qt6GuiTools_DIR",
@@ -6347,7 +6335,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6GuiTools"
+			"value" : "/Users/mohamed/Qt/6.9.0/macos/lib/cmake/Qt6GuiTools"
 		},
 		{
 			"name" : "Qt6Gui_DIR",
@@ -6359,7 +6347,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6Gui"
+			"value" : "/Users/mohamed/Qt/6.9.0/macos/lib/cmake/Qt6Gui"
 		},
 		{
 			"name" : "Qt6WidgetsPrivate_DIR",
@@ -6371,7 +6359,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6WidgetsPrivate"
+			"value" : "/Users/mohamed/Qt/6.9.0/macos/lib/cmake/Qt6WidgetsPrivate"
 		},
 		{
 			"name" : "Qt6WidgetsTools_DIR",
@@ -6383,7 +6371,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6WidgetsTools"
+			"value" : "/Users/mohamed/Qt/6.9.0/macos/lib/cmake/Qt6WidgetsTools"
 		},
 		{
 			"name" : "Qt6Widgets_DIR",
@@ -6395,107 +6383,31 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6Widgets"
+			"value" : "/Users/mohamed/Qt/6.9.0/macos/lib/cmake/Qt6Widgets"
 		},
 		{
-			"name" : "Qt6ZlibPrivate_DIR",
+			"name" : "Qt6_DIR",
 			"properties" : 
 			[
 				{
 					"name" : "HELPSTRING",
-					"value" : "The directory containing a CMake configuration file for Qt6ZlibPrivate."
+					"value" : "The directory containing a CMake configuration file for Qt6."
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/Qt/6.9.0/mingw_64/lib/cmake/Qt6ZlibPrivate"
+			"value" : "Qt6_DIR-NOTFOUND"
 		},
 		{
-			"name" : "Vulkan_GLSLANG_VALIDATOR_EXECUTABLE",
+			"name" : "WrapOpenGL_AGL",
 			"properties" : 
 			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Path to a program."
-				}
-			],
-			"type" : "FILEPATH",
-			"value" : "Vulkan_GLSLANG_VALIDATOR_EXECUTABLE-NOTFOUND"
-		},
-		{
-			"name" : "Vulkan_GLSLC_EXECUTABLE",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Path to a program."
-				}
-			],
-			"type" : "FILEPATH",
-			"value" : "Vulkan_GLSLC_EXECUTABLE-NOTFOUND"
-		},
-		{
-			"name" : "Vulkan_INCLUDE_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Path to a file."
-				}
-			],
-			"type" : "PATH",
-			"value" : "Vulkan_INCLUDE_DIR-NOTFOUND"
-		},
-		{
-			"name" : "Vulkan_LIBRARY",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
 				{
 					"name" : "HELPSTRING",
 					"value" : "Path to a library."
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "Vulkan_LIBRARY-NOTFOUND"
-		},
-		{
-			"name" : "WINDEPLOYQT_EXECUTABLE",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Path to a program."
-				}
-			],
-			"type" : "FILEPATH",
-			"value" : "C:/Qt/6.9.0/mingw_64/bin/windeployqt.exe"
-		},
-		{
-			"name" : "_CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "linker supports push/pop state"
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "TRUE"
+			"value" : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/System/Library/Frameworks/AGL.framework"
 		},
 		{
 			"name" : "_GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX",
@@ -6507,7 +6419,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Program Files (x86)/mini_wasslni_project"
+			"value" : "/usr/local"
 		},
 		{
 			"name" : "mini_wasslni_project_BINARY_DIR",
@@ -6519,7 +6431,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/A/CLionProjects/mini-wasslni-project/cmake-build-debug"
+			"value" : "/Users/mohamed/CLionProjects/mini-wasslni-project/cmake-build-debug"
 		},
 		{
 			"name" : "mini_wasslni_project_IS_TOP_LEVEL",
@@ -6543,7 +6455,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/A/CLionProjects/mini-wasslni-project"
+			"value" : "/Users/mohamed/CLionProjects/mini-wasslni-project"
 		}
 	],
 	"kind" : "cache",

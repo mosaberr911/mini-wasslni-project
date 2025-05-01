@@ -5,7 +5,7 @@
 #include<fstream>
 #include<sstream>
 #include<string>
-#include "bits/stdc++.h"
+//#include "bits/stdc++.h"
 #include<queue>
 using namespace std;
 
@@ -283,6 +283,38 @@ void Graph::write() {
 		}
 	}
 	output.close();
+}
+void Graph::dfsPaths(string current, string destination, vector<string>& path) {
+
+	vis[current] = 1;
+	path.push_back(current);
+
+	if (current == destination) {
+		for (int i = 0; i < path.size(); i++) {
+			cout << path[i];
+			if (i != path.size() - 1) cout << " -> ";
+		}
+		cout << endl;
+	}
+	else {
+		for (auto& neighbor : adj[current]) {
+			if (!vis[neighbor.first]) {
+				dfsPaths(neighbor.first, destination, path);
+			}
+		}
+	}
+
+	path.pop_back();
+	vis[current] = 0;
+}
+
+
+void Graph::findallpaths(string city1, string city2) {
+	vis.clear();
+	vector<string> path;
+	cout << "All paths from " << city1 << " to " << city2 << ":\n";
+	dfsPaths(city1, city2, path);
+
 }
 void Graph::read() {
 	ifstream input("data.txt");

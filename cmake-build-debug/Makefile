@@ -129,6 +129,30 @@ mini_wasslni_project/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_wasslni_project.dir/build.make CMakeFiles/mini_wasslni_project.dir/build
 .PHONY : mini_wasslni_project/fast
 
+ConsoleApp.o: ConsoleApp.cpp.o
+.PHONY : ConsoleApp.o
+
+# target to build an object file
+ConsoleApp.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_wasslni_project.dir/build.make CMakeFiles/mini_wasslni_project.dir/ConsoleApp.cpp.o
+.PHONY : ConsoleApp.cpp.o
+
+ConsoleApp.i: ConsoleApp.cpp.i
+.PHONY : ConsoleApp.i
+
+# target to preprocess a source file
+ConsoleApp.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_wasslni_project.dir/build.make CMakeFiles/mini_wasslni_project.dir/ConsoleApp.cpp.i
+.PHONY : ConsoleApp.cpp.i
+
+ConsoleApp.s: ConsoleApp.cpp.s
+.PHONY : ConsoleApp.s
+
+# target to generate assembly for a file
+ConsoleApp.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_wasslni_project.dir/build.make CMakeFiles/mini_wasslni_project.dir/ConsoleApp.cpp.s
+.PHONY : ConsoleApp.cpp.s
+
 Graph.o: Graph.cpp.o
 .PHONY : Graph.o
 
@@ -152,6 +176,30 @@ Graph.s: Graph.cpp.s
 Graph.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_wasslni_project.dir/build.make CMakeFiles/mini_wasslni_project.dir/Graph.cpp.s
 .PHONY : Graph.cpp.s
+
+User.o: User.cpp.o
+.PHONY : User.o
+
+# target to build an object file
+User.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_wasslni_project.dir/build.make CMakeFiles/mini_wasslni_project.dir/User.cpp.o
+.PHONY : User.cpp.o
+
+User.i: User.cpp.i
+.PHONY : User.i
+
+# target to preprocess a source file
+User.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_wasslni_project.dir/build.make CMakeFiles/mini_wasslni_project.dir/User.cpp.i
+.PHONY : User.cpp.i
+
+User.s: User.cpp.s
+.PHONY : User.s
+
+# target to generate assembly for a file
+User.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_wasslni_project.dir/build.make CMakeFiles/mini_wasslni_project.dir/User.cpp.s
+.PHONY : User.cpp.s
 
 main.o: main.cpp.o
 .PHONY : main.o
@@ -186,9 +234,15 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... mini_wasslni_project"
+	@echo "... ConsoleApp.o"
+	@echo "... ConsoleApp.i"
+	@echo "... ConsoleApp.s"
 	@echo "... Graph.o"
 	@echo "... Graph.i"
 	@echo "... Graph.s"
+	@echo "... User.o"
+	@echo "... User.i"
+	@echo "... User.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
