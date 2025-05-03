@@ -16,6 +16,7 @@ class Graph
 public:
     void addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges);
     std::string dijkstra(const std::string& start, const std::string& end);  // دالة Dijkstra
+    std::string displayMap();  // تم إضافة دالة displayMap
 
 private:
     std::map<std::string, std::vector<std::pair<std::string, int>>> adj;  // قائمة الجوار
