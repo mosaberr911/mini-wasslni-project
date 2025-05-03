@@ -9,17 +9,19 @@
 #include <QDebug>
 #include <QFile>
 #include <QTextStream>
+#include <QVBoxLayout>
+#include <QSpacerItem>
 
 Options::Options(QWidget *parent) : QWidget(parent)
 {
-    setFixedSize(600, 500);
+    setFixedSize(600, 700);
     setWindowTitle("Options");
 
     // الخلفية
     QPixmap background("C:/Users/A/OneDrive/Documents/wasslni/images/Screenshot 2025-04-28 183435.png");
     if (background.isNull()) {
         qDebug() << "Failed to load background image.";
-        background = QPixmap(600, 500);
+        background = QPixmap(600, 700);
         background.fill(Qt::lightGray);
     }
 
@@ -27,46 +29,72 @@ Options::Options(QWidget *parent) : QWidget(parent)
     palette.setBrush(QPalette::Window, QBrush(background));
     setPalette(palette);
 
+    // Layout رئيسي
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    mainLayout->setSpacing(15);
+    mainLayout->setContentsMargins(100, 30, 100, 30);  // هوامش داخلية
+
+    // إعدادات الحجم والخط
+    int elementHeight = 50;
+    int elementWidth = 350;
+    QFont font;
+    font.setPointSize(12);
+
     // زر Show Shortest Path
-    showShortestPathButton = new QPushButton("Show Shortest Path", this);
+    showShortestPathButton = new QPushButton("Show Shortest Path");
     showShortestPathButton->setStyleSheet("background-color: green; color: white;");
-    showShortestPathButton->setGeometry(200, 50, 200, 40);
+    showShortestPathButton->setFixedSize(elementWidth, elementHeight);
+    showShortestPathButton->setFont(font);
+    mainLayout->addWidget(showShortestPathButton, 0, Qt::AlignHCenter);
 
     // حقول إدخال المدن
-    startCityLineEdit = new QLineEdit(this);
+    startCityLineEdit = new QLineEdit();
     startCityLineEdit->setPlaceholderText("Enter Start City");
-    startCityLineEdit->setGeometry(150, 120, 300, 40);
     startCityLineEdit->setVisible(false);
+    startCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    startCityLineEdit->setFont(font);
+    mainLayout->addWidget(startCityLineEdit, 0, Qt::AlignHCenter);
 
-    endCityLineEdit = new QLineEdit(this);
+    endCityLineEdit = new QLineEdit();
     endCityLineEdit->setPlaceholderText("Enter End City");
-    endCityLineEdit->setGeometry(150, 180, 300, 40);
     endCityLineEdit->setVisible(false);
+    endCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    endCityLineEdit->setFont(font);
+    mainLayout->addWidget(endCityLineEdit, 0, Qt::AlignHCenter);
 
     // زر Show Path
-    showPathButton = new QPushButton("Show Path", this);
+    showPathButton = new QPushButton("Show Path");
     showPathButton->setStyleSheet("background-color: green; color: white;");
-    showPathButton->setGeometry(200, 240, 200, 40);
     showPathButton->setVisible(false);
     showPathButton->setEnabled(false);
+    showPathButton->setFixedSize(elementWidth, elementHeight);
+    showPathButton->setFont(font);
+    mainLayout->addWidget(showPathButton, 0, Qt::AlignHCenter);
 
     // زر Display Map
-    displayMapButton = new QPushButton("Display Map", this);
+    displayMapButton = new QPushButton("Display Map");
     displayMapButton->setStyleSheet("background-color: green; color: white;");
-    displayMapButton->setGeometry(200, 300, 200, 40);
+    displayMapButton->setFixedSize(elementWidth, elementHeight);
+    displayMapButton->setFont(font);
+    mainLayout->addWidget(displayMapButton, 0, Qt::AlignHCenter);
 
     // زر Add City
-    addCityButton = new QPushButton("Add City", this);
+    addCityButton = new QPushButton("Add City");
     addCityButton->setStyleSheet("background-color: green; color: white;");
-    addCityButton->setGeometry(200, 360, 200, 40);
+    addCityButton->setFixedSize(elementWidth, elementHeight);
+    addCityButton->setFont(font);
+    mainLayout->addWidget(addCityButton, 0, Qt::AlignHCenter);
 
     // حقل إضافة مدينة
-    addCityLineEdit = new QLineEdit(this);
+    addCityLineEdit = new QLineEdit();
     addCityLineEdit->setPlaceholderText("Enter City Name");
-    addCityLineEdit->setGeometry(150, 420, 300, 40);
     addCityLineEdit->setVisible(false);
+    addCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    addCityLineEdit->setFont(font);
+    mainLayout->addWidget(addCityLineEdit, 0, Qt::AlignHCenter);
 
-    // الربط بالأحداث
+    // ربط الإشارات بالأحداث
     connect(showShortestPathButton, &QPushButton::clicked, this, &Options::onShowShortestPathClicked);
     connect(showPathButton, &QPushButton::clicked, this, &Options::onShowPathClicked);
     connect(displayMapButton, &QPushButton::clicked, this, &Options::onDisplayMapClicked);
@@ -76,17 +104,13 @@ Options::Options(QWidget *parent) : QWidget(parent)
 void Options::onShowShortestPathClicked()
 {
     isPathInputVisible = !isPathInputVisible;
+
     startCityLineEdit->setVisible(isPathInputVisible);
     endCityLineEdit->setVisible(isPathInputVisible);
     showPathButton->setVisible(isPathInputVisible);
     showPathButton->setEnabled(isPathInputVisible);
 
     if (isPathInputVisible) {
-        int centerX = (width() - startCityLineEdit->width()) / 2;
-        startCityLineEdit->move(centerX, 120);
-        endCityLineEdit->move(centerX, 180);
-        showPathButton->move((width() - showPathButton->width()) / 2, 240);
-
         showShortestPathButton->setText("Hide Path Input");
     } else {
         showShortestPathButton->setText("Show Shortest Path");
@@ -95,19 +119,14 @@ void Options::onShowShortestPathClicked()
 
 void Options::onDisplayMapClicked()
 {
-    // إنشاء كائن من الجراف
     Graph graph;
-
-    // تحميل الحواف من الملف
     QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
 
-    // التأكد من أن الحواف تم تحميلها بنجاح
     if (edges.isEmpty()) {
         QMessageBox::warning(this, "File Error", "No edges were loaded from the file. Please check the file format.");
-        return;  // إرجاع في حالة فشل تحميل الحواف
+        return;
     }
 
-    // إضافة الحواف إلى الجراف
     try {
         graph.addGraphFromUI(edges);
     } catch (const std::exception& e) {
@@ -115,10 +134,8 @@ void Options::onDisplayMapClicked()
         return;
     }
 
-    // استدعاء دالة displayMap لعرض الخريطة
     try {
         QString mapRepresentation = QString::fromStdString(graph.displayMap());
-        // عرض الخريطة في نافذة منبثقة
         QMessageBox::information(this, "Map Display", mapRepresentation);
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", "An error occurred while displaying the map: " + QString(e.what()));
@@ -131,8 +148,6 @@ void Options::onAddCityClicked()
     addCityLineEdit->setVisible(isAddCityInputVisible);
 
     if (isAddCityInputVisible) {
-        int centerX = (width() - addCityLineEdit->width()) / 2;
-        addCityLineEdit->move(centerX, 420);
         addCityButton->setText("Hide Add City");
     } else {
         addCityButton->setText("Add City");
