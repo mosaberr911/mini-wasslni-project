@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <sstream>  // لإضافة مكتبة stringstream
 
 void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges)
 {
@@ -89,4 +90,16 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
         if (i + 1 < path.size()) result += " -> ";
     }
     return result;
+}
+
+std::string Graph::displayMap() {
+    std::stringstream ss;
+    for (auto it = adj.begin(); it != adj.end(); ++it) {
+        ss << "City: " << it->first << ":\n";  // Display city name
+        for (auto t : it->second) {
+            ss << "  - Road to " << t.first << " (Distance: " << t.second << ")\n";  // Display connected cities and distance
+        }
+        ss << std::endl;
+    }
+    return ss.str();  // Return the map as a string
 }
