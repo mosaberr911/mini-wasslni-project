@@ -5,8 +5,42 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <sstream>  // لإضافة مكتبة stringstream
+#include <sstream>
 
+// دالة لإضافة مدينة بدون تكرار
+void Graph::addCity(std::string cityName) {
+    if (containsCity(cityName))
+        throw std::runtime_error("City already exists in graph");
+    adj[cityName];  // تضاف كـ مفتاح جديد بدون جيران حالياً
+}
+
+// دالة لحذف مدينة مع إزالة جميع الإشارات لها في باقي المدن
+void Graph::deleteCity(std::string cityName) {
+    if (!containsCity(cityName))
+        throw std::runtime_error("City does not exist in graph");
+
+    for (auto& cityPair : adj) {
+        std::string neighbour = cityPair.first;
+
+        if (neighbour != cityName) {
+            auto& neighborCities = cityPair.second;
+            for (auto it = neighborCities.begin(); it != neighborCities.end();) {
+                if (it->first == cityName)
+                    it = neighborCities.erase(it);
+                else
+                    ++it;
+            }
+        }
+    }
+    adj.erase(cityName);
+}
+
+// فحص إذا كانت المدينة موجودة
+bool Graph::containsCity(std::string cityName) {
+    return adj.find(cityName) != adj.end();
+}
+
+// دالة لإضافة الرسم البياني من واجهة المستخدم
 void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges)
 {
     for (const auto& edge : edges) {
@@ -25,33 +59,33 @@ void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edg
             throw std::runtime_error("Distance must be a positive number.");
         }
 
-        // Check if the edge already exists
         for (const auto& neighbor : adj[s1]) {
             if (neighbor.first == s2) {
                 throw std::runtime_error("This edge already exists.");
             }
         }
 
-        // Add the edge in both directions (undirected graph)
         adj[s1].push_back({ s2, distance });
         adj[s2].push_back({ s1, distance });
     }
 }
 
+// دالة خوارزمية Dijkstra لإيجاد أقصر مسار
 std::string Graph::dijkstra(const std::string& start, const std::string& end) {
     if (adj.find(start) == adj.end() || adj.find(end) == adj.end()) {
         return "Error";
     }
 
-    // Initialize all nodes
     for (auto& [node, _] : adj) {
-        dis[node] = std::numeric_limits<double>::infinity();  // set to infinity
+        dis[node] = std::numeric_limits<double>::infinity();
         vis[node] = false;
         parent[node] = "";
     }
 
-    // Priority queue to store (cost, node)
-    std::priority_queue<std::pair<double, std::string>, std::vector<std::pair<double, std::string>>, std::greater<>> pq;
+    std::priority_queue<std::pair<double, std::string>,
+                        std::vector<std::pair<double, std::string>>,
+                        std::greater<>> pq;
+
     pq.push({0.0, start});
     dis[start] = 0.0;
 
@@ -62,7 +96,6 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
         if (vis[node]) continue;
         vis[node] = true;
 
-        // Iterate over neighbors
         for (auto& [neighbor, weight] : adj[node]) {
             if (!vis[neighbor] && dis[node] + weight < dis[neighbor]) {
                 dis[neighbor] = dis[node] + weight;
@@ -74,8 +107,7 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
 
     std::string result;
     if (dis[end] == std::numeric_limits<double>::infinity()) {
-        result = "No path from " + start + " to " + end + ".";
-        return result;
+        return "No path from " + start + " to " + end + ".";
     }
 
     result = "Distance from " + start + " to " + end + " is: " + std::to_string(dis[end]) + "\n";
@@ -92,14 +124,15 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
     return result;
 }
 
+// عرض خريطة الرسم البياني
 std::string Graph::displayMap() {
     std::stringstream ss;
     for (auto it = adj.begin(); it != adj.end(); ++it) {
-        ss << "City: " << it->first << ":\n";  // Display city name
+        ss << "City: " << it->first << ":\n";
         for (auto t : it->second) {
-            ss << "  - Road to " << t.first << " (Distance: " << t.second << ")\n";  // Display connected cities and distance
+            ss << "  - Road to " << t.first << " (Distance: " << t.second << ")\n";
         }
         ss << std::endl;
     }
-    return ss.str();  // Return the map as a string
+    return ss.str();
 }
