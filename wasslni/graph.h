@@ -22,12 +22,13 @@ public:
     std::string dijkstra(const std::string& start, const std::string& end);
     std::string displayMap();
 
-    bool addCity(std::string cityName);          // تعديل دالة addCity لتعيد قيمة bool
-    bool addEdge(std::string city1, std::string city2, float distance);  // دالة لإضافة الحافة بين المدينتين
-    bool containsCity(std::string cityName);     // دالة لفحص وجود المدينة
+    bool addCity(std::string cityName);
+    bool addEdge(std::string city1, std::string city2, float distance);
+    bool containsCity(std::string cityName);
+    bool deleteEdge(std::string city1, std::string city2);  // الدالة المضافة
 
 private:
-    std::map<std::string, std::vector<std::pair<std::string, int>>> adj;
+    std::map<std::string, std::vector<std::pair<std::string, float>>> adj;  // تغيير int إلى float لتتناسب مع الدوال
     std::map<std::string, double> dis;
     std::map<std::string, bool> vis;
     std::map<std::string, std::string> parent;
