@@ -102,12 +102,51 @@ Options::Options(QWidget *parent) : QWidget(parent)
     saveCityButton->setVisible(false);  // زر "Save City" مخفي
     mainLayout->addWidget(saveCityButton, 0, Qt::AlignHCenter);
 
+    // زر Add Road
+    addRoadButton = new QPushButton("Add Road");
+    addRoadButton->setStyleSheet("background-color: green; color: white;");
+    addRoadButton->setFixedSize(elementWidth, elementHeight);
+    addRoadButton->setFont(font);
+    mainLayout->addWidget(addRoadButton, 0, Qt::AlignHCenter);
+
+    // حقول إدخال الطريق
+    roadStartCityLineEdit = new QLineEdit();
+    roadStartCityLineEdit->setPlaceholderText("Start City");
+    roadStartCityLineEdit->setVisible(false);
+    roadStartCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    roadStartCityLineEdit->setFont(font);
+    mainLayout->addWidget(roadStartCityLineEdit, 0, Qt::AlignHCenter);
+
+    roadEndCityLineEdit = new QLineEdit();
+    roadEndCityLineEdit->setPlaceholderText("End City");
+    roadEndCityLineEdit->setVisible(false);
+    roadEndCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    roadEndCityLineEdit->setFont(font);
+    mainLayout->addWidget(roadEndCityLineEdit, 0, Qt::AlignHCenter);
+
+    roadDistanceLineEdit = new QLineEdit();
+    roadDistanceLineEdit->setPlaceholderText("Distance");
+    roadDistanceLineEdit->setVisible(false);
+    roadDistanceLineEdit->setFixedSize(elementWidth, elementHeight);
+    roadDistanceLineEdit->setFont(font);
+    mainLayout->addWidget(roadDistanceLineEdit, 0, Qt::AlignHCenter);
+
+    // زر Save Road
+    saveRoadButton = new QPushButton("Save Road");
+    saveRoadButton->setStyleSheet("background-color: green; color: white;");
+    saveRoadButton->setFixedSize(elementWidth, elementHeight);
+    saveRoadButton->setFont(font);
+    saveRoadButton->setVisible(false);
+    mainLayout->addWidget(saveRoadButton, 0, Qt::AlignHCenter);
+
     // ربط الإشارات بالأحداث
     connect(showShortestPathButton, &QPushButton::clicked, this, &Options::onShowShortestPathClicked);
     connect(showPathButton, &QPushButton::clicked, this, &Options::onShowPathClicked);
     connect(displayMapButton, &QPushButton::clicked, this, &Options::onDisplayMapClicked);
     connect(addCityButton, &QPushButton::clicked, this, &Options::onAddCityClicked);
-    connect(saveCityButton, &QPushButton::clicked, this, &Options::onSaveCityClicked);  // ربط الزر هنا
+    connect(saveCityButton, &QPushButton::clicked, this, &Options::onSaveCityClicked);
+    connect(addRoadButton, &QPushButton::clicked, this, &Options::onAddRoadClicked);
+    connect(saveRoadButton, &QPushButton::clicked, this, &Options::onSaveRoadClicked);
 }
 
 void Options::onShowShortestPathClicked()
@@ -189,27 +228,22 @@ void Options::onSaveCityClicked()
     QString cityName = addCityLineEdit->text().trimmed();
 
     if (!cityName.isEmpty()) {
-        // تأكد من أن الجراف موجود هنا
         Graph graph;
         QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
         graph.addGraphFromUI(edges);
 
-        // تحقق مما إذا كانت المدينة موجودة بالفعل
-        bool cityExists = graph.containsCity(cityName.toStdString());  // تحقق من وجود المدينة
+        bool cityExists = graph.containsCity(cityName.toStdString());
 
         if (cityExists) {
             QMessageBox::warning(this, "City Exists", "The city '" + cityName + "' already exists in the graph.");
-            return;  // لا تضيف المدينة إذا كانت موجودة
+            return;
         }
 
-        // إضافة المدينة إلى الجراف بشكل صحيح
         bool cityAdded = graph.addCity(cityName.toStdString());
 
         if (cityAdded) {
             QMessageBox::information(this, "City Added", "City '" + cityName + "' has been saved to the graph.");
-
-            // حفظ المدينة في الملف
-            saveCityToFile(cityName);
+            saveCityToFile(cityName);  // هذا هو استدعاء الدالة
         } else {
             QMessageBox::warning(this, "City Add Error", "Failed to add the city '" + cityName + "' to the graph.");
         }
@@ -218,11 +252,77 @@ void Options::onSaveCityClicked()
     }
 }
 
+void Options::onAddRoadClicked()
+{
+    isAddRoadInputVisible = !isAddRoadInputVisible;
+
+    roadStartCityLineEdit->setVisible(isAddRoadInputVisible);
+    roadEndCityLineEdit->setVisible(isAddRoadInputVisible);
+    roadDistanceLineEdit->setVisible(isAddRoadInputVisible);
+    saveRoadButton->setVisible(isAddRoadInputVisible);
+
+    if (isAddRoadInputVisible) {
+        addRoadButton->setText("Hide Road Input");
+    } else {
+        addRoadButton->setText("Add Road");
+    }
+}
+
+void Options::onSaveRoadClicked()
+{
+    QString startCity = roadStartCityLineEdit->text().trimmed();
+    QString endCity = roadEndCityLineEdit->text().trimmed();
+    QString distanceStr = roadDistanceLineEdit->text().trimmed();
+
+    if (startCity.isEmpty() || endCity.isEmpty() || distanceStr.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "All fields must be filled!");
+        return;
+    }
+
+    bool ok;
+    int distance = distanceStr.toInt(&ok);
+    if (!ok || distance <= 0) {
+        QMessageBox::warning(this, "Input Error", "Distance must be a positive number!");
+        return;
+    }
+
+    if (startCity == endCity) {
+        QMessageBox::warning(this, "Input Error", "Start city and end city cannot be the same!");
+        return;
+    }
+
+    // إنشاء كائن Graph والتحقق من المدن
+    Graph graph;
+    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
+    graph.addGraphFromUI(edges);
+
+    // التحقق من وجود المدن
+    if (!graph.containsCity(startCity.toStdString())) {
+        QMessageBox::warning(this, "City Error", "Start city '" + startCity + "' does not exist!");
+        return;
+    }
+
+    if (!graph.containsCity(endCity.toStdString())) {
+        QMessageBox::warning(this, "City Error", "End city '" + endCity + "' does not exist!");
+        return;
+    }
+
+    // محاولة إضافة الطريق
+    bool roadAdded = graph.addEdge(startCity.toStdString(), endCity.toStdString(), distance);
+
+    if (roadAdded) {
+        // حفظ الطريق في الملف
+        saveRoadToFile(startCity, endCity, distance);
+        QMessageBox::information(this, "Success", "Road between " + startCity + " and " + endCity + " has been added successfully!");
+    } else {
+        QMessageBox::warning(this, "Error", "Failed to add road. The road may already exist.");
+    }
+}
+
 // دالة لحفظ المدينة في الملف
 void Options::saveCityToFile(const QString& cityName)
 {
     QFile file("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
-
     if (!file.open(QIODevice::Append | QIODevice::Text)) {
         QMessageBox::critical(this, "File Error", "Failed to open file for writing.");
         return;
@@ -230,6 +330,19 @@ void Options::saveCityToFile(const QString& cityName)
 
     QTextStream out(&file);
     out << cityName << ", ,10\n";  // إضافة المدينة إلى الملف مع مسافة 10
+    file.close();
+}
+
+void Options::saveRoadToFile(const QString& city1, const QString& city2, int distance)
+{
+    QFile file("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
+    if (!file.open(QIODevice::Append | QIODevice::Text)) {
+        QMessageBox::critical(this, "File Error", "Failed to open file for writing.");
+        return;
+    }
+
+    QTextStream out(&file);
+    out << city1 << "," << city2 << "," << distance << "\n";
     file.close();
 }
 
