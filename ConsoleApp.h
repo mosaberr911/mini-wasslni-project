@@ -14,9 +14,7 @@ public:
     ConsoleApp();
     void signUp();
     void login();
-    void saveUsers() const;
-    void loadUsers();
-    void userMenu(User&);
+    static void userMenu(User&);
     static void displayUserMenuOptions();
     static int getValidatedMenuChoice(int min, int max);
     static void executeUserMenuAction(int choice, User& thisUser);

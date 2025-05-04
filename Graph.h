@@ -7,11 +7,12 @@
 #include<string>
 //#include "bits/stdc++.h"
 using namespace std;
+using AdjacencyList = unordered_map<string, vector<pair<string, float> > >;
 
 class Graph {
 private:
     static const int N = 1e5+5;
-    unordered_map<string, vector<pair<string, float> > > adj;
+    AdjacencyList adj;
     unordered_map<string, bool> vis;
     unordered_map<string,int>dis;
     priority_queue<pair<float, string>, vector<pair<float, string> >, greater<pair<float, string> > > pq;
@@ -21,10 +22,12 @@ public:
     void bfs(const string& StartNode);//
     void dfs(const string& StartNode);//
     void addGraph();//
-    void dfspaths(string current, string destination, vector<string>& path);
-    void findallpaths(string , string );
-    void read();
-    void write();
+    void dfsPaths(string current, string destination, vector<string>& path);
+    void findAllPaths(string , string );
+    AdjacencyList getAdjacencyList();
+    void setAdjacencyList(const AdjacencyList&);
+    void read(string);
+    void write(string);
     void displayGraph();
     void modify_distance(string,string);
     void addCity(string cityName);
