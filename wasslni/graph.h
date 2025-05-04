@@ -18,7 +18,7 @@ public:
     std::string dijkstra(const std::string& start, const std::string& end);
     std::string displayMap();
 
-    void addCity(std::string cityName);          // دالة لإضافة مدينة
+    bool addCity(std::string cityName);          // تعديل دالة addCity لتعيد قيمة bool
     void deleteCity(std::string cityName);       // دالة لحذف مدينة
     bool containsCity(std::string cityName);     // دالة لفحص وجود المدينة
 
