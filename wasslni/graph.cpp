@@ -6,49 +6,77 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
-#include <iostream>  // لإظهار رسائل الخطأ والنجاح
+#include <iostream>
 
-// دالة لإضافة مدينة بدون تكرار
 bool Graph::addCity(std::string cityName) {
     if (containsCity(cityName)) {
-        std::cerr << "City '" << cityName << "' already exists in the graph." << std::endl;  // رسالة خطأ في حال وجود المدينة
-        return false;  // المدينة موجودة بالفعل
+        std::cerr << "City '" << cityName << "' already exists in the graph." << std::endl;
+        return false;
     }
-    adj[cityName];  // تضاف كـ مفتاح جديد بدون جيران حالياً
-    return true;  // تم إضافة المدينة بنجاح
+    adj[cityName];
+    return true;
 }
 
-// دالة لحذف مدينة مع إزالة جميع الإشارات لها في باقي المدن
-void Graph::deleteCity(std::string cityName) {
-    if (!containsCity(cityName)) {
-        std::cerr << "Error: City '" << cityName << "' does not exist in the graph." << std::endl;
-        return;  // لا تقوم بإزالة المدينة إذا لم تكن موجودة
+bool Graph::addEdge(std::string city1, std::string city2, float distance) {
+    if (!containsCity(city1) || !containsCity(city2)) {
+        return false;
     }
 
-    for (auto& cityPair : adj) {
-        std::string neighbour = cityPair.first;
+    if (city1 == city2) {
+        return false;
+    }
 
-        if (neighbour != cityName) {
-            auto& neighborCities = cityPair.second;
-            for (auto it = neighborCities.begin(); it != neighborCities.end();) {
-                if (it->first == cityName)
-                    it = neighborCities.erase(it);
-                else
-                    ++it;
-            }
+    if (distance <= 0) {
+        return false;
+    }
+
+    for (const auto& neighbor : adj[city1]) {
+        if (neighbor.first == city2) {
+            return false;
         }
     }
-    adj.erase(cityName);
+
+    adj[city1].push_back({city2, distance});
+    adj[city2].push_back({city1, distance});
+    return true;
 }
 
-// فحص إذا كانت المدينة موجودة
 bool Graph::containsCity(std::string cityName) {
-    return adj.find(cityName) != adj.end();
+    if (adj.find(cityName) != adj.end()) {
+        return true;
+    }
+
+    std::ifstream file("C:\\Users\\A\\OneDrive\\Documents\\wasslni\\graph.txt");
+    if (!file.is_open()) {
+        throw std::runtime_error("فشل فتح الملف.");
+    }
+
+    std::unordered_set<std::string> cities;
+    std::string line;
+
+    while (std::getline(file, line)) {
+        std::stringstream ss(line);
+        std::string city1, city2;
+        float distance;
+
+        std::getline(ss, city1, ',');
+        std::getline(ss, city2, ',');
+        ss >> distance;
+
+        cities.insert(city1);
+        cities.insert(city2);
+    }
+
+    file.close();
+
+    for (const auto& city : cities) {
+        adj[city];
+    }
+
+    return cities.find(cityName) != cities.end();
 }
 
-// دالة لإضافة الرسم البياني من واجهة المستخدم
-void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges)
-{
+void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges) {
     for (const auto& edge : edges) {
         QString cityA = std::get<0>(edge).trimmed();
         QString cityB = std::get<1>(edge).trimmed();
@@ -59,33 +87,31 @@ void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edg
 
         if (s1 == s2) {
             std::cerr << "Self-loop is not allowed (city connected to itself)." << std::endl;
-            continue;  // تخطي هذه الحافة
+            continue;
         }
 
         if (distance <= 0) {
             std::cerr << "Distance must be a positive number." << std::endl;
-            continue;  // تخطي هذه الحافة
+            continue;
         }
 
         for (const auto& neighbor : adj[s1]) {
             if (neighbor.first == s2) {
                 std::cerr << "Edge already exists between " << s1 << " and " << s2 << "." << std::endl;
-                continue;  // تخطي هذه الحافة
+                continue;
             }
         }
 
-        adj[s1].push_back({ s2, distance });
-        adj[s2].push_back({ s1, distance });
+        adj[s1].push_back({s2, static_cast<float>(distance)});
+        adj[s2].push_back({s1, static_cast<float>(distance)});
     }
 }
 
-// دالة خوارزمية Dijkstra لإيجاد أقصر مسار
 std::string Graph::dijkstra(const std::string& start, const std::string& end) {
     if (adj.find(start) == adj.end() || adj.find(end) == adj.end()) {
         return "Error: One or both cities do not exist in the graph.";
     }
 
-    // إعدادات Dijkstra
     for (auto& [node, _] : adj) {
         dis[node] = std::numeric_limits<double>::infinity();
         vis[node] = false;
@@ -136,7 +162,6 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
     return result;
 }
 
-// عرض خريطة الرسم البياني
 std::string Graph::displayMap() {
     std::stringstream ss;
     for (auto it = adj.begin(); it != adj.end(); ++it) {
