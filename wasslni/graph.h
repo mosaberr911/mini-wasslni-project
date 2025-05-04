@@ -10,6 +10,10 @@
 #include <queue>
 #include <functional>
 #include <limits>
+#include <unordered_set>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
 
 class Graph
 {
@@ -19,7 +23,7 @@ public:
     std::string displayMap();
 
     bool addCity(std::string cityName);          // تعديل دالة addCity لتعيد قيمة bool
-    void deleteCity(std::string cityName);       // دالة لحذف مدينة
+    bool addEdge(std::string city1, std::string city2, float distance);  // دالة لإضافة الحافة بين المدينتين
     bool containsCity(std::string cityName);     // دالة لفحص وجود المدينة
 
 private:
