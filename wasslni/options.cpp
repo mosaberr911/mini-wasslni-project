@@ -94,11 +94,20 @@ Options::Options(QWidget *parent) : QWidget(parent)
     addCityLineEdit->setFont(font);
     mainLayout->addWidget(addCityLineEdit, 0, Qt::AlignHCenter);
 
+    // زر Save City (يكون مخفيًا في البداية)
+    saveCityButton = new QPushButton("Save City");
+    saveCityButton->setStyleSheet("background-color: green; color: white;");
+    saveCityButton->setFixedSize(elementWidth, elementHeight);
+    saveCityButton->setFont(font);
+    saveCityButton->setVisible(false);  // زر "Save City" مخفي
+    mainLayout->addWidget(saveCityButton, 0, Qt::AlignHCenter);
+
     // ربط الإشارات بالأحداث
     connect(showShortestPathButton, &QPushButton::clicked, this, &Options::onShowShortestPathClicked);
     connect(showPathButton, &QPushButton::clicked, this, &Options::onShowPathClicked);
     connect(displayMapButton, &QPushButton::clicked, this, &Options::onDisplayMapClicked);
     connect(addCityButton, &QPushButton::clicked, this, &Options::onAddCityClicked);
+    connect(saveCityButton, &QPushButton::clicked, this, &Options::onSaveCityClicked);  // ربط الزر هنا
 }
 
 void Options::onShowShortestPathClicked()
@@ -115,6 +124,26 @@ void Options::onShowShortestPathClicked()
     } else {
         showShortestPathButton->setText("Show Shortest Path");
     }
+}
+
+void Options::onShowPathClicked()
+{
+    QString startCity = startCityLineEdit->text().trimmed();
+    QString endCity = endCityLineEdit->text().trimmed();
+
+    if (startCity.isEmpty() || endCity.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "Both cities must be entered!");
+        return;
+    }
+
+    // هنا يجب عليك استخدام الكود الخاص بك لتمرير البيانات والبحث عن أقصر طريق
+    Graph graph;
+    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
+    graph.addGraphFromUI(edges);
+
+    // افترض أن لديك دالة dijkstra لتحديد أقصر طريق
+    std::string result = graph.dijkstra(startCity.toStdString(), endCity.toStdString());
+    QMessageBox::information(this, "Shortest Path", QString::fromStdString(result));
 }
 
 void Options::onDisplayMapClicked()
@@ -146,12 +175,49 @@ void Options::onAddCityClicked()
 {
     isAddCityInputVisible = !isAddCityInputVisible;
     addCityLineEdit->setVisible(isAddCityInputVisible);
+    saveCityButton->setVisible(isAddCityInputVisible);  // إظهار زر "Save City" عند الضغط على زر "Add City"
 
     if (isAddCityInputVisible) {
         addCityButton->setText("Hide Add City");
     } else {
         addCityButton->setText("Add City");
     }
+}
+
+void Options::onSaveCityClicked()
+{
+    QString cityName = addCityLineEdit->text().trimmed();
+
+    if (!cityName.isEmpty()) {
+        // تأكد من أن الجراف موجود هنا
+        Graph graph;
+        QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
+        graph.addGraphFromUI(edges);
+
+        // إضافة المدينة
+        graph.addCity(cityName.toStdString());
+        QMessageBox::information(this, "City Added", "City '" + cityName + "' has been saved to the graph.");
+
+        // حفظ المدينة في الملف
+        saveCityToFile(cityName);
+    } else {
+        QMessageBox::warning(this, "Input Error", "Please enter a city name.");
+    }
+}
+
+// دالة لحفظ المدينة في الملف
+void Options::saveCityToFile(const QString& cityName)
+{
+    QFile file("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
+
+    if (!file.open(QIODevice::Append | QIODevice::Text)) {
+        QMessageBox::critical(this, "File Error", "Failed to open file for writing.");
+        return;
+    }
+
+    QTextStream out(&file);
+    out << cityName << ", ,0\n";  // إضافة المدينة إلى الملف (من الأفضل تحديد القيم الأخرى بناءً على التطبيق الخاص بك)
+    file.close();
 }
 
 QVector<std::tuple<QString, QString, int>> Options::loadEdgesFromFile(const QString& filePath)
@@ -172,29 +238,9 @@ QVector<std::tuple<QString, QString, int>> Options::loadEdgesFromFile(const QStr
         if (parts.size() == 3) {
             QString a = parts[0].trimmed();
             QString b = parts[1].trimmed();
-            int dist = parts[2].trimmed().toInt();
-            edges.append({a, b, dist});
+            int weight = parts[2].toInt();
+            edges.append(std::make_tuple(a, b, weight));
         }
     }
-
-    file.close();
     return edges;
-}
-
-void Options::onShowPathClicked()
-{
-    QString startCity = startCityLineEdit->text().trimmed();
-    QString endCity = endCityLineEdit->text().trimmed();
-
-    if (startCity.isEmpty() || endCity.isEmpty()) {
-        QMessageBox::warning(this, "Input Error", "Both cities must be entered!");
-        return;
-    }
-
-    Graph graph;
-    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
-    graph.addGraphFromUI(edges);
-
-    std::string result = graph.dijkstra(startCity.toStdString(), endCity.toStdString());
-    QMessageBox::information(this, "Shortest Path", QString::fromStdString(result));
 }
