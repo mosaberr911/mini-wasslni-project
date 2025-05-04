@@ -194,12 +194,25 @@ void Options::onSaveCityClicked()
         QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
         graph.addGraphFromUI(edges);
 
-        // إضافة المدينة
-        graph.addCity(cityName.toStdString());
-        QMessageBox::information(this, "City Added", "City '" + cityName + "' has been saved to the graph.");
+        // تحقق مما إذا كانت المدينة موجودة بالفعل
+        bool cityExists = graph.containsCity(cityName.toStdString());  // تحقق من وجود المدينة
 
-        // حفظ المدينة في الملف
-        saveCityToFile(cityName);
+        if (cityExists) {
+            QMessageBox::warning(this, "City Exists", "The city '" + cityName + "' already exists in the graph.");
+            return;  // لا تضيف المدينة إذا كانت موجودة
+        }
+
+        // إضافة المدينة إلى الجراف بشكل صحيح
+        bool cityAdded = graph.addCity(cityName.toStdString());
+
+        if (cityAdded) {
+            QMessageBox::information(this, "City Added", "City '" + cityName + "' has been saved to the graph.");
+
+            // حفظ المدينة في الملف
+            saveCityToFile(cityName);
+        } else {
+            QMessageBox::warning(this, "City Add Error", "Failed to add the city '" + cityName + "' to the graph.");
+        }
     } else {
         QMessageBox::warning(this, "Input Error", "Please enter a city name.");
     }
@@ -216,7 +229,7 @@ void Options::saveCityToFile(const QString& cityName)
     }
 
     QTextStream out(&file);
-    out << cityName << ", ,0\n";  // إضافة المدينة إلى الملف (من الأفضل تحديد القيم الأخرى بناءً على التطبيق الخاص بك)
+    out << cityName << ", ,10\n";  // إضافة المدينة إلى الملف مع مسافة 10
     file.close();
 }
 
