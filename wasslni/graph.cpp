@@ -6,18 +6,24 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <iostream>  // لإظهار رسائل الخطأ والنجاح
 
 // دالة لإضافة مدينة بدون تكرار
-void Graph::addCity(std::string cityName) {
-    if (containsCity(cityName))
-        throw std::runtime_error("City already exists in graph");
+bool Graph::addCity(std::string cityName) {
+    if (containsCity(cityName)) {
+        std::cerr << "City '" << cityName << "' already exists in the graph." << std::endl;  // رسالة خطأ في حال وجود المدينة
+        return false;  // المدينة موجودة بالفعل
+    }
     adj[cityName];  // تضاف كـ مفتاح جديد بدون جيران حالياً
+    return true;  // تم إضافة المدينة بنجاح
 }
 
 // دالة لحذف مدينة مع إزالة جميع الإشارات لها في باقي المدن
 void Graph::deleteCity(std::string cityName) {
-    if (!containsCity(cityName))
-        throw std::runtime_error("City does not exist in graph");
+    if (!containsCity(cityName)) {
+        std::cerr << "Error: City '" << cityName << "' does not exist in the graph." << std::endl;
+        return;  // لا تقوم بإزالة المدينة إذا لم تكن موجودة
+    }
 
     for (auto& cityPair : adj) {
         std::string neighbour = cityPair.first;
@@ -52,16 +58,19 @@ void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edg
         std::string s2 = cityB.toStdString();
 
         if (s1 == s2) {
-            throw std::runtime_error("Self-loop is not allowed (city connected to itself).");
+            std::cerr << "Self-loop is not allowed (city connected to itself)." << std::endl;
+            continue;  // تخطي هذه الحافة
         }
 
         if (distance <= 0) {
-            throw std::runtime_error("Distance must be a positive number.");
+            std::cerr << "Distance must be a positive number." << std::endl;
+            continue;  // تخطي هذه الحافة
         }
 
         for (const auto& neighbor : adj[s1]) {
             if (neighbor.first == s2) {
-                throw std::runtime_error("This edge already exists.");
+                std::cerr << "Edge already exists between " << s1 << " and " << s2 << "." << std::endl;
+                continue;  // تخطي هذه الحافة
             }
         }
 
@@ -73,9 +82,10 @@ void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edg
 // دالة خوارزمية Dijkstra لإيجاد أقصر مسار
 std::string Graph::dijkstra(const std::string& start, const std::string& end) {
     if (adj.find(start) == adj.end() || adj.find(end) == adj.end()) {
-        return "Error";
+        return "Error: One or both cities do not exist in the graph.";
     }
 
+    // إعدادات Dijkstra
     for (auto& [node, _] : adj) {
         dis[node] = std::numeric_limits<double>::infinity();
         vis[node] = false;
@@ -84,7 +94,7 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
 
     std::priority_queue<std::pair<double, std::string>,
                         std::vector<std::pair<double, std::string>>,
-                        std::greater<>> pq;
+                        std::greater<std::pair<double, std::string>>> pq;
 
     pq.push({0.0, start});
     dis[start] = 0.0;
@@ -111,16 +121,18 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
     }
 
     result = "Distance from " + start + " to " + end + " is: " + std::to_string(dis[end]) + "\n";
+
     std::vector<std::string> path;
     for (std::string at = end; !at.empty(); at = parent[at])
         path.push_back(at);
     std::reverse(path.begin(), path.end());
 
     result += "Path: ";
-    for (int i = 0; i < path.size(); ++i) {
+    for (size_t i = 0; i < path.size(); ++i) {
         result += path[i];
         if (i + 1 < path.size()) result += " -> ";
     }
+
     return result;
 }
 
