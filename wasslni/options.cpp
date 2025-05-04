@@ -139,6 +139,36 @@ Options::Options(QWidget *parent) : QWidget(parent)
     saveRoadButton->setVisible(false);
     mainLayout->addWidget(saveRoadButton, 0, Qt::AlignHCenter);
 
+    // زر Delete Road (المضاف حديثاً)
+    deleteRoadButton = new QPushButton("Delete Road");
+    deleteRoadButton->setStyleSheet("background-color: green; color: white;");
+    deleteRoadButton->setFixedSize(elementWidth, elementHeight);
+    deleteRoadButton->setFont(font);
+    mainLayout->addWidget(deleteRoadButton, 0, Qt::AlignHCenter);
+
+    // حقول إدخال حذف الطريق
+    deleteStartCityLineEdit = new QLineEdit();
+    deleteStartCityLineEdit->setPlaceholderText("Start City");
+    deleteStartCityLineEdit->setVisible(false);
+    deleteStartCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    deleteStartCityLineEdit->setFont(font);
+    mainLayout->addWidget(deleteStartCityLineEdit, 0, Qt::AlignHCenter);
+
+    deleteEndCityLineEdit = new QLineEdit();
+    deleteEndCityLineEdit->setPlaceholderText("End City");
+    deleteEndCityLineEdit->setVisible(false);
+    deleteEndCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    deleteEndCityLineEdit->setFont(font);
+    mainLayout->addWidget(deleteEndCityLineEdit, 0, Qt::AlignHCenter);
+
+    // زر Confirm Delete
+    confirmDeleteButton = new QPushButton("Confirm Delete");
+    confirmDeleteButton->setStyleSheet("background-color: green; color: white;");
+    confirmDeleteButton->setFixedSize(elementWidth, elementHeight);
+    confirmDeleteButton->setFont(font);
+    confirmDeleteButton->setVisible(false);
+    mainLayout->addWidget(confirmDeleteButton, 0, Qt::AlignHCenter);
+
     // ربط الإشارات بالأحداث
     connect(showShortestPathButton, &QPushButton::clicked, this, &Options::onShowShortestPathClicked);
     connect(showPathButton, &QPushButton::clicked, this, &Options::onShowPathClicked);
@@ -147,6 +177,8 @@ Options::Options(QWidget *parent) : QWidget(parent)
     connect(saveCityButton, &QPushButton::clicked, this, &Options::onSaveCityClicked);
     connect(addRoadButton, &QPushButton::clicked, this, &Options::onAddRoadClicked);
     connect(saveRoadButton, &QPushButton::clicked, this, &Options::onSaveRoadClicked);
+    connect(deleteRoadButton, &QPushButton::clicked, this, &Options::onDeleteRoadClicked);
+    connect(confirmDeleteButton, &QPushButton::clicked, this, &Options::onConfirmDeleteClicked);
 }
 
 void Options::onShowShortestPathClicked()
@@ -319,7 +351,64 @@ void Options::onSaveRoadClicked()
     }
 }
 
-// دالة لحفظ المدينة في الملف
+void Options::onDeleteRoadClicked()
+{
+    isDeleteRoadInputVisible = !isDeleteRoadInputVisible;
+
+    deleteStartCityLineEdit->setVisible(isDeleteRoadInputVisible);
+    deleteEndCityLineEdit->setVisible(isDeleteRoadInputVisible);
+    confirmDeleteButton->setVisible(isDeleteRoadInputVisible);
+
+    if (isDeleteRoadInputVisible) {
+        deleteRoadButton->setText("Hide Delete Input");
+    } else {
+        deleteRoadButton->setText("Delete Road");
+    }
+}
+
+void Options::onConfirmDeleteClicked()
+{
+    QString startCity = deleteStartCityLineEdit->text().trimmed();
+    QString endCity = deleteEndCityLineEdit->text().trimmed();
+
+    if (startCity.isEmpty() || endCity.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "Both cities must be entered!");
+        return;
+    }
+
+    if (startCity == endCity) {
+        QMessageBox::warning(this, "Input Error", "Start city and end city cannot be the same!");
+        return;
+    }
+
+    // إنشاء كائن Graph والتحقق من المدن
+    Graph graph;
+    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
+    graph.addGraphFromUI(edges);
+
+    // التحقق من وجود المدن
+    if (!graph.containsCity(startCity.toStdString())) {
+        QMessageBox::warning(this, "City Error", "Start city '" + startCity + "' does not exist!");
+        return;
+    }
+
+    if (!graph.containsCity(endCity.toStdString())) {
+        QMessageBox::warning(this, "City Error", "End city '" + endCity + "' does not exist!");
+        return;
+    }
+
+    // محاولة حذف الطريق
+    bool roadDeleted = graph.deleteEdge(startCity.toStdString(), endCity.toStdString());
+
+    if (roadDeleted) {
+        // تحديث الملف بعد الحذف
+        updateFileAfterDeletion(startCity, endCity);
+        QMessageBox::information(this, "Success", "Road between " + startCity + " and " + endCity + " has been deleted successfully!");
+    } else {
+        QMessageBox::warning(this, "Error", "Failed to delete road. The road may not exist.");
+    }
+}
+
 void Options::saveCityToFile(const QString& cityName)
 {
     QFile file("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
@@ -343,6 +432,41 @@ void Options::saveRoadToFile(const QString& city1, const QString& city2, int dis
 
     QTextStream out(&file);
     out << city1 << "," << city2 << "," << distance << "\n";
+    file.close();
+}
+
+void Options::updateFileAfterDeletion(const QString& city1, const QString& city2)
+{
+    QFile file("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, "File Error", "Failed to open file for reading.");
+        return;
+    }
+
+    QTextStream in(&file);
+    QStringList lines;
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        QStringList parts = line.split(',');
+        if (parts.size() >= 2) {
+            QString a = parts[0].trimmed();
+            QString b = parts[1].trimmed();
+            if (!(a == city1 && b == city2) && !(a == city2 && b == city1)) {
+                lines.append(line);
+            }
+        }
+    }
+    file.close();
+
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, "File Error", "Failed to open file for writing.");
+        return;
+    }
+
+    QTextStream out(&file);
+    foreach (const QString &line, lines) {
+        out << line << "\n";
+    }
     file.close();
 }
 
