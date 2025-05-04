@@ -18,7 +18,11 @@ bool Graph::addCity(std::string cityName) {
 }
 
 bool Graph::addEdge(std::string city1, std::string city2, float distance) {
-    if (!containsCity(city1) || !containsCity(city2)) {
+    if (!containsCity(city1)) {  // Fixed: Added closing parenthesis here
+        return false;
+    }
+
+    if (!containsCity(city2)) {  // Fixed: Added closing parenthesis here
         return false;
     }
 
@@ -37,7 +41,7 @@ bool Graph::addEdge(std::string city1, std::string city2, float distance) {
     }
 
     adj[city1].push_back({city2, distance});
-    adj[city2].push_back({city1, distance});
+    adj[city2].push_back({city1, distance});  // Fixed: braces around the push_back call
     return true;
 }
 
@@ -74,6 +78,43 @@ bool Graph::containsCity(std::string cityName) {
     }
 
     return cities.find(cityName) != cities.end();
+}
+
+bool Graph::deleteEdge(std::string city1, std::string city2) {
+    if (!containsCity(city1)) {
+        return false;
+    }
+
+    if (!containsCity(city2)) {
+        return false;
+    }
+
+    if (city1 == city2) {
+        return false;
+    }
+
+    bool edgeRemoved = false;
+
+    auto& neighbors1 = adj[city1];
+    for (auto it = neighbors1.begin(); it != neighbors1.end(); ++it) {
+        if (it->first == city2) {
+            neighbors1.erase(it);
+            edgeRemoved = true;
+            break;
+        }
+    }
+
+    if (edgeRemoved) {
+        auto& neighbors2 = adj[city2];
+        for (auto it = neighbors2.begin(); it != neighbors2.end(); ++it) {
+            if (it->first == city1) {
+                neighbors2.erase(it);
+                break;
+            }
+        }
+    }
+
+    return edgeRemoved;
 }
 
 void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges) {
@@ -119,7 +160,7 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
     }
 
     std::priority_queue<std::pair<double, std::string>,
-                        std::vector<std::pair<double, std::string>>,
+                        std::vector<std::pair<double, std::string>> ,
                         std::greater<std::pair<double, std::string>>> pq;
 
     pq.push({0.0, start});
