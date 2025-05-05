@@ -140,7 +140,6 @@ void Graph::addGraph() {
 			}
 		}
 		adj[s1].push_back({ s2,d });
-		adj[s2].push_back({ s1,d });
 	}
 	// char ch;
 	// do {
@@ -278,6 +277,9 @@ void Graph::deleteEdge(string city1, string city2) {
 }
 
 void Graph::modify_distance(string city1, string city2) {
+	if (adj.find(city1) == adj.end() || adj.find(city2) == adj.end()) {
+		throw runtime_error("cities don't exist");
+	}
 	cout << "Enter the new distance\n";
 	float dist;
 	cin >> dist;
@@ -287,13 +289,6 @@ void Graph::modify_distance(string city1, string city2) {
 			break;
 		}
 	}
-	for (auto& t : adj[city2]) {
-		if (t.first == city1) {
-			t.second = dist;
-			break;
-		}
-	}
-
 }
 
 bool Graph::containsCity(string cityName) {
@@ -346,7 +341,7 @@ void Graph::dfsPaths(string current, string destination, vector<string>& path,bo
 
 void Graph::findAllPaths(string city1, string city2) {
 	if (adj.find(city1) == adj.end() || adj.find(city2) == adj.end()) {
-	throw runtime_error("the city doesn't exist");
+		throw runtime_error("cities don't exist");
 	}
 	vis.clear();
 	vector<string> path;
