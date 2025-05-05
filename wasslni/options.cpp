@@ -14,7 +14,7 @@
 
 Options::Options(QWidget *parent) : QWidget(parent)
 {
-    setFixedSize(600, 700);
+    setFixedSize(600, 700); // Increased height to accommodate new button
     setWindowTitle("Options");
 
     // الخلفية
@@ -102,6 +102,29 @@ Options::Options(QWidget *parent) : QWidget(parent)
     saveCityButton->setVisible(false);
     mainLayout->addWidget(saveCityButton, 0, Qt::AlignHCenter);
 
+    // زر Delete City
+    deleteCityButton = new QPushButton("Delete City");
+    deleteCityButton->setStyleSheet("background-color: green; color: white;");
+    deleteCityButton->setFixedSize(elementWidth, elementHeight);
+    deleteCityButton->setFont(font);
+    mainLayout->addWidget(deleteCityButton, 0, Qt::AlignHCenter);
+
+    // حقل إدخال حذف المدينة
+    deleteCityLineEdit = new QLineEdit();
+    deleteCityLineEdit->setPlaceholderText("Enter City Name");
+    deleteCityLineEdit->setVisible(false);
+    deleteCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    deleteCityLineEdit->setFont(font);
+    mainLayout->addWidget(deleteCityLineEdit, 0, Qt::AlignHCenter);
+
+    // زر Confirm Delete City
+    confirmDeleteCityButton = new QPushButton("Confirm Delete");
+    confirmDeleteCityButton->setStyleSheet("background-color: green; color: white;");
+    confirmDeleteCityButton->setFixedSize(elementWidth, elementHeight);
+    confirmDeleteCityButton->setFont(font);
+    confirmDeleteCityButton->setVisible(false);
+    mainLayout->addWidget(confirmDeleteCityButton, 0, Qt::AlignHCenter);
+
     // زر Add Road
     addRoadButton = new QPushButton("Add Road");
     addRoadButton->setStyleSheet("background-color: green; color: white;");
@@ -175,6 +198,8 @@ Options::Options(QWidget *parent) : QWidget(parent)
     connect(displayMapButton, &QPushButton::clicked, this, &Options::onDisplayMapClicked);
     connect(addCityButton, &QPushButton::clicked, this, &Options::onAddCityClicked);
     connect(saveCityButton, &QPushButton::clicked, this, &Options::onSaveCityClicked);
+    connect(deleteCityButton, &QPushButton::clicked, this, &Options::onDeleteCityClicked);
+    connect(confirmDeleteCityButton, &QPushButton::clicked, this, &Options::onConfirmDeleteCityClicked);
     connect(addRoadButton, &QPushButton::clicked, this, &Options::onAddRoadClicked);
     connect(saveRoadButton, &QPushButton::clicked, this, &Options::onSaveRoadClicked);
     connect(deleteRoadButton, &QPushButton::clicked, this, &Options::onDeleteRoadClicked);
@@ -279,6 +304,47 @@ void Options::onSaveCityClicked()
         }
     } else {
         QMessageBox::warning(this, "Input Error", "Please enter a city name.");
+    }
+}
+
+void Options::onDeleteCityClicked()
+{
+    isDeleteCityInputVisible = !isDeleteCityInputVisible;
+    deleteCityLineEdit->setVisible(isDeleteCityInputVisible);
+    confirmDeleteCityButton->setVisible(isDeleteCityInputVisible);
+
+    if (isDeleteCityInputVisible) {
+        deleteCityButton->setText("Hide Delete City");
+    } else {
+        deleteCityButton->setText("Delete City");
+    }
+}
+
+void Options::onConfirmDeleteCityClicked()
+{
+    QString cityName = deleteCityLineEdit->text().trimmed();
+
+    if (cityName.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "Please enter a city name.");
+        return;
+    }
+
+    Graph graph;
+    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
+    graph.addGraphFromUI(edges);
+
+    if (!graph.containsCity(cityName.toStdString())) {
+        QMessageBox::warning(this, "City Error", "City '" + cityName + "' does not exist!");
+        return;
+    }
+
+    bool cityDeleted = graph.deleteCity(cityName.toStdString());
+
+    if (cityDeleted) {
+        updateFileAfterCityDeletion(cityName);
+        QMessageBox::information(this, "Success", "City '" + cityName + "' has been deleted successfully!");
+    } else {
+        QMessageBox::warning(this, "Error", "Failed to delete city '" + cityName + "'.");
     }
 }
 
@@ -442,6 +508,41 @@ void Options::updateFileAfterDeletion(const QString& city1, const QString& city2
             QString a = parts[0].trimmed();
             QString b = parts[1].trimmed();
             if (!(a == city1 && b == city2) && !(a == city2 && b == city1)) {
+                lines.append(line);
+            }
+        }
+    }
+    file.close();
+
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, "File Error", "Failed to open file for writing.");
+        return;
+    }
+
+    QTextStream out(&file);
+    foreach (const QString &line, lines) {
+        out << line << "\n";
+    }
+    file.close();
+}
+
+void Options::updateFileAfterCityDeletion(const QString& cityName)
+{
+    QFile file("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, "File Error", "Failed to open file for reading.");
+        return;
+    }
+
+    QTextStream in(&file);
+    QStringList lines;
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        QStringList parts = line.split(',');
+        if (parts.size() >= 2) {
+            QString a = parts[0].trimmed();
+            QString b = parts[1].trimmed();
+            if (a != cityName && b != cityName) {
                 lines.append(line);
             }
         }
