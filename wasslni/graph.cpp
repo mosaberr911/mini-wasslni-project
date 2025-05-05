@@ -18,21 +18,10 @@ bool Graph::addCity(std::string cityName) {
 }
 
 bool Graph::addEdge(std::string city1, std::string city2, float distance) {
-    if (!containsCity(city1)) {  // Fixed: Added closing parenthesis here
-        return false;
-    }
-
-    if (!containsCity(city2)) {  // Fixed: Added closing parenthesis here
-        return false;
-    }
-
-    if (city1 == city2) {
-        return false;
-    }
-
-    if (distance <= 0) {
-        return false;
-    }
+    if (!containsCity(city1)) return false;
+    if (!containsCity(city2)) return false;
+    if (city1 == city2) return false;
+    if (distance <= 0) return false;
 
     for (const auto& neighbor : adj[city1]) {
         if (neighbor.first == city2) {
@@ -41,7 +30,7 @@ bool Graph::addEdge(std::string city1, std::string city2, float distance) {
     }
 
     adj[city1].push_back({city2, distance});
-    adj[city2].push_back({city1, distance});  // Fixed: braces around the push_back call
+    adj[city2].push_back({city1, distance});
     return true;
 }
 
@@ -81,17 +70,7 @@ bool Graph::containsCity(std::string cityName) {
 }
 
 bool Graph::deleteEdge(std::string city1, std::string city2) {
-    if (!containsCity(city1)) {
-        return false;
-    }
-
-    if (!containsCity(city2)) {
-        return false;
-    }
-
-    if (city1 == city2) {
-        return false;
-    }
+    if (!containsCity(city1) || !containsCity(city2) || city1 == city2) return false;
 
     bool edgeRemoved = false;
 
@@ -117,6 +96,26 @@ bool Graph::deleteEdge(std::string city1, std::string city2) {
     return edgeRemoved;
 }
 
+bool Graph::deleteCity(std::string cityName) {
+    if (!containsCity(cityName))
+        throw std::runtime_error("City does not exist in the graph.");
+
+    for (auto& cityPair : adj) {
+        std::string neighbour = cityPair.first;
+        if (neighbour != cityName) {
+            auto &neighborCities = cityPair.second;
+            for (auto it = neighborCities.begin(); it != neighborCities.end();) {
+                if (it->first == cityName)
+                    it = neighborCities.erase(it);
+                else
+                    ++it;
+            }
+        }
+    }
+
+    adj.erase(cityName);
+}
+
 void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges) {
     for (const auto& edge : edges) {
         QString cityA = std::get<0>(edge).trimmed();
@@ -126,21 +125,10 @@ void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edg
         std::string s1 = cityA.toStdString();
         std::string s2 = cityB.toStdString();
 
-        if (s1 == s2) {
-            std::cerr << "Self-loop is not allowed (city connected to itself)." << std::endl;
-            continue;
-        }
-
-        if (distance <= 0) {
-            std::cerr << "Distance must be a positive number." << std::endl;
-            continue;
-        }
+        if (s1 == s2 || distance <= 0) continue;
 
         for (const auto& neighbor : adj[s1]) {
-            if (neighbor.first == s2) {
-                std::cerr << "Edge already exists between " << s1 << " and " << s2 << "." << std::endl;
-                continue;
-            }
+            if (neighbor.first == s2) continue;
         }
 
         adj[s1].push_back({s2, static_cast<float>(distance)});
@@ -160,7 +148,7 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
     }
 
     std::priority_queue<std::pair<double, std::string>,
-                        std::vector<std::pair<double, std::string>> ,
+                        std::vector<std::pair<double, std::string>>,
                         std::greater<std::pair<double, std::string>>> pq;
 
     pq.push({0.0, start});
@@ -182,12 +170,11 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
         }
     }
 
-    std::string result;
     if (dis[end] == std::numeric_limits<double>::infinity()) {
         return "No path from " + start + " to " + end + ".";
     }
 
-    result = "Distance from " + start + " to " + end + " is: " + std::to_string(dis[end]) + "\n";
+    std::string result = "Distance from " + start + " to " + end + " is: " + std::to_string(dis[end]) + "\n";
 
     std::vector<std::string> path;
     for (std::string at = end; !at.empty(); at = parent[at])
