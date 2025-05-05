@@ -23,7 +23,9 @@ private slots:
     void onAddRoadClicked();
     void onSaveRoadClicked();
     void onDeleteRoadClicked();
-    void onConfirmDeleteClicked(); // تمت إضافة هذا السلوط
+    void onConfirmDeleteClicked();
+    void onDeleteCityClicked();
+    void onConfirmDeleteCityClicked();
 
 private:
     QPushButton *showShortestPathButton;
@@ -34,7 +36,9 @@ private:
     QPushButton *addRoadButton;
     QPushButton *saveRoadButton;
     QPushButton *deleteRoadButton;
-    QPushButton *confirmDeleteButton; // تمت إضافة هذا الزر
+    QPushButton *confirmDeleteButton;
+    QPushButton *deleteCityButton;
+    QPushButton *confirmDeleteCityButton;
 
     QLineEdit *startCityLineEdit;
     QLineEdit *endCityLineEdit;
@@ -42,18 +46,21 @@ private:
     QLineEdit *roadStartCityLineEdit;
     QLineEdit *roadEndCityLineEdit;
     QLineEdit *roadDistanceLineEdit;
-    QLineEdit *deleteStartCityLineEdit; // تمت إضافة هذا الحقل
-    QLineEdit *deleteEndCityLineEdit;   // تمت إضافة هذا الحقل
+    QLineEdit *deleteStartCityLineEdit;
+    QLineEdit *deleteEndCityLineEdit;
+    QLineEdit *deleteCityLineEdit;
 
     bool isPathInputVisible = false;
     bool isAddCityInputVisible = false;
     bool isAddRoadInputVisible = false;
-    bool isDeleteRoadInputVisible = false; // تمت إضافة هذا المتغير
+    bool isDeleteRoadInputVisible = false;
+    bool isDeleteCityInputVisible = false;
 
     QVector<std::tuple<QString, QString, int>> loadEdgesFromFile(const QString& filePath);
     void saveRoadToFile(const QString& city1, const QString& city2, int distance);
     void saveCityToFile(const QString& cityName);
-    void updateFileAfterDeletion(const QString& city1, const QString& city2); // تمت إضافة هذه الدالة
+    void updateFileAfterDeletion(const QString& city1, const QString& city2);
+    void updateFileAfterCityDeletion(const QString& cityName);
 };
 
 #endif // OPTIONS_H
