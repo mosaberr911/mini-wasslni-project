@@ -14,7 +14,7 @@
 
 Options::Options(QWidget *parent) : QWidget(parent)
 {
-    setFixedSize(600, 700); // Increased height to accommodate new button
+    setFixedSize(600, 700);
     setWindowTitle("Options");
 
     // الخلفية
@@ -338,13 +338,17 @@ void Options::onConfirmDeleteCityClicked()
         return;
     }
 
-    bool cityDeleted = graph.deleteCity(cityName.toStdString());
+    try {
+        bool cityDeleted = graph.deleteCity(cityName.toStdString());
 
-    if (cityDeleted) {
-        updateFileAfterCityDeletion(cityName);
-        QMessageBox::information(this, "Success", "City '" + cityName + "' has been deleted successfully!");
-    } else {
-        QMessageBox::warning(this, "Error", "Failed to delete city '" + cityName + "'.");
+        if (cityDeleted) {
+            updateFileAfterCityDeletion(cityName);
+            QMessageBox::information(this, "Success", "City '" + cityName + "' has been deleted successfully!");
+        } else {
+            QMessageBox::warning(this, "Error", "Failed to delete city '" + cityName + "'.");
+        }
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", "An error occurred: " + QString(e.what()));
     }
 }
 
@@ -525,7 +529,6 @@ void Options::updateFileAfterDeletion(const QString& city1, const QString& city2
     }
     file.close();
 }
-
 void Options::updateFileAfterCityDeletion(const QString& cityName)
 {
     QFile file("C:/Users/A/OneDrive/Documents/wasslni/graph.txt");
@@ -542,9 +545,19 @@ void Options::updateFileAfterCityDeletion(const QString& cityName)
         if (parts.size() >= 2) {
             QString a = parts[0].trimmed();
             QString b = parts[1].trimmed();
-            if (a != cityName && b != cityName) {
+            if (a == cityName) {
+                // إذا كانت المدينة في الجانب الأول، نستبدلها بفراغ
+                lines.append(" ," + b + (parts.size() > 2 ? "," + parts[2] : ""));
+            } else if (b == cityName) {
+                // إذا كانت المدينة في الجانب الثاني، نستبدلها بفراغ
+                lines.append(a + ", " + (parts.size() > 2 ? "," + parts[2] : ""));
+            } else {
+                // إذا لم تكن المدينة في السطر، نضيفه كما هو
                 lines.append(line);
             }
+        } else {
+            // إذا كان السطر غير صالح، نضيفه كما هو
+            lines.append(line);
         }
     }
     file.close();
