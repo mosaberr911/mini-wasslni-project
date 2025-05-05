@@ -26,7 +26,7 @@ public:
     bool addEdge(std::string city1, std::string city2, float distance);
     bool containsCity(std::string cityName);
     bool deleteEdge(std::string city1, std::string city2);
-    bool deleteCity(std::string cityName); // ✅ الدالة المضافة
+    bool deleteCity(std::string cityName);
 
 private:
     std::map<std::string, std::vector<std::pair<std::string, float>>> adj;
