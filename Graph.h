@@ -22,7 +22,7 @@ public:
     void bfs(const string& StartNode);//
     void dfs(const string& StartNode);//
     void addGraph();//
-    void dfsPaths(string current, string destination, vector<string>& path);
+    void dfsPaths(string current, string destination, vector<string>& path,bool);
     void findAllPaths(string , string );
     AdjacencyList getAdjacencyList();
     void setAdjacencyList(const AdjacencyList&);
