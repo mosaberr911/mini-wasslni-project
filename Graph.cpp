@@ -117,7 +117,7 @@ void Graph::addGraph() {
 	cin >> numEdges;
 	for (int i = 0; i < numEdges; i++) {
 		string s1, s2;
-		int d;
+		float d;
 		// cout << "Enter the name of cities then the distance\n";
 		// cin >> s1 >> s2 >> d;
 		cout << "Enter first city name:\n";
@@ -319,12 +319,13 @@ void Graph::write(string filename) {
 	output.close();
 }
 
-void Graph::dfsPaths(string current, string destination, vector<string>& path) {
+void Graph::dfsPaths(string current, string destination, vector<string>& path,bool &found) {
 
 	vis[current] = 1;
 	path.push_back(current);
 
 	if (current == destination) {
+		found=true;
 		for (int i = 0; i < path.size(); i++) {
 			cout << path[i];
 			if (i != path.size() - 1) cout << " -> ";
@@ -334,7 +335,7 @@ void Graph::dfsPaths(string current, string destination, vector<string>& path) {
 	else {
 		for (auto& neighbor : adj[current]) {
 			if (!vis[neighbor.first]) {
-				dfsPaths(neighbor.first, destination, path);
+				dfsPaths(neighbor.first, destination, path,found);
 			}
 		}
 	}
@@ -344,10 +345,17 @@ void Graph::dfsPaths(string current, string destination, vector<string>& path) {
 }
 
 void Graph::findAllPaths(string city1, string city2) {
+	if (adj.find(city1) == adj.end() || adj.find(city2) == adj.end()) {
+	throw runtime_error("the city doesn't exist");
+	}
 	vis.clear();
 	vector<string> path;
+	bool found = false;
 	cout << "All paths from " << city1 << " to " << city2 << ":\n";
-	dfsPaths(city1, city2, path);
+	dfsPaths(city1, city2, path,found);
+	if (!found) {
+		cout << "NO paths exist.";
+	}
 
 }
 
