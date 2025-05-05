@@ -114,6 +114,7 @@ bool Graph::deleteCity(std::string cityName) {
     }
 
     adj.erase(cityName);
+    return true;
 }
 
 void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges) {
