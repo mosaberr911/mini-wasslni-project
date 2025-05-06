@@ -2,10 +2,13 @@
 #define OPTIONS_H
 
 #include <QWidget>
-#include <QPushButton>
-#include <QLineEdit>
 #include <QVector>
 #include <tuple>
+
+class QPushButton;
+class QLineEdit;
+class QLabel;
+class Graph;
 
 class Options : public QWidget
 {
@@ -13,6 +16,7 @@ class Options : public QWidget
 
 public:
     explicit Options(QWidget *parent = nullptr);
+    void setUserEmail(const QString &email);
 
 private slots:
     void onShowShortestPathClicked();
@@ -20,47 +24,49 @@ private slots:
     void onDisplayMapClicked();
     void onAddCityClicked();
     void onSaveCityClicked();
+    void onDeleteCityClicked();
+    void onConfirmDeleteCityClicked();
     void onAddRoadClicked();
     void onSaveRoadClicked();
     void onDeleteRoadClicked();
     void onConfirmDeleteClicked();
-    void onDeleteCityClicked();
-    void onConfirmDeleteCityClicked();
 
 private:
+    QString getUserGraphPath() const;
+    void saveCityToFile(const QString& cityName);
+    void saveRoadToFile(const QString& city1, const QString& city2, int distance);
+    void updateFileAfterDeletion(const QString& city1, const QString& city2);
+    void updateFileAfterCityDeletion(const QString& cityName);
+    QVector<std::tuple<QString, QString, int>> loadEdgesFromFile(const QString& filePath);
+
+    QString userEmail;
+    bool isAddCityInputVisible = false;
+    bool isDeleteCityInputVisible = false;
+    bool isAddRoadInputVisible = false;
+    bool isDeleteRoadInputVisible = false;
+    bool isPathInputVisible = false;
+
+    // عناصر واجهة المستخدم
     QPushButton *showShortestPathButton;
+    QLineEdit *startCityLineEdit;
+    QLineEdit *endCityLineEdit;
     QPushButton *showPathButton;
     QPushButton *displayMapButton;
     QPushButton *addCityButton;
-    QPushButton *saveCityButton;
-    QPushButton *addRoadButton;
-    QPushButton *saveRoadButton;
-    QPushButton *deleteRoadButton;
-    QPushButton *confirmDeleteButton;
-    QPushButton *deleteCityButton;
-    QPushButton *confirmDeleteCityButton;
-
-    QLineEdit *startCityLineEdit;
-    QLineEdit *endCityLineEdit;
     QLineEdit *addCityLineEdit;
+    QPushButton *saveCityButton;
+    QPushButton *deleteCityButton;
+    QLineEdit *deleteCityLineEdit;
+    QPushButton *confirmDeleteCityButton;
+    QPushButton *addRoadButton;
     QLineEdit *roadStartCityLineEdit;
     QLineEdit *roadEndCityLineEdit;
     QLineEdit *roadDistanceLineEdit;
+    QPushButton *saveRoadButton;
+    QPushButton *deleteRoadButton;
     QLineEdit *deleteStartCityLineEdit;
     QLineEdit *deleteEndCityLineEdit;
-    QLineEdit *deleteCityLineEdit;
-
-    bool isPathInputVisible = false;
-    bool isAddCityInputVisible = false;
-    bool isAddRoadInputVisible = false;
-    bool isDeleteRoadInputVisible = false;
-    bool isDeleteCityInputVisible = false;
-
-    QVector<std::tuple<QString, QString, int>> loadEdgesFromFile(const QString& filePath);
-    void saveRoadToFile(const QString& city1, const QString& city2, int distance);
-    void saveCityToFile(const QString& cityName);
-    void updateFileAfterDeletion(const QString& city1, const QString& city2);
-    void updateFileAfterCityDeletion(const QString& cityName);
+    QPushButton *confirmDeleteButton;
 };
 
 #endif // OPTIONS_H
