@@ -7,7 +7,10 @@
 #include <algorithm>
 #include <sstream>
 #include <iostream>
-
+Graph::Graph(const std::string& userEmail) : userEmail(userEmail) {}
+void Graph::setUserEmail(const std::string& email) {
+    userEmail = email;
+}
 bool Graph::addCity(std::string cityName) {
     if (containsCity(cityName)) {
         std::cerr << "City '" << cityName << "' already exists in the graph." << std::endl;
@@ -39,9 +42,10 @@ bool Graph::containsCity(std::string cityName) {
         return true;
     }
 
-    std::ifstream file("C:\\Users\\A\\OneDrive\\Documents\\wasslni\\graph.txt");
+    std::string filePath = getUserGraphPath();
+    std::ifstream file(filePath);
     if (!file.is_open()) {
-        throw std::runtime_error("فشل فتح الملف.");
+        throw std::runtime_error("Failed to open user graph file: " + filePath);
     }
 
     std::unordered_set<std::string> cities;
@@ -201,4 +205,31 @@ std::string Graph::displayMap() {
         ss << std::endl;
     }
     return ss.str();
+}
+std::string Graph::getUserGraphPath() const {
+    if (userEmail.empty()) {
+        throw std::runtime_error("User email not set");
+    }
+
+    // Sanitize email to create filename (same as in Login.cpp)
+    std::string sanitizedEmail = userEmail;
+    size_t pos = 0;
+    while ((pos = sanitizedEmail.find("@", pos)) != std::string::npos) {
+        sanitizedEmail.replace(pos, 1, "_at_");
+        pos += 4;
+    }
+    pos = 0;
+    while ((pos = sanitizedEmail.find(".", pos)) != std::string::npos) {
+        sanitizedEmail.replace(pos, 1, "_dot_");
+        pos += 5;
+    }
+
+    // Remove any remaining special characters
+    for (char& c : sanitizedEmail) {
+        if (!isalnum(c) && c != '_') {
+            c = '_';
+        }
+    }
+
+    return "C:/Users/A/OneDrive/Documents/wasslni/maps/" + sanitizedEmail + "_graph.txt";
 }
