@@ -9,7 +9,7 @@
 #include <QVector>
 #include <tuple>
 #include "graph.h"
-#include "Options.h"  // ✅ تضمين ملف نافذة Options
+#include "Options.h"
 
 class Map : public QWidget
 {
@@ -17,32 +17,39 @@ class Map : public QWidget
 
 public:
     explicit Map(QWidget *parent = nullptr);
+    void setUserEmail(const QString &email);
 
 private slots:
-    void onSubmitEdgeCount();     // دالة للتعامل مع الضغط على زر Submit
-    void onSaveClicked();         // دالة لحفظ البيانات
-    void onContinueClicked();     // دالة للانتقال إلى الصفحة التالية (فتح نافذة Options)
+    void onSubmitEdgeCount();
+    void onSaveClicked();
+    void onContinueClicked();
+    void onAddMapClicked();
 
 private:
-    void saveGraphData(const QVector<std::tuple<QString, QString, int>> &edges);  // دالة لحفظ البيانات في الملف
+    void saveGraphData(const QVector<std::tuple<QString, QString, int>> &edges);
+    QString getUserGraphPath() const;
 
-    QLineEdit *edgeCountField;       // حقل إدخال عدد الحواف
-    QVBoxLayout *inputsLayout;        // تخطيط إدخال البيانات
-    QScrollArea *scrollArea;         // منطقة التمرير لإدخال الحواف
+    QLineEdit *edgeCountField;
+    QVBoxLayout *inputsLayout;
+    QScrollArea *scrollArea;
 
-    QPushButton *submitButton;       // زر Submit
-    QPushButton *saveButton;         // زر حفظ البيانات
-    QPushButton *continueButton;     // زر الاستمرار
+    QPushButton *submitButton;
+    QPushButton *saveButton;
+    QPushButton *continueButton;
+    QPushButton *addMapButton;
+
+    QLabel *title;
+    QLabel *nextPageLabel;
 
     struct EdgeInput {
-        QLineEdit *cityA;           // حقل إدخال المدينة A
-        QLineEdit *cityB;           // حقل إدخال المدينة B
-        QLineEdit *distance;        // حقل إدخال المسافة
+        QLineEdit *cityA;
+        QLineEdit *cityB;
+        QLineEdit *distance;
     };
 
-    QVector<EdgeInput> edgeInputs;   // لتخزين الحواف المدخلة
-
-    Graph graph;  // كائن من كلاس Graph (يفترض أنك قمت بتعريف هذا الكلاس)
+    QVector<EdgeInput> edgeInputs;
+    Graph graph;
+    QString userEmail;
 };
 
 #endif // MAP_H
