@@ -7,7 +7,9 @@
 #include <QMessageBox>
 #include <QFile>
 #include <QTextStream>
-#include "Map.h"  // إضافة هيدر الـ Map
+#include <QRegularExpression>
+#include <QDir>
+#include "Map.h"
 
 Login::Login(QWidget *parent) : QWidget(parent), registerWindow(nullptr), mapWindow(nullptr)
 {
@@ -150,18 +152,57 @@ void Login::onLoginClicked()
     QString email = emailField->text().trimmed();
     QString password = passwordField->text().trimmed();
 
-    // تحقق من صحة البيانات
     if (checkCredentials(email, password)) {
+        createUserMapFile(email);
+
         QMessageBox::information(this, "Success", "Login successful!");
 
-        // بعد التحقق من البيانات الصحيحة، إخفاء صفحة الدخول وفتح الماب
-        this->hide();  // إخفاء نافذة اللوجين
-
+        this->hide();
         if (!mapWindow) {
-            mapWindow = new Map();  // إنشاء نافذة الماب إذا كانت غير موجودة
+            mapWindow = new Map();
+            mapWindow->setUserEmail(email);  // تأكد من وجود هذا السطر
         }
-        mapWindow->show();  // عرض نافذة الماب
+        mapWindow->show();
     } else {
         QMessageBox::warning(this, "Error", "Incorrect email or password.");
+    }
+}
+void Login::createUserMapFile(const QString &email)
+{
+    // Create maps directory if it doesn't exist
+    QDir dir("C:/Users/A/OneDrive/Documents/wasslni/maps");
+    if (!dir.exists()) {
+        if (!dir.mkpath(".")) {
+            QMessageBox::warning(this, "Error", "Could not create maps directory.");
+            return;
+        }
+    }
+
+    // Sanitize email to create filename (replace special characters)
+    QString sanitizedEmail = email;
+    sanitizedEmail.replace("@", "_at_");
+    sanitizedEmail.replace(".", "_dot_");
+    sanitizedEmail.replace(QRegularExpression("[^a-zA-Z0-9_]"), "_");  // Updated for Qt 6
+
+    // Create file path
+    QString filePath = QString("C:/Users/A/OneDrive/Documents/wasslni/maps/%1_map.txt").arg(sanitizedEmail);
+
+    // Check if file already exists
+    if (QFile::exists(filePath)) {
+        qDebug() << "User map file already exists:" << filePath;
+        return;
+    }
+
+    // Create new file
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << "// User map file for: " << email << "\n";
+        out << "// Created on: " << QDateTime::currentDateTime().toString() << "\n";
+        out << "// Add your map data here\n";
+        file.close();
+        qDebug() << "Created user map file:" << filePath;
+    } else {
+        QMessageBox::warning(this, "Error", "Could not create user map file.");
     }
 }
