@@ -18,6 +18,12 @@
 class Graph
 {
 public:
+
+    Graph(const std::string& userEmail = "");  // Updated constructor
+
+    void setUserEmail(const std::string& email);  // New method
+    std::string getUserGraphPath() const;  // New method
+
     void addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges);
     std::string dijkstra(const std::string& start, const std::string& end);
     std::string displayMap();
@@ -29,6 +35,7 @@ public:
     bool deleteCity(std::string cityName);
 
 private:
+    std::string userEmail;  // New member variable
     std::map<std::string, std::vector<std::pair<std::string, float>>> adj;
     std::map<std::string, double> dis;
     std::map<std::string, bool> vis;
