@@ -179,7 +179,14 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
         return "No path from " + start + " to " + end + ".";
     }
 
-    std::string result = "Distance from " + start + " to " + end + " is: " + std::to_string(dis[end]) + "\n";
+    std::string finalDistance = std::to_string(dis[end]);
+    size_t dot_pos = finalDistance.find('.');
+    if (dot_pos != std::string::npos) {
+        size_t end_pos = std::min(dot_pos + 3, finalDistance.size());
+        finalDistance = finalDistance.substr(0, end_pos);
+    }
+
+    std::string result = "Distance from " + start + " to " + end + " is: " + finalDistance + "\n";
 
     std::vector<std::string> path;
     for (std::string at = end; !at.empty(); at = parent[at])
