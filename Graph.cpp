@@ -5,6 +5,7 @@
 #include<fstream>
 #include<sstream>
 #include<string>
+#include <regex>
 //#include "bits/stdc++.h"
 #include<queue>
 using namespace std;
@@ -53,9 +54,6 @@ string Graph::dijkstra(const string& start, const string& end) {
     return result;
 }
 
-
-
-
 void Graph::traverseGraph() {
     int selection;
     bool x = true;
@@ -92,6 +90,7 @@ void Graph::dfs( const string& startNode) {
 		}
 	}
 }
+
 void Graph::bfs(const string& startNode) {
     queue<string> q;
     vis.clear();
@@ -111,13 +110,24 @@ void Graph::bfs(const string& startNode) {
     }
     cout << endl;
 }
+
 void Graph::addGraph() {
-	char ch;
-	do {
+	int numEdges;
+	cout << "Enter number of edges: ";
+	cin >> numEdges;
+	for (int i = 0; i < numEdges; i++) {
 		string s1, s2;
-		int d;
-		cout << "Enter the name of cities then the distance\n";
-		cin >> s1 >> s2 >> d;
+		float d;
+		// cout << "Enter the name of cities then the distance\n";
+		// cin >> s1 >> s2 >> d;
+		cout << "Enter first city name:\n";
+		cin >> ws;
+		getline(cin, s1);
+		cout << "Enter second city name:\n";
+		cin >> ws;
+		getline(cin, s2);
+		cout << "Enter distance between them:\n";
+		cin >> d;
 		if (s1 == s2) {
 			throw runtime_error("self loop not allowed");
 		}
@@ -130,10 +140,29 @@ void Graph::addGraph() {
 			}
 		}
 		adj[s1].push_back({ s2,d });
-		adj[s2].push_back({ s1,d });
-		cout << "if you want to add more enter y\n";
-		cin >> ch;
-	} while (ch == 'y' || ch == 'Y');
+	}
+	// char ch;
+	// do {
+	// 	string s1, s2;
+	// 	int d;
+	// 	cout << "Enter the name of cities then the distance\n";
+	// 	cin >> s1 >> s2 >> d;
+	// 	if (s1 == s2) {
+	// 		throw runtime_error("self loop not allowed");
+	// 	}
+	// 	if (d <= 0) {
+	// 		throw runtime_error("the distance must be positive number\n");
+	// 	}
+	// 	for (const auto& neighbor : adj[s1]) {
+	// 		if (neighbor.first == s2) {
+	// 			throw runtime_error("this edge already exists in graph");
+	// 		}
+	// 	}
+	// 	adj[s1].push_back({ s2,d });
+	// 	adj[s2].push_back({ s1,d });
+	// 	cout << "if you want to add more enter y\n";
+	// 	cin >> ch;
+	// } while (ch == 'y' || ch == 'Y');
 }
 
 void Graph::displayGraph() {
@@ -154,6 +183,7 @@ void Graph::addCity(string cityName) {
         throw runtime_error("City already exists in graph");
     adj[cityName];
 }
+
 void Graph::deleteCity(string cityName) {
     // check if city does not exist in graph
     if (!containsCity(cityName))
@@ -245,7 +275,11 @@ void Graph::deleteEdge(string city1, string city2) {
         throw runtime_error("Edge does not exist.");
 	}//throw exception if the edge doesn't exist
 }
+
 void Graph::modify_distance(string city1, string city2) {
+	if (adj.find(city1) == adj.end() || adj.find(city2) == adj.end()) {
+		throw runtime_error("cities don't exist");
+	}
 	cout << "Enter the new distance\n";
 	float dist;
 	cin >> dist;
@@ -255,19 +289,14 @@ void Graph::modify_distance(string city1, string city2) {
 			break;
 		}
 	}
-	for (auto& t : adj[city2]) {
-		if (t.first == city1) {
-			t.second = dist;
-			break;
-		}
-	}
-
 }
+
 bool Graph::containsCity(string cityName) {
     return adj.find(cityName) != adj.end();
 }
-void Graph::write() {
-	ofstream output("data.txt", ios::app);
+
+void Graph::write(string filename) {
+	ofstream output(filename, ios::app);
 	if (!output) {
 		cout << "fail not found";
 		return ;
@@ -284,12 +313,14 @@ void Graph::write() {
 	}
 	output.close();
 }
-void Graph::dfsPaths(string current, string destination, vector<string>& path) {
+
+void Graph::dfsPaths(string current, string destination, vector<string>& path,bool &found) {
 
 	vis[current] = 1;
 	path.push_back(current);
 
 	if (current == destination) {
+		found=true;
 		for (int i = 0; i < path.size(); i++) {
 			cout << path[i];
 			if (i != path.size() - 1) cout << " -> ";
@@ -299,7 +330,7 @@ void Graph::dfsPaths(string current, string destination, vector<string>& path) {
 	else {
 		for (auto& neighbor : adj[current]) {
 			if (!vis[neighbor.first]) {
-				dfsPaths(neighbor.first, destination, path);
+				dfsPaths(neighbor.first, destination, path,found);
 			}
 		}
 	}
@@ -308,22 +339,29 @@ void Graph::dfsPaths(string current, string destination, vector<string>& path) {
 	vis[current] = 0;
 }
 
-
-void Graph::findallpaths(string city1, string city2) {
+void Graph::findAllPaths(string city1, string city2) {
+	if (adj.find(city1) == adj.end() || adj.find(city2) == adj.end()) {
+		throw runtime_error("cities don't exist");
+	}
 	vis.clear();
 	vector<string> path;
+	bool found = false;
 	cout << "All paths from " << city1 << " to " << city2 << ":\n";
-	dfsPaths(city1, city2, path);
+	dfsPaths(city1, city2, path,found);
+	if (!found) {
+		cout << "NO paths exist.";
+	}
 
 }
-void Graph::read() {
-	ifstream input("data.txt");
+
+void Graph::read(string filename) {
+	ifstream input(filename);
 	if (!input) {
 		cout << "File not found\n";
 		return;
 	}
 
-	adj.clear();  
+	adj.clear();
 
 	string line;
 	while (getline(input, line)) {
@@ -343,7 +381,7 @@ void Graph::read() {
 			size_t end = connections.find(')', start);
 			if (end == string::npos) break;
 
-			string edge = connections.substr(start + 1, end - start - 1);  
+			string edge = connections.substr(start + 1, end - start - 1);
 			size_t colon = edge.find(':');
 			if (colon != string::npos) {
 				string neighbor = edge.substr(0, colon);
@@ -355,4 +393,12 @@ void Graph::read() {
 	}
 
 	input.close();
+}
+
+AdjacencyList Graph::getAdjacencyList() {
+	return adj;
+}
+
+void Graph::setAdjacencyList(const AdjacencyList& adj) {
+	this->adj = adj;
 }

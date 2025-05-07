@@ -153,6 +153,30 @@ ConsoleApp.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_wasslni_project.dir/build.make CMakeFiles/mini_wasslni_project.dir/ConsoleApp.cpp.s
 .PHONY : ConsoleApp.cpp.s
 
+FileSystem.o: FileSystem.cpp.o
+.PHONY : FileSystem.o
+
+# target to build an object file
+FileSystem.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_wasslni_project.dir/build.make CMakeFiles/mini_wasslni_project.dir/FileSystem.cpp.o
+.PHONY : FileSystem.cpp.o
+
+FileSystem.i: FileSystem.cpp.i
+.PHONY : FileSystem.i
+
+# target to preprocess a source file
+FileSystem.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_wasslni_project.dir/build.make CMakeFiles/mini_wasslni_project.dir/FileSystem.cpp.i
+.PHONY : FileSystem.cpp.i
+
+FileSystem.s: FileSystem.cpp.s
+.PHONY : FileSystem.s
+
+# target to generate assembly for a file
+FileSystem.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mini_wasslni_project.dir/build.make CMakeFiles/mini_wasslni_project.dir/FileSystem.cpp.s
+.PHONY : FileSystem.cpp.s
+
 Graph.o: Graph.cpp.o
 .PHONY : Graph.o
 
@@ -237,6 +261,9 @@ help:
 	@echo "... ConsoleApp.o"
 	@echo "... ConsoleApp.i"
 	@echo "... ConsoleApp.s"
+	@echo "... FileSystem.o"
+	@echo "... FileSystem.i"
+	@echo "... FileSystem.s"
 	@echo "... Graph.o"
 	@echo "... Graph.i"
 	@echo "... Graph.s"

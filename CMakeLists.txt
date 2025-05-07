@@ -15,7 +15,9 @@ add_executable(mini_wasslni_project main.cpp Graph.cpp Graph.h
         User.cpp
         User.h
         ConsoleApp.cpp
-        ConsoleApp.h)
+        ConsoleApp.h
+        FileSystem.cpp
+        FileSystem.h)
 
 # ربط Qt مع المشروع
 target_link_libraries(mini_wasslni_project Qt6::Widgets)

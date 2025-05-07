@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/mini_wasslni_project.dir/ConsoleApp.cpp.o"
   "CMakeFiles/mini_wasslni_project.dir/ConsoleApp.cpp.o.d"
+  "CMakeFiles/mini_wasslni_project.dir/FileSystem.cpp.o"
+  "CMakeFiles/mini_wasslni_project.dir/FileSystem.cpp.o.d"
   "CMakeFiles/mini_wasslni_project.dir/Graph.cpp.o"
   "CMakeFiles/mini_wasslni_project.dir/Graph.cpp.o.d"
   "CMakeFiles/mini_wasslni_project.dir/User.cpp.o"

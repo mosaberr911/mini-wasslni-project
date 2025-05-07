@@ -4,30 +4,13 @@
 #include<string>
 #include <fstream>
 #include "ConsoleApp.h"
+#include "FileSystem.h"
 #include "Graph.h"
 #include <limits>
 using namespace std;
+
 ConsoleApp::ConsoleApp() {
     mainMenu();
-}
-
-void ConsoleApp::loadUsers() {
-    // ifstream file("users.txt");
-    // if (file.is_open()) {
-    //     string username, password, role;
-    //     while (file >> username >> password >> role) {
-    //         users[username] = { password, role };
-    //     }
-    //     file.close();
-    // }
-}
-
-void ConsoleApp::saveUsers() const {
-    // ofstream file("users.txt");
-    // for (const auto& pair : users) {
-    //     file << pair.first << " " << pair.second << " " << endl;
-    // }
-    // file.close();
 }
 
 void ConsoleApp::signUp() {
@@ -46,7 +29,11 @@ void ConsoleApp::signUp() {
     User newUser(username, password);
     users[username] = newUser;
     cout << "Account created successfully for " << username << endl;
-    users[username].graph.addGraph();
+    try {
+        users[username].graph.addGraph();
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
+    }
     userMenu(users[username]);
 }
 
@@ -73,19 +60,25 @@ void ConsoleApp::login() {
 
     if (password == users[username].getPassword()) {
         cout << "Welcome " << username << "!\n";
+        try {
+            FileSystem::loadGraphFromFile("usersGraphs.txt", users[username]);
+        } catch (const exception& e) {
+            cout << "Error: " << e.what() << endl;
+        }
         userMenu(users[username]);
     }
-
 }
 
 void ConsoleApp::userMenu(User& thisUser) {
-    //thisUser.getGraph().read();
     int choice;
-    string currentLoc, destination;
+    if (thisUser.graph.getAdjacencyList().empty()) {
+        cout << "You have no graph! you must add a graph first if you wish to continue\n";
+        thisUser.graph.addGraph();
+    }
 
     do {
         displayUserMenuOptions();
-        choice = getValidatedMenuChoice(0, 7);
+        choice = getValidatedMenuChoice(0, 8);
 
         try {
             executeUserMenuAction(choice, thisUser);
@@ -95,12 +88,16 @@ void ConsoleApp::userMenu(User& thisUser) {
 
     } while (choice != 0);
 
-    //thisUser.getGraph().write();
+    try {
+        FileSystem::saveGraphToFile("usersGraphs.txt", thisUser);
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
+    }
 }
 
 void ConsoleApp::displayUserMenuOptions() {
     cout << "\n--- User Menu ---\n";
-    cout << "1. View Map\n2. Find Shortest Route (Dijkstra)\n3. Traverse Graph (BFS/DFS)\n4. Add City\n5. Delete City\n6. Add Road\n7. Delete Road\n0. Logout\n";
+    cout << "1. View Map\n2. Find Shortest Route (Dijkstra)\n3. Traverse Graph (BFS/DFS)\n4. Find all paths from a city to another\n5. Add City\n6. Delete City\n7. Add Road\n8. Delete Road\n0. Logout\n";
     cout << "Enter your choice: ";
 }
 
@@ -142,6 +139,18 @@ void ConsoleApp::executeUserMenuAction(int choice, User& thisUser) {
             break;
         case 4:
             try {
+                cout << "Enter first city name:\n";
+                cin >> ws;
+                getline(cin, city1);
+                cout << "Enter second city name:\n";
+                getline(cin, city2);
+                thisUser.graph.findAllPaths(city1, city2);
+            } catch (const exception& e) {
+                cout << "Error: " << e.what() << endl;
+            }
+            break;
+        case 5:
+            try {
                 cout << "Enter city name:\n";
                 cin >> ws;
                 getline(cin, city1);
@@ -150,7 +159,7 @@ void ConsoleApp::executeUserMenuAction(int choice, User& thisUser) {
                 cout << "Error: " << e.what() << endl;
             }
             break;
-        case 5:
+        case 6:
             try {
                 cout << "Enter city name to delete:\n";
                 cin >> ws;
@@ -160,7 +169,7 @@ void ConsoleApp::executeUserMenuAction(int choice, User& thisUser) {
                 cout << "Error: " << e.what() << endl;
             }
             break;
-        case 6:
+        case 7:
             try {
                 cout << "Enter first city name:\n";
                 cin >> ws;
@@ -174,7 +183,7 @@ void ConsoleApp::executeUserMenuAction(int choice, User& thisUser) {
                 cout << "Error: " << e.what() << endl;
             }
             break;
-        case 7:
+        case 8:
             try {
                 cout << "Enter first city name:\n";
                 cin >> ws;
@@ -194,9 +203,12 @@ void ConsoleApp::executeUserMenuAction(int choice, User& thisUser) {
     }
 }
 
-
 void ConsoleApp::mainMenu() {
-    //loadUsers();
+    try {
+        users = FileSystem::loadUsers("users.txt");
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
+    }
     int choice;
 
     while (true) {
@@ -223,5 +235,10 @@ void ConsoleApp::mainMenu() {
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
     }
-    //saveUsers();
+
+    try {
+        FileSystem::saveUsers("users.txt", users);
+    } catch (const exception& e) {
+        cout << "Error: " << e.what() << endl;
+    }
 }

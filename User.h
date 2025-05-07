@@ -7,6 +7,7 @@
 #include <string>
 #include "Graph.h"
 using namespace std;
+using AdjacencyList = unordered_map<string, vector<pair<string, float> > >;
 
 class User {
 private:
@@ -16,8 +17,8 @@ public:
     Graph graph;
     User();
     User(string, string);
-    string getUsername();
-    string getPassword();
+    string getUsername() const;
+    string getPassword() const;
     void setUsername(string);
     void setPassword(string);
 };
