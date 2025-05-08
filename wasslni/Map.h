@@ -8,7 +8,7 @@
 #include <QVBoxLayout>
 #include <QVector>
 #include <tuple>
-#include "Graph.h"
+#include "graph.h"
 #include "Options.h"
 
 class Map : public QWidget
