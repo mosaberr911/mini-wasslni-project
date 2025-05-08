@@ -18,10 +18,10 @@
 class Graph
 {
 public:
-    Graph(const std::string& userEmail = "");  // Constructor with optional userEmail
+    Graph(const std::string& userEmail = "");  
 
-    void setUserEmail(const std::string& email);  // Setter for userEmail
-    std::string getUserGraphPath() const;  // Getter for user graph file path
+    void setUserEmail(const std::string& email);  
+    std::string getUserGraphPath() const;  
 
     void addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges);
     std::string dijkstra(const std::string& start, const std::string& end);
@@ -36,11 +36,11 @@ public:
     bool deleteCity(std::string cityName);
 
 private:
-    std::string userEmail;  // User email for file path creation
+    std::string userEmail;  
     std::map<std::string, std::vector<std::pair<std::string, float>>> adj;
     std::map<std::string, double> dis;
     std::map<std::string, bool> vis;
     std::map<std::string, std::string> parent;
 };
 
-#endif // GRAPH_H
+#endif 
