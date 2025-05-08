@@ -1,16 +1,21 @@
-#include "Graph.h"
+#include "graph.h"
 #include <stdexcept>
 #include <limits>
 #include <queue>
 #include <vector>
+#include <QString>
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <QTextEdit>
 #include <iostream>
+
 Graph::Graph(const std::string& userEmail) : userEmail(userEmail) {}
+
 void Graph::setUserEmail(const std::string& email) {
     userEmail = email;
 }
+
 bool Graph::addCity(std::string cityName) {
     if (containsCity(cityName)) {
         std::cerr << "City '" << cityName << "' already exists in the graph." << std::endl;
@@ -132,12 +137,18 @@ void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edg
 
         if (s1 == s2 || distance <= 0) continue;
 
+        bool edgeExists = false;
         for (const auto& neighbor : adj[s1]) {
-            if (neighbor.first == s2) continue;
+            if (neighbor.first == s2) {
+                edgeExists = true;
+                break;
+            }
         }
 
-        adj[s1].push_back({s2, static_cast<float>(distance)});
-        adj[s2].push_back({s1, static_cast<float>(distance)});
+        if (!edgeExists) {
+            adj[s1].push_back({s2, static_cast<float>(distance)});
+            adj[s2].push_back({s1, static_cast<float>(distance)});
+        }
     }
 }
 
@@ -213,12 +224,12 @@ std::string Graph::displayMap() {
     }
     return ss.str();
 }
+
 std::string Graph::getUserGraphPath() const {
     if (userEmail.empty()) {
         throw std::runtime_error("User email not set");
     }
 
-    // Sanitize email to create filename (same as in Login.cpp)
     std::string sanitizedEmail = userEmail;
     size_t pos = 0;
     while ((pos = sanitizedEmail.find("@", pos)) != std::string::npos) {
@@ -231,16 +242,51 @@ std::string Graph::getUserGraphPath() const {
         pos += 5;
     }
 
-    // Remove any remaining special characters
     for (char& c : sanitizedEmail) {
         if (!isalnum(c) && c != '_') {
             c = '_';
         }
     }
 
-    // SABER_PATH
-    // return "C:/Users/A/OneDrive/Documents/wasslni/maps/" + sanitizedEmail + "_graph.txt";
+    return "C:/Users/A/OneDrive/Documents/wasslni/maps/" + sanitizedEmail + "_graph.txt";
+}
 
-    // YASSIN_PATH
-    return "/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/maps/" + sanitizedEmail + "_graph.txt";
+void Graph::BFS(const QString& startNode, QTextEdit* output) {
+    std::queue<QString> q;
+    vis.clear();
+    q.push(startNode);
+   vis[startNode.toStdString()] = true;
+    QString result = "BFS Traversal:\n";
+
+    while (!q.empty()) {
+        QString node = q.front();
+        q.pop();
+        result += node + "\n";
+
+        for (auto [child, weight] : adj[node.toStdString()]) {
+            QString qChild = QString::fromStdString(child);
+            if (!vis[qChild.toStdString()]) {
+                vis[qChild.toStdString()] = true;
+                q.push(qChild);
+                result += " -> " + qChild + " (Weight: " + QString::number(weight) + ")\n";
+            }
+        }
+    }
+    output->append(result);
+}
+
+void Graph::DFS(const QString& startNode, QTextEdit* output) {
+    vis[startNode.toStdString()] = true;
+    QString result = "DFS Traversal:\n";
+    result += startNode + "\n";
+
+    for (auto [child, weight] : adj[startNode.toStdString()]) {
+        QString qChild = QString::fromStdString(child);
+        result += " -> " + qChild + " (Weight: " + QString::number(weight) + ")\n";
+        if (!vis[qChild.toStdString()]) {
+            result += "Exploring " + qChild + "\n";
+            DFS(qChild, output);
+        }
+    }
+    output->append(result);
 }
