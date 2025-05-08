@@ -76,5 +76,7 @@ debug {
 release {
     DEFINES += QT_NO_DEBUG_OUTPUT
     QMAKE_CXXFLAGS += -O3
-    QMAKE_LFLAGS += -Wl,--gc-sections
+    unix:!macx {
+        QMAKE_LFLAGS += -Wl,--gc-sections
+    }
 }
