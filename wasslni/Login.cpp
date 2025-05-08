@@ -90,7 +90,7 @@ Login::Login(QWidget *parent) : QWidget(parent), registerWindow(nullptr), mapWin
 
 void Login::onCreateAccountClicked()
 {
-    this->hide();  
+    this->hide();
     if (!registerWindow) {
         registerWindow = new Register();
         connect(registerWindow, &Register::backToLoginRequested, this, &Login::showLogin);
@@ -152,7 +152,7 @@ void Login::onLoginClicked()
         this->hide();
         if (!mapWindow) {
             mapWindow = new Map();
-            mapWindow->setUserEmail(email);  
+            mapWindow->setUserEmail(email);
         }
         mapWindow->show();
     } else {
@@ -172,7 +172,7 @@ void Login::createUserMapFile(const QString &email)
     QString sanitizedEmail = email;
     sanitizedEmail.replace("@", "_at_");
     sanitizedEmail.replace(".", "_dot_");
-    sanitizedEmail.replace(QRegularExpression("[^a-zA-Z0-9_]"), "_");  
+    sanitizedEmail.replace(QRegularExpression("[^a-zA-Z0-9_]"), "_");
 
     QString filePath = QString("C:/Users/A/OneDrive/Documents/wasslni/maps/%1_map.txt").arg(sanitizedEmail);
 
