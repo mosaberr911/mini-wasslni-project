@@ -16,7 +16,12 @@ Login::Login(QWidget *parent) : QWidget(parent), registerWindow(nullptr), mapWin
     setFixedSize(600, 500);
     setWindowTitle("Wasslni - Login");
 
+    // SABER_PATH
     QPixmap background("C:/Users/A/OneDrive/Documents/wasslni/images/Screenshot 2025-04-28 183435.png");
+
+    // YASSIN_PATH
+    // QPixmap background("/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/images/Screenshot 2025-04-28 183435.png");
+    
     if (background.isNull()) {
         qDebug() << "Failed to load background image.";
         background = QPixmap(600, 500);
@@ -108,7 +113,12 @@ void Login::showLogin()
 
 bool Login::checkCredentials(const QString &email, const QString &password)
 {
+    // SABER_PATH
     QString filePath = "C:/Users/A/OneDrive/Documents/wasslni/users.txt";
+
+    // YASSIN_PATH
+    // QString filePath = "/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/users.txt";
+    
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::warning(this, "Error", "Failed to open user data file.");
@@ -161,7 +171,12 @@ void Login::onLoginClicked()
 }
 void Login::createUserMapFile(const QString &email)
 {
+    // SABER_PATH
     QDir dir("C:/Users/A/OneDrive/Documents/wasslni/maps");
+
+    // YASSIN_PATH
+    // QDir dir("/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/maps");
+    
     if (!dir.exists()) {
         if (!dir.mkpath(".")) {
             QMessageBox::warning(this, "Error", "Could not create maps directory.");
@@ -174,7 +189,11 @@ void Login::createUserMapFile(const QString &email)
     sanitizedEmail.replace(".", "_dot_");
     sanitizedEmail.replace(QRegularExpression("[^a-zA-Z0-9_]"), "_");
 
+    // SABER_PATH
     QString filePath = QString("C:/Users/A/OneDrive/Documents/wasslni/maps/%1_map.txt").arg(sanitizedEmail);
+
+    // YASSIN_PATH
+    // QString filePath = QString("/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/maps/%1_map.txt").arg(sanitizedEmail);
 
     if (QFile::exists(filePath)) {
         qDebug() << "User map file already exists:" << filePath;
