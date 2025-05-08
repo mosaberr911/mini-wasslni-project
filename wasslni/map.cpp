@@ -86,6 +86,7 @@ Map::Map(QWidget *parent) : QWidget(parent), userEmail(""), isSaved(false)
     // التخطيط الداخلي للمحتوى
     QVBoxLayout *contentLayout = new QVBoxLayout();
     contentLayout->addWidget(title);
+    contentLayout->addSpacing(10);
     contentLayout->addWidget(edgeCountField);
     contentLayout->addWidget(submitButton);
     contentLayout->addWidget(scrollArea);
@@ -105,7 +106,7 @@ Map::Map(QWidget *parent) : QWidget(parent), userEmail(""), isSaved(false)
     bottomLayout->setAlignment(Qt::AlignBottom | Qt::AlignHCenter);
 
     mainLayout->addLayout(bottomLayout);
-    mainLayout->setContentsMargins(50, 30, 50, 30);
+    mainLayout->setContentsMargins(50, 10, 50, 30);
     setLayout(mainLayout);
 }
 
