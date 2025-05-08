@@ -50,7 +50,7 @@ private:
     QVector<EdgeInput> edgeInputs;
     Graph graph;
     QString userEmail;
-    bool isSaved; // متغير جديد لتتبع حالة الحفظ
+    bool isSaved; 
 };
 
-#endif // MAP_H
+#endif 
