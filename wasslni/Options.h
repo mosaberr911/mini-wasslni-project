@@ -17,8 +17,12 @@ class Options : public QWidget
 public:
     explicit Options(QWidget *parent = nullptr);
     void setUserEmail(const QString &email);
+    QString getUserEmail() const;
 
 private slots:
+    void onTraverseMapClicked();
+    void onDFSClicked();
+    void onBFSClicked();
     void onShowShortestPathClicked();
     void onShowPathClicked();
     void onDisplayMapClicked();
@@ -33,6 +37,10 @@ private slots:
 
 private:
     QString getUserGraphPath() const;
+    QPushButton* traverseMapButton;
+    QPushButton* dfsButton;
+    QPushButton* bfsButton;
+    bool isTraverseInputVisible;
     void saveCityToFile(const QString& cityName);
     void saveRoadToFile(const QString& city1, const QString& city2, int distance);
     void updateFileAfterDeletion(const QString& city1, const QString& city2);
