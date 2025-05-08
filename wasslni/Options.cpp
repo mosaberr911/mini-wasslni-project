@@ -1,5 +1,5 @@
-#include "options.h"
-#include "graph.h"
+#include "Options.h"
+#include "Graph.h"
 #include <QPushButton>
 #include <QLineEdit>
 #include <QInputDialog>
@@ -24,7 +24,12 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     setFixedSize(600, 700);
     setWindowTitle("Options");
 
+    // SABER_PATH
     QPixmap background("C:/Users/A/OneDrive/Documents/wasslni/images/Screenshot 2025-04-28 183435.png");
+
+    // YASSIN_PATH
+    // QPixmap background("/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/images/Screenshot 2025-04-28 183435.png");
+    
     if (background.isNull()) {
         qDebug() << "Failed to load background image.";
         background = QPixmap(600, 700);
@@ -247,7 +252,12 @@ QString Options::getUserGraphPath() const
     sanitizedEmail.replace(".", "_dot_");
     sanitizedEmail.replace(QRegularExpression("[^a-zA-Z0-9_]"), "_");
 
+    // SABER_PATH
     QString dirPath = "C:/Users/A/OneDrive/Documents/wasslni/maps";
+
+    // YASSIN_PATH
+    // QString dirPath = "/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/maps";
+    
     QDir dir(dirPath);
 
     if (!dir.exists() && !dir.mkpath(".")) {
