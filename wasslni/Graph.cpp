@@ -238,5 +238,9 @@ std::string Graph::getUserGraphPath() const {
         }
     }
 
-    return "C:/Users/A/OneDrive/Documents/wasslni/maps/" + sanitizedEmail + "_graph.txt";
+    // SABER_PATH
+    // return "C:/Users/A/OneDrive/Documents/wasslni/maps/" + sanitizedEmail + "_graph.txt";
+
+    // YASSIN_PATH
+    return "/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/maps/" + sanitizedEmail + "_graph.txt";
 }
