@@ -6,7 +6,7 @@
 #include "Map.h"
 #include <QString>
 #include <QMessageBox>
-#include <QDir>  // Add this for directory handling
+#include <QDir>  
 
 class QLineEdit;
 class QLabel;
@@ -25,7 +25,7 @@ private slots:
 
 private:
     bool checkCredentials(const QString &email, const QString &password);
-    void createUserMapFile(const QString &email);  // New function to create user map file
+    void createUserMapFile(const QString &email);  
 
     QLineEdit *emailField;
     QLineEdit *passwordField;
@@ -34,4 +34,4 @@ private:
     Map *mapWindow;
 };
 
-#endif // LOGIN_H
+#endif 
