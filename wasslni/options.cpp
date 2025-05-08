@@ -372,7 +372,7 @@ void Options::onSaveCityClicked()
     } else {
         // Connect new city to an existing city (first one in the set)
         QString existingCity = *cities.begin();
-        out << cityName << "," << existingCity << ",10\n";
+        out << cityName << "," << "" << ",0\n";
     }
     file.close();
 
@@ -394,7 +394,6 @@ void Options::saveCityToFile(const QString& cityName)
         return;
     }
 
-    // Check if the file is empty
     bool isEmpty = file.size() == 0;
     file.close();
 
@@ -404,13 +403,7 @@ void Options::saveCityToFile(const QString& cityName)
     }
 
     QTextStream out(&file);
-    if (isEmpty) {
-        // If file is empty, add a self-loop with zero distance (placeholder)
-        out << cityName << "," << cityName << ",0\n";
-    } else {
-        // Otherwise, add a connection to a placeholder city
-        out << cityName << ", ,10\n";  // Default distance of 10
-    }
+    out << cityName << ", ,0\n";
     file.close();
 }
 
