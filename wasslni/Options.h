@@ -54,7 +54,6 @@ private:
     bool isDeleteRoadInputVisible = false;
     bool isPathInputVisible = false;
 
-    // عناصر واجهة المستخدم
     QPushButton *showShortestPathButton;
     QLineEdit *startCityLineEdit;
     QLineEdit *endCityLineEdit;
@@ -77,4 +76,4 @@ private:
     QPushButton *confirmDeleteButton;
 };
 
-#endif // OPTIONS_H
+#endif 
