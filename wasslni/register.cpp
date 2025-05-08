@@ -39,7 +39,7 @@ Register::Register(QWidget *parent) : QWidget(parent)
 
     QString fieldStyle = "QLineEdit {"
                          "min-width: 100px;"
-                         "min-height: 22px;"   
+                         "min-height: 22px;"
                          "background: white;"
                          "border: 1px solid #ccc;"
                          "border-radius: 5px;"
@@ -85,7 +85,7 @@ Register::Register(QWidget *parent) : QWidget(parent)
                           "}";
 
     registerButton->setStyleSheet(buttonStyle);
-    backButton->setStyleSheet(buttonStyle.replace("#4CAF50", "#f44336").replace("#45a049", "#d32f2f"));
+    backButton->setStyleSheet(buttonStyle.replace("#4CAF50", "#2196F3").replace("#45a049", "#0b7dda"));
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(titleLabel);
