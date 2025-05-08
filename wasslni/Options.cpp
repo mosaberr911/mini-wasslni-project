@@ -379,23 +379,19 @@ void Options::onSaveCityClicked()
         return;
     }
 
-    // Load existing edges from file to check if city already exists
     QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
 
-    // Build a set of existing cities
     QSet<QString> cities;
     for (const auto& edge : edges) {
         cities.insert(std::get<0>(edge));
         cities.insert(std::get<1>(edge));
     }
 
-    // Check if city already exists
     if (cities.contains(cityName)) {
         QMessageBox::warning(this, "Exists", "City already exists");
         return;
     }
 
-    // Add city to file
     QFile file(filePath);
     if (!file.open(QIODevice::Append | QIODevice::Text)) {
         QMessageBox::critical(this, "Error", "Failed to open map file for writing");
@@ -404,10 +400,8 @@ void Options::onSaveCityClicked()
 
     QTextStream out(&file);
     if (cities.isEmpty()) {
-        // If this is the first city, just add it with a placeholder
         out << cityName << "," << cityName << ",0\n";
     } else {
-        // Connect new city to an existing city (first one in the set)
         QString existingCity = *cities.begin();
         out << cityName << "," << "" << ",0\n";
     }
@@ -470,27 +464,22 @@ void Options::onConfirmDeleteCityClicked()
         return;
     }
 
-    // Load existing edges from file to check if city exists
     QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
 
-    // Build a set of existing cities
     QSet<QString> cities;
     for (const auto& edge : edges) {
         cities.insert(std::get<0>(edge));
         cities.insert(std::get<1>(edge));
     }
 
-    // Check if city exists
     if (!cities.contains(cityName)) {
         QMessageBox::warning(this, "Error", "City does not exist");
         return;
     }
 
-    // Remove all edges connected to this city
     updateFileAfterCityDeletion(cityName);
     QMessageBox::information(this, "Success", "City deleted successfully");
 
-    // Reset UI
     deleteCityLineEdit->clear();
     deleteCityLineEdit->setVisible(false);
     confirmDeleteCityButton->setVisible(false);
@@ -512,7 +501,6 @@ void Options::updateFileAfterCityDeletion(const QString& cityName)
     while (!in.atEnd()) {
         QString line = in.readLine();
 
-        // Keep comments and empty lines
         if (line.trimmed().isEmpty() || line.trimmed().startsWith("//")) {
             lines.append(line);
             continue;
@@ -523,14 +511,12 @@ void Options::updateFileAfterCityDeletion(const QString& cityName)
             QString city1 = parts[0].trimmed();
             QString city2 = parts[1].trimmed();
 
-            // Skip any line where either city is the one being deleted
             if (city1 == cityName || city2 == cityName) {
                 continue;
             }
 
             lines.append(line);
         } else {
-            // Keep lines with unexpected format
             lines.append(line);
         }
     }
@@ -595,10 +581,8 @@ void Options::onSaveRoadClicked()
         return;
     }
 
-    // Load existing graph first to check if cities exist and if road already exists
     QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
 
-    // Check if the road already exists
     bool roadExists = false;
     for (const auto& edge : edges) {
         QString city1 = std::get<0>(edge);
@@ -616,14 +600,12 @@ void Options::onSaveRoadClicked()
         return;
     }
 
-    // Build a set of existing cities
     QSet<QString> cities;
     for (const auto& edge : edges) {
         cities.insert(std::get<0>(edge));
         cities.insert(std::get<1>(edge));
     }
 
-    // Check if both cities exist
     if (!cities.contains(startCity)) {
         QMessageBox::warning(this, "Error", "Start city '" + startCity + "' does not exist");
         return;
@@ -634,7 +616,6 @@ void Options::onSaveRoadClicked()
         return;
     }
 
-    // Now add the edge to the file
     QFile file(filePath);
     if (!file.open(QIODevice::Append | QIODevice::Text)) {
         QMessageBox::critical(this, "Error", "Failed to open map file for writing");
@@ -647,7 +628,6 @@ void Options::onSaveRoadClicked()
 
     QMessageBox::information(this, "Success", "Road added successfully");
 
-    // Reset UI
     roadStartCityLineEdit->clear();
     roadEndCityLineEdit->clear();
     roadDistanceLineEdit->clear();
@@ -732,7 +712,6 @@ void Options::onConfirmDeleteClicked()
     updateFileAfterDeletion(startCity, endCity);
     QMessageBox::information(this, "Success", "Road deleted successfully");
 
-    // Reset UI
     deleteStartCityLineEdit->clear();
     deleteEndCityLineEdit->clear();
     deleteStartCityLineEdit->setVisible(false);
@@ -806,7 +785,6 @@ void Options::onDFSClicked()
         return;
     }
 
-    // الحصول على العقدة التي يبدأ منها المستخدم
     bool ok;
     QString startNode = QInputDialog::getText(this, "DFS Start Node", "Enter the starting node:", QLineEdit::Normal, "", &ok);
     if (!ok || startNode.isEmpty()) {
@@ -817,11 +795,9 @@ void Options::onDFSClicked()
     Graph graph;
     graph.addGraphFromUI(edges);
 
-    QTextEdit* output = new QTextEdit(this);  // Output area for DFS
+    QTextEdit* output = new QTextEdit(this); 
     output->setReadOnly(true);
-    graph.DFS(startNode, output);  // تنفيذ DFS من العقدة المدخلة
-
-    // عرض نتيجة DFS في مربع النص
+    graph.DFS(startNode, output); 
     QMessageBox::information(this, "DFS Traversal", output->toPlainText());
 }
 
@@ -840,7 +816,6 @@ void Options::onBFSClicked()
         return;
     }
 
-    // الحصول على العقدة التي يبدأ منها المستخدم
     bool ok;
     QString startNode = QInputDialog::getText(this, "BFS Start Node", "Enter the starting node:", QLineEdit::Normal, "", &ok);
     if (!ok || startNode.isEmpty()) {
@@ -851,11 +826,10 @@ void Options::onBFSClicked()
     Graph graph;
     graph.addGraphFromUI(edges);
 
-    QTextEdit* output = new QTextEdit(this);  // Output area for BFS
+    QTextEdit* output = new QTextEdit(this);  
     output->setReadOnly(true);
-    graph.BFS(startNode, output);  // تنفيذ BFS من العقدة المدخلة
+    graph.BFS(startNode, output); 
 
-    // عرض نتيجة BFS في مربع النص
     QMessageBox::information(this, "BFS Traversal", output->toPlainText());
 }
 
