@@ -1,4 +1,4 @@
-#include "graph.h"
+#include "Graph.h"
 #include <stdexcept>
 #include <limits>
 #include <queue>
@@ -248,7 +248,11 @@ std::string Graph::getUserGraphPath() const {
         }
     }
 
+    // SABER_PATH
     return "C:/Users/A/OneDrive/Documents/wasslni/maps/" + sanitizedEmail + "_graph.txt";
+
+    // YASSIN_PATH
+    // return "/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/maps/" + sanitizedEmail + "_graph.txt";
 }
 
 void Graph::BFS(const QString& startNode, QTextEdit* output) {
