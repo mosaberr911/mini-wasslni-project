@@ -435,33 +435,31 @@ void Options::onConfirmDeleteCityClicked()
         return;
     }
 
-    Graph graph;
+    // Load existing edges from file to check if city exists
     QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
-    graph.addGraphFromUI(edges);
 
-    if (!graph.containsCity(cityName.toStdString())) {
+    // Build a set of existing cities
+    QSet<QString> cities;
+    for (const auto& edge : edges) {
+        cities.insert(std::get<0>(edge));
+        cities.insert(std::get<1>(edge));
+    }
+
+    // Check if city exists
+    if (!cities.contains(cityName)) {
         QMessageBox::warning(this, "Error", "City does not exist");
         return;
     }
 
-    try {
-        if (!graph.deleteCity(cityName.toStdString())) {
-            QMessageBox::warning(this, "Error", "Failed to delete city");
-            return;
-        }
+    // Remove all edges connected to this city
+    updateFileAfterCityDeletion(cityName);
+    QMessageBox::information(this, "Success", "City deleted successfully");
 
-        updateFileAfterCityDeletion(cityName);
-        QMessageBox::information(this, "Success", "City deleted successfully");
-
-        // Reset UI
-        deleteCityLineEdit->clear();
-        deleteCityLineEdit->setVisible(false);
-        confirmDeleteCityButton->setVisible(false);
-        deleteCityButton->setText("Delete City");
-
-    } catch (const std::exception& e) {
-        QMessageBox::critical(this, "Error", QString("An error occurred: %1").arg(e.what()));
-    }
+    // Reset UI
+    deleteCityLineEdit->clear();
+    deleteCityLineEdit->setVisible(false);
+    confirmDeleteCityButton->setVisible(false);
+    deleteCityButton->setText("Delete City");
 }
 
 void Options::updateFileAfterCityDeletion(const QString& cityName)
@@ -478,19 +476,26 @@ void Options::updateFileAfterCityDeletion(const QString& cityName)
     QStringList lines;
     while (!in.atEnd()) {
         QString line = in.readLine();
+
+        // Keep comments and empty lines
+        if (line.trimmed().isEmpty() || line.trimmed().startsWith("//")) {
+            lines.append(line);
+            continue;
+        }
+
         QStringList parts = line.split(',');
         if (parts.size() >= 2) {
-            QString a = parts[0].trimmed();
-            QString b = parts[1].trimmed();
+            QString city1 = parts[0].trimmed();
+            QString city2 = parts[1].trimmed();
 
-            if (a == cityName) {
-                lines.append(" ," + b + (parts.size() > 2 ? "," + parts[2] : ""));
-            } else if (b == cityName) {
-                lines.append(a + ", " + (parts.size() > 2 ? "," + parts[2] : ""));
-            } else {
-                lines.append(line);
+            // Skip any line where either city is the one being deleted
+            if (city1 == cityName || city2 == cityName) {
+                continue;
             }
+
+            lines.append(line);
         } else {
+            // Keep lines with unexpected format
             lines.append(line);
         }
     }
@@ -507,7 +512,6 @@ void Options::updateFileAfterCityDeletion(const QString& cityName)
     }
     file.close();
 }
-
 void Options::onAddRoadClicked()
 {
     isAddRoadInputVisible = !isAddRoadInputVisible;
