@@ -1,5 +1,5 @@
-#include "options.h"
-#include "graph.h"
+#include "Options.h"
+#include "Graph.h"
 #include <QPushButton>
 #include <QLineEdit>
 #include <QLabel>
