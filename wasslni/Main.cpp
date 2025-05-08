@@ -1,16 +1,15 @@
 #include "login.h"
 #include <QApplication>
-#include <QIcon>  // تأكد من إضافة هذه المكتبة
+#include <QIcon>  
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    // تعيين أيقونة التطبيق الرئيسية
     a.setWindowIcon(QIcon(":/images/favicon.ico"));
 
     Login w;
-    w.setWindowIcon(QIcon(":/images/favicon.ico"));  // تعيين الأيقونة للنافذة
+    w.setWindowIcon(QIcon(":/images/favicon.ico"));  
     w.show();
 
     return a.exec();
