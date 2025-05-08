@@ -14,8 +14,7 @@ public:
     explicit Register(QWidget *parent = nullptr);
 
 signals:
-    void backToLoginRequested();  // إشارة للعودة للوجين
-
+    void backToLoginRequested();  
 private slots:
     void onRegisterClicked();
     void onBackClicked();
@@ -29,4 +28,4 @@ private:
     QPushButton *backButton;
 };
 
-#endif // REGISTER_H
+#endif 
