@@ -342,21 +342,40 @@ void Options::onSaveCityClicked()
         return;
     }
 
-    Graph graph;
+    // Load existing edges from file to check if city already exists
     QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
-    graph.addGraphFromUI(edges);
 
-    if (graph.containsCity(cityName.toStdString())) {
+    // Build a set of existing cities
+    QSet<QString> cities;
+    for (const auto& edge : edges) {
+        cities.insert(std::get<0>(edge));
+        cities.insert(std::get<1>(edge));
+    }
+
+    // Check if city already exists
+    if (cities.contains(cityName)) {
         QMessageBox::warning(this, "Exists", "City already exists");
         return;
     }
 
-    if (!graph.addCity(cityName.toStdString())) {
-        QMessageBox::critical(this, "Error", "Failed to add city to graph");
+    // Add city to file
+    QFile file(filePath);
+    if (!file.open(QIODevice::Append | QIODevice::Text)) {
+        QMessageBox::critical(this, "Error", "Failed to open map file for writing");
         return;
     }
 
-    saveCityToFile(cityName);
+    QTextStream out(&file);
+    if (cities.isEmpty()) {
+        // If this is the first city, just add it with a placeholder
+        out << cityName << "," << cityName << ",0\n";
+    } else {
+        // Connect new city to an existing city (first one in the set)
+        QString existingCity = *cities.begin();
+        out << cityName << "," << existingCity << ",10\n";
+    }
+    file.close();
+
     QMessageBox::information(this, "Success", "City added successfully");
     addCityLineEdit->clear();
     addCityLineEdit->setVisible(false);
@@ -364,10 +383,20 @@ void Options::onSaveCityClicked()
     addCityButton->setText("Add City");
 }
 
+// Update the saveCityToFile method as well to be consistent
 void Options::saveCityToFile(const QString& cityName)
 {
     QString filePath = getUserGraphPath();
     QFile file(filePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, "Error", "Failed to open map file for reading");
+        return;
+    }
+
+    // Check if the file is empty
+    bool isEmpty = file.size() == 0;
+    file.close();
 
     if (!file.open(QIODevice::Append | QIODevice::Text)) {
         QMessageBox::critical(this, "Error", "Failed to open map file for writing");
@@ -375,9 +404,16 @@ void Options::saveCityToFile(const QString& cityName)
     }
 
     QTextStream out(&file);
-    out << cityName << ", ,10\n";  // Default distance of 10
+    if (isEmpty) {
+        // If file is empty, add a self-loop with zero distance (placeholder)
+        out << cityName << "," << cityName << ",0\n";
+    } else {
+        // Otherwise, add a connection to a placeholder city
+        out << cityName << ", ,10\n";  // Default distance of 10
+    }
     file.close();
 }
+
 
 void Options::onDeleteCityClicked()
 {
