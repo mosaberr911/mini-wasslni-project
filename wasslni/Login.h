@@ -2,7 +2,7 @@
 #define LOGIN_H
 
 #include <QWidget>
-#include "register.h"
+#include "Register.h"
 #include "Map.h"
 #include <QString>
 #include <QMessageBox>
