@@ -15,7 +15,12 @@ Register::Register(QWidget *parent) : QWidget(parent)
     setFixedSize(600, 500);
     setWindowTitle("Create New Account");
 
+    // SABER_PATH
     QPixmap background("C:/Users/A/OneDrive/Documents/wasslni/images/Screenshot 2025-04-28 183435.png");
+
+    // YASSIN_PATH
+    QPixmap background("/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/images/Screenshot 2025-04-28 183435.png");
+    
     if (background.isNull()) {
         qDebug() << "Failed to load background image in Register.";
         background = QPixmap(600, 500);
@@ -114,7 +119,11 @@ void Register::onRegisterClicked()
         return;
     }
 
+    // SABER_PATH
     QString filePath = "C:/Users/A/OneDrive/Documents/wasslni/users.txt";
+
+    // YASSIN_PATH
+    // QString filePath = "/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/users.txt";
 
     QFile file(filePath);
     if (!file.open(QIODevice::Append | QIODevice::Text)) {
