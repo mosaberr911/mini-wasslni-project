@@ -295,25 +295,6 @@ bool Graph::containsCity(string cityName) {
     return adj.find(cityName) != adj.end();
 }
 
-void Graph::write(string filename) {
-	ofstream output(filename, ios::app);
-	if (!output) {
-		cout << "fail not found";
-		return ;
-	}
-	else {
-		for (auto it = adj.begin();it != adj.end();it++) {
-			output << it->first << " ";
-			for (auto t : it->second) {
-				output << "(" << t.first << ":" << t.second << ")";
-
-			}
-			output << endl;
-		}
-	}
-	output.close();
-}
-
 void Graph::dfsPaths(string current, string destination, vector<string>& path,bool &found) {
 
 	vis[current] = 1;
@@ -354,45 +335,48 @@ void Graph::findAllPaths(string city1, string city2) {
 
 }
 
-void Graph::read(string filename) {
-	ifstream input(filename);
+void write() {
+	ofstream output("data.txt", ios::app);
+	if (!output) {
+		cout << "fail not found";
+		return ;
+	}
+	else {
+		for (auto it = adj.begin();it != adj.end();it++) {
+			output << it->first << " ";
+			for (auto t : it->second) {
+				output << " " << t.first << " " << t.second << " ";
+
+			}
+			output << endl;
+		}
+	}
+	output.close();
+}
+void read() {
+	ifstream input("data.txt"); 
 	if (!input) {
-		cout << "File not found\n";
+		cout << "File not found\n"; 
 		return;
 	}
 
-	adj.clear();
+	adj.clear(); 
 
 	string line;
-	while (getline(input, line)) {
-		if (line.empty()) continue;
+	while (getline(input, line)) {  
+		istringstream iss(line);    
 
-		istringstream iss(line);
 		string city;
-		iss >> city;
+		iss >> city;  
 
-		size_t pos = line.find(' ');
-		if (pos == string::npos) continue;
-
-		string connections = line.substr(pos + 1);
-
-		size_t start = 0;
-		while ((start = connections.find('(', start)) != string::npos) {
-			size_t end = connections.find(')', start);
-			if (end == string::npos) break;
-
-			string edge = connections.substr(start + 1, end - start - 1);
-			size_t colon = edge.find(':');
-			if (colon != string::npos) {
-				string neighbor = edge.substr(0, colon);
-				float distance = stof(edge.substr(colon + 1));
-				adj[city].push_back({ neighbor, distance });
-			}
-			start = end + 1;
+		string neighbor;
+		float dist;
+		while (iss >> neighbor >> dist) {  
+			adj[city].push_back({ neighbor, dist });  
 		}
 	}
 
-	input.close();
+	input.close();  
 }
 
 AdjacencyList Graph::getAdjacencyList() {
