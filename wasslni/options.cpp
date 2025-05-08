@@ -526,26 +526,56 @@ void Options::onSaveRoadClicked()
         return;
     }
 
-    Graph graph;
+    // Load existing graph first to check if cities exist and if road already exists
     QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
-    graph.addGraphFromUI(edges);
 
-    if (!graph.containsCity(startCity.toStdString())) {
-        QMessageBox::warning(this, "Error", "Start city does not exist");
+    // Check if the road already exists
+    bool roadExists = false;
+    for (const auto& edge : edges) {
+        QString city1 = std::get<0>(edge);
+        QString city2 = std::get<1>(edge);
+
+        if ((city1 == startCity && city2 == endCity) ||
+            (city1 == endCity && city2 == startCity)) {
+            roadExists = true;
+            break;
+        }
+    }
+
+    if (roadExists) {
+        QMessageBox::warning(this, "Error", "Road already exists between these cities");
         return;
     }
 
-    if (!graph.containsCity(endCity.toStdString())) {
-        QMessageBox::warning(this, "Error", "End city does not exist");
+    // Build a set of existing cities
+    QSet<QString> cities;
+    for (const auto& edge : edges) {
+        cities.insert(std::get<0>(edge));
+        cities.insert(std::get<1>(edge));
+    }
+
+    // Check if both cities exist
+    if (!cities.contains(startCity)) {
+        QMessageBox::warning(this, "Error", "Start city '" + startCity + "' does not exist");
         return;
     }
 
-    if (!graph.addEdge(startCity.toStdString(), endCity.toStdString(), distance)) {
-        QMessageBox::warning(this, "Error", "Failed to add road (may already exist)");
+    if (!cities.contains(endCity)) {
+        QMessageBox::warning(this, "Error", "End city '" + endCity + "' does not exist");
         return;
     }
 
-    saveRoadToFile(startCity, endCity, distance);
+    // Now add the edge to the file
+    QFile file(filePath);
+    if (!file.open(QIODevice::Append | QIODevice::Text)) {
+        QMessageBox::critical(this, "Error", "Failed to open map file for writing");
+        return;
+    }
+
+    QTextStream out(&file);
+    out << startCity << "," << endCity << "," << distance << "\n";
+    file.close();
+
     QMessageBox::information(this, "Success", "Road added successfully");
 
     // Reset UI
@@ -558,7 +588,6 @@ void Options::onSaveRoadClicked()
     saveRoadButton->setVisible(false);
     addRoadButton->setText("Add Road");
 }
-
 void Options::saveRoadToFile(const QString& city1, const QString& city2, int distance)
 {
     QString filePath = getUserGraphPath();
