@@ -1,6 +1,8 @@
-#include "Options.h"
-#include "Graph.h"
+#include "options.h"
+#include "graph.h"
 #include <QPushButton>
+#include <QLineEdit>
+#include <QInputDialog>
 #include <QLineEdit>
 #include <QLabel>
 #include <QMessageBox>
@@ -123,7 +125,6 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     addRoadButton->setFont(font);
     mainLayout->addWidget(addRoadButton, 0, Qt::AlignHCenter);
 
-    // حقول إدخال الطريق
     roadStartCityLineEdit = new QLineEdit();
     roadStartCityLineEdit->setPlaceholderText("Start City");
     roadStartCityLineEdit->setVisible(false);
@@ -179,6 +180,39 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     confirmDeleteButton->setVisible(false);
     mainLayout->addWidget(confirmDeleteButton, 0, Qt::AlignHCenter);
 
+    traverseMapButton = new QPushButton("Traverse Map");
+    traverseMapButton->setStyleSheet("background-color: green; color: white;");
+    traverseMapButton->setFixedSize(elementWidth, elementHeight);
+    traverseMapButton->setFont(font);
+    mainLayout->addWidget(traverseMapButton, 0, Qt::AlignHCenter);
+
+    // Create a horizontal layout for DFS and BFS buttons
+    QHBoxLayout *traverseButtonsLayout = new QHBoxLayout();
+    traverseButtonsLayout->setSpacing(10);
+
+    dfsButton = new QPushButton("Using DFS");
+    dfsButton->setStyleSheet("background-color: #4CAF50; color: white;");
+    dfsButton->setFixedSize(elementWidth/2 - 5, elementHeight);
+    dfsButton->setFont(font);
+    dfsButton->setVisible(false);
+    traverseButtonsLayout->addWidget(dfsButton);
+
+    bfsButton = new QPushButton("Using BFS");
+    bfsButton->setStyleSheet("background-color: #4CAF50; color: white;");
+    bfsButton->setFixedSize(elementWidth/2 - 5, elementHeight);
+    bfsButton->setFont(font);
+    bfsButton->setVisible(false);
+    traverseButtonsLayout->addWidget(bfsButton);
+
+    mainLayout->addLayout(traverseButtonsLayout);
+
+    isTraverseInputVisible = false;
+    isPathInputVisible = false;
+    isAddCityInputVisible = false;
+    isDeleteCityInputVisible = false;
+    isAddRoadInputVisible = false;
+    isDeleteRoadInputVisible = false;
+
     connect(showShortestPathButton, &QPushButton::clicked, this, &Options::onShowShortestPathClicked);
     connect(showPathButton, &QPushButton::clicked, this, &Options::onShowPathClicked);
     connect(displayMapButton, &QPushButton::clicked, this, &Options::onDisplayMapClicked);
@@ -190,6 +224,9 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     connect(saveRoadButton, &QPushButton::clicked, this, &Options::onSaveRoadClicked);
     connect(deleteRoadButton, &QPushButton::clicked, this, &Options::onDeleteRoadClicked);
     connect(confirmDeleteButton, &QPushButton::clicked, this, &Options::onConfirmDeleteClicked);
+    connect(traverseMapButton, &QPushButton::clicked, this, &Options::onTraverseMapClicked);
+    connect(dfsButton, &QPushButton::clicked, this, &Options::onDFSClicked);
+    connect(bfsButton, &QPushButton::clicked, this, &Options::onBFSClicked);
 }
 
 void Options::setUserEmail(const QString &email)
@@ -383,7 +420,6 @@ void Options::onSaveCityClicked()
     addCityButton->setText("Add City");
 }
 
-// Update the saveCityToFile method as well to be consistent
 void Options::saveCityToFile(const QString& cityName)
 {
     QString filePath = getUserGraphPath();
@@ -406,7 +442,6 @@ void Options::saveCityToFile(const QString& cityName)
     out << cityName << ", ,0\n";
     file.close();
 }
-
 
 void Options::onDeleteCityClicked()
 {
@@ -512,6 +547,7 @@ void Options::updateFileAfterCityDeletion(const QString& cityName)
     }
     file.close();
 }
+
 void Options::onAddRoadClicked()
 {
     isAddRoadInputVisible = !isAddRoadInputVisible;
@@ -621,6 +657,7 @@ void Options::onSaveRoadClicked()
     saveRoadButton->setVisible(false);
     addRoadButton->setText("Add Road");
 }
+
 void Options::saveRoadToFile(const QString& city1, const QString& city2, int distance)
 {
     QString filePath = getUserGraphPath();
@@ -740,6 +777,88 @@ void Options::updateFileAfterDeletion(const QString& city1, const QString& city2
     }
     file.close();
 }
+
+void Options::onTraverseMapClicked()
+{
+    isTraverseInputVisible = !isTraverseInputVisible;
+
+    dfsButton->setVisible(isTraverseInputVisible);
+    bfsButton->setVisible(isTraverseInputVisible);
+
+    if (isTraverseInputVisible) {
+        traverseMapButton->setText("Hide Traverse Options");
+    } else {
+        traverseMapButton->setText("Traverse Map");
+    }
+}
+
+void Options::onDFSClicked()
+{
+    QString filePath = getUserGraphPath();
+    if (filePath.isEmpty()) {
+        QMessageBox::critical(this, "Error", "Cannot determine map file path");
+        return;
+    }
+
+    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
+    if (edges.isEmpty()) {
+        QMessageBox::warning(this, "Empty Map", "Map file contains no valid data");
+        return;
+    }
+
+    // الحصول على العقدة التي يبدأ منها المستخدم
+    bool ok;
+    QString startNode = QInputDialog::getText(this, "DFS Start Node", "Enter the starting node:", QLineEdit::Normal, "", &ok);
+    if (!ok || startNode.isEmpty()) {
+        QMessageBox::critical(this, "Error", "Invalid start node");
+        return;
+    }
+
+    Graph graph;
+    graph.addGraphFromUI(edges);
+
+    QTextEdit* output = new QTextEdit(this);  // Output area for DFS
+    output->setReadOnly(true);
+    graph.DFS(startNode, output);  // تنفيذ DFS من العقدة المدخلة
+
+    // عرض نتيجة DFS في مربع النص
+    QMessageBox::information(this, "DFS Traversal", output->toPlainText());
+}
+
+
+void Options::onBFSClicked()
+{
+    QString filePath = getUserGraphPath();
+    if (filePath.isEmpty()) {
+        QMessageBox::critical(this, "Error", "Cannot determine map file path");
+        return;
+    }
+
+    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
+    if (edges.isEmpty()) {
+        QMessageBox::warning(this, "Empty Map", "Map file contains no valid data");
+        return;
+    }
+
+    // الحصول على العقدة التي يبدأ منها المستخدم
+    bool ok;
+    QString startNode = QInputDialog::getText(this, "BFS Start Node", "Enter the starting node:", QLineEdit::Normal, "", &ok);
+    if (!ok || startNode.isEmpty()) {
+        QMessageBox::critical(this, "Error", "Invalid start node");
+        return;
+    }
+
+    Graph graph;
+    graph.addGraphFromUI(edges);
+
+    QTextEdit* output = new QTextEdit(this);  // Output area for BFS
+    output->setReadOnly(true);
+    graph.BFS(startNode, output);  // تنفيذ BFS من العقدة المدخلة
+
+    // عرض نتيجة BFS في مربع النص
+    QMessageBox::information(this, "BFS Traversal", output->toPlainText());
+}
+
 
 QVector<std::tuple<QString, QString, int>> Options::loadEdgesFromFile(const QString& filePath)
 {
