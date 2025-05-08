@@ -17,7 +17,6 @@ Map::Map(QWidget *parent) : QWidget(parent), userEmail(""), isSaved(false)
     setFixedSize(600, 500);
     setWindowTitle("Map");
 
-    // إعداد الخلفية
     QPixmap background("C:/Users/A/OneDrive/Documents/wasslni/images/Screenshot 2025-04-28 183435.png");
     if (background.isNull()) {
         qDebug() << "Failed to load background image.";
@@ -29,40 +28,33 @@ Map::Map(QWidget *parent) : QWidget(parent), userEmail(""), isSaved(false)
     palette.setBrush(QPalette::Window, QBrush(background));
     setPalette(palette);
 
-    // Label العنوان
     title = new QLabel("Add number of roads", this);
     title->setStyleSheet("font-size: 22px; font-weight: bold; color: black;");
     title->setAlignment(Qt::AlignCenter);
     title->hide();
 
-    // حقل إدخال عدد الطرق
     edgeCountField = new QLineEdit(this);
     edgeCountField->setPlaceholderText("Enter number of roads");
     edgeCountField->setStyleSheet("padding: 8px; font-size: 14px; background-color: white; color: black;");
     edgeCountField->hide();
 
-    // زر Submit
     submitButton = new QPushButton("Submit", this);
     submitButton->setStyleSheet("padding: 8px; background-color: gray; color: white; font-weight: bold;");
     connect(submitButton, &QPushButton::clicked, this, &Map::onSubmitEdgeCount);
     submitButton->hide();
 
-    // زر Add Map
     addMapButton = new QPushButton("Add Map", this);
     addMapButton->setStyleSheet("padding: 8px; background-color: #2196F3; color: white; font-weight: bold;");
     connect(addMapButton, &QPushButton::clicked, this, &Map::onAddMapClicked);
 
-    // زر Continue
     continueButton = new QPushButton("Continue", this);
     continueButton->setStyleSheet("padding: 8px; background-color: #4CAF50; color: white; font-weight: bold;");
     connect(continueButton, &QPushButton::clicked, this, &Map::onContinueClicked);
 
-    // النص فوق زر Continue
     nextPageLabel = new QLabel("Go to the next page", this);
     nextPageLabel->setStyleSheet("font-size: 18px; font-weight: bold; color: #333;");
     nextPageLabel->setAlignment(Qt::AlignCenter);
 
-    // Scroll Area
     scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true);
     scrollArea->setStyleSheet("background-color: white;");
@@ -77,13 +69,11 @@ Map::Map(QWidget *parent) : QWidget(parent), userEmail(""), isSaved(false)
     scrollArea->setWidget(scrollContent);
     scrollArea->hide();
 
-    // زر الحفظ
     saveButton = new QPushButton("Save", this);
     saveButton->setStyleSheet("padding: 8px; background-color: #4CAF50; color: white; font-weight: bold;");
     connect(saveButton, &QPushButton::clicked, this, &Map::onSaveClicked);
     saveButton->hide();
 
-    // التخطيط الداخلي للمحتوى
     QVBoxLayout *contentLayout = new QVBoxLayout();
     contentLayout->addWidget(title);
     contentLayout->addSpacing(10);
@@ -92,13 +82,11 @@ Map::Map(QWidget *parent) : QWidget(parent), userEmail(""), isSaved(false)
     contentLayout->addWidget(scrollArea);
     contentLayout->addWidget(saveButton);
 
-    // التخطيط الرئيسي
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(addMapButton);
     mainLayout->addLayout(contentLayout);
     mainLayout->addStretch();
 
-    // مجموعة التخطيط للنص والزر السفلي
     QVBoxLayout *bottomLayout = new QVBoxLayout();
     bottomLayout->addSpacing(20);
     bottomLayout->addWidget(nextPageLabel);
@@ -141,9 +129,9 @@ void Map::onAddMapClicked()
     edgeCountField->show();
     submitButton->show();
     addMapButton->hide();
-    isSaved = false; // إعادة تعيين حالة الحفظ عند إضافة خريطة جديدة
-    saveButton->setEnabled(true); // تمكين زر الحفظ
-    saveButton->setStyleSheet("padding: 8px; background-color: #4CAF50; color: white; font-weight: bold;"); // إعادة اللون الأصلي
+    isSaved = false;
+    saveButton->setEnabled(true); 
+    saveButton->setStyleSheet("padding: 8px; background-color: #4CAF50; color: white; font-weight: bold;"); 
 }
 
 void Map::onSubmitEdgeCount()
@@ -156,7 +144,6 @@ void Map::onSubmitEdgeCount()
         return;
     }
 
-    // حذف المدخلات القديمة
     QLayoutItem *child;
     while ((child = inputsLayout->takeAt(0)) != nullptr) {
         delete child->widget();
@@ -164,7 +151,6 @@ void Map::onSubmitEdgeCount()
     }
     edgeInputs.clear();
 
-    // إنشاء المدخلات
     for (int i = 0; i < count; ++i) {
         QHBoxLayout *row = new QHBoxLayout();
         QLineEdit *cityA = new QLineEdit();
@@ -175,7 +161,6 @@ void Map::onSubmitEdgeCount()
         cityB->setPlaceholderText("City B");
         distance->setPlaceholderText("Distance");
 
-        // تطبيق الأنماط على حقول الإدخال
         QString inputStyle = "background-color: white; color: black; padding: 5px;";
         cityA->setStyleSheet(inputStyle);
         cityB->setStyleSheet(inputStyle);
