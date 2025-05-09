@@ -415,11 +415,11 @@ void Options::onSaveCityClicked()
     QTextStream out(&file);
     if (cities.isEmpty()) {
         // If this is the first city, just add it with a placeholder
-        out << cityName << "," << cityName << ",0\n";
+        out << cityName << "," << "defult" << ",0\n";
     } else {
         // Connect new city to an existing city (first one in the set)
         QString existingCity = *cities.begin();
-        out << cityName << "," << "" << ",0\n";
+        out << cityName << "," << "defult" << ",0\n";
     }
     file.close();
 
