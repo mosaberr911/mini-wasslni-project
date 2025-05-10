@@ -1,6 +1,9 @@
 #include "Map.h"
 #include "Options.h"
-
+#include "FileManager.h"
+#include "PathManager.h"
+#include "UserManager.h"
+#include "User.h"
 #include <QLabel>
 #include <QPushButton>
 #include <QMessageBox>
@@ -11,18 +14,15 @@
 #include <QFile>
 #include <QDir>
 #include <QTextStream>
+#include <iostream>
 
 Map::Map(QWidget *parent) : QWidget(parent), userEmail(""), isSaved(false)
 {
     setFixedSize(600, 500);
     setWindowTitle("Map");
-    
-    // SABER_PATH
-    QPixmap background("C:/Users/A/OneDrive/Documents/wasslni/images/Screenshot 2025-04-28 183435.png");
 
-    // YASSIN_PATH
-    // QPixmap background("/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/images/Screenshot 2025-04-28 183435.png");
-    
+    QPixmap background(QString::fromStdString(PathManager::getBackgroundImagePath()));
+
     if (background.isNull()) {
         qDebug() << "Failed to load background image.";
         background = QPixmap(600, 500);
@@ -103,34 +103,9 @@ Map::Map(QWidget *parent) : QWidget(parent), userEmail(""), isSaved(false)
     setLayout(mainLayout);
 }
 
-void Map::setUserEmail(const QString &email)
+void Map::setUserEmail(const string& userEmail)
 {
-    userEmail = email;
-    graph.setUserEmail(email.toStdString());
-}
-
-QString Map::getUserGraphPath() const {
-    QString sanitizedEmail = userEmail;
-    sanitizedEmail.replace("@", "_at_");
-    sanitizedEmail.replace(".", "_dot_");
-    sanitizedEmail.replace(QRegularExpression("[^a-zA-Z0-9_]"), "_");
-
-    // SABER_PATH
-    QString dirPath = "C:/Users/A/OneDrive/Documents/wasslni/maps";
-
-    // YASSIN_PATH
-    // QString dirPath = "/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/maps";
-    
-    QDir dir(dirPath);
-
-    if (!dir.exists()) {
-        if (!dir.mkpath(".")) {
-            qDebug() << "Failed to create maps directory";
-            return "";
-        }
-    }
-
-    return dirPath + "/" + sanitizedEmail + "_map.txt";
+    this->userEmail = userEmail;
 }
 
 void Map::onAddMapClicked()
@@ -189,51 +164,38 @@ void Map::onSubmitEdgeCount()
     submitButton->hide();
 }
 
-void Map::onSaveClicked()
-{
-    if (isSaved) {
-        QMessageBox::information(this, "Info", "You have already saved the roads.");
-        return;
-    }
-
-    QVector<std::tuple<QString, QString, int>> edges;
-
-    for (const auto& input : edgeInputs) {
-        QString a = input.cityA->text().trimmed();
-        QString b = input.cityB->text().trimmed();
-        int d = input.distance->text().toInt();
-
-        if (a.isEmpty() || b.isEmpty() || d <= 0) {
-            QMessageBox::warning(this, "Error", "Please fill all fields correctly.");
+void Map::onSaveClicked() {
+    try {
+        if (isSaved) {
+            QMessageBox::information(this, "Info", "You have already saved the roads.");
             return;
         }
-
-        edges.append({a, b, d});
-    }
-
-    saveGraphData(edges);
-    isSaved = true;
-    saveButton->setEnabled(false);
-    saveButton->setStyleSheet("padding: 8px; background-color: #cccccc; color: #666666; font-weight: bold;");
-
-    QMessageBox::information(this, "Success", "Roads saved successfully!");
-}
-
-void Map::saveGraphData(const QVector<std::tuple<QString, QString, int>> &edges) {
-    QString filePath = getUserGraphPath();
-    if (filePath.isEmpty()) return;
-
-    QFile file(filePath);
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&file);
-        for (const auto &edge : edges) {
-            out << std::get<0>(edge) << ","
-                << std::get<1>(edge) << ","
-                << std::get<2>(edge) << "\n";
+        QVector<std::tuple<QString, QString, int>> edges;
+        for (auto& input : edgeInputs) {
+            QString start = input.cityA->text().trimmed();
+            QString end = input.cityB->text().trimmed();
+            int dis = input.distance->text().toInt();
+            if (start.isEmpty() || end.isEmpty() || dis <= 0) {
+                QMessageBox::warning(this, "Error", "Please fill all fields correctly.");
+                return;
+            }
+            edges.push_back({start, end, dis});
         }
-        file.close();
-    } else {
-        qDebug() << "Failed to save graph data to" << filePath;
+        User user = UserManager::getUserByEmail(userEmail);
+        user.addGraph(edges);
+
+        // update the user in UserManager class
+        UserManager::updateUser(user);
+
+        // immediately save users graph: prevent data loss
+        UserManager::saveUserGraph(user.getEmail(), PathManager::getGraphsFilePath());
+
+        isSaved = true;
+        saveButton->setEnabled(false);
+        saveButton->setStyleSheet("padding: 8px; background-color: #cccccc; color: #666666; font-weight: bold;");
+        QMessageBox::information(this, "Success", "Roads saved successfully!");
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString("Failed to add new map: %1").arg(e.what()));
     }
 }
 
