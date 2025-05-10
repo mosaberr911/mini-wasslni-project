@@ -1,6 +1,7 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
+#include "User.h"
 #include <QWidget>
 #include <QVector>
 #include <tuple>
@@ -16,7 +17,7 @@ class Options : public QWidget
 
 public:
     explicit Options(QWidget *parent = nullptr);
-    void setUserEmail(const QString &email);
+    void setUserEmail(const string &email);
     QString getUserEmail() const;
 
 private slots:
@@ -41,13 +42,9 @@ private:
     QPushButton* dfsButton;
     QPushButton* bfsButton;
     bool isTraverseInputVisible;
-    void saveCityToFile(const QString& cityName);
-    void saveRoadToFile(const QString& city1, const QString& city2, int distance);
-    void updateFileAfterDeletion(const QString& city1, const QString& city2);
-    void updateFileAfterCityDeletion(const QString& cityName);
     QVector<std::tuple<QString, QString, int>> loadEdgesFromFile(const QString& filePath);
 
-    QString userEmail;
+    string userEmail;
     bool isAddCityInputVisible = false;
     bool isDeleteCityInputVisible = false;
     bool isAddRoadInputVisible = false;
