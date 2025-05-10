@@ -9,121 +9,95 @@
 #include <sstream>
 #include <QTextEdit>
 #include <iostream>
+#include <regex>
 
-Graph::Graph(const std::string& userEmail) : userEmail(userEmail) {}
+using namespace std;
 
-void Graph::setUserEmail(const std::string& email) {
-    userEmail = email;
-}
+Graph::Graph() : adj({}) {}
 
-bool Graph::addCity(std::string cityName) {
-    if (containsCity(cityName)) {
-        std::cerr << "City '" << cityName << "' already exists in the graph." << std::endl;
-        return false;
-    }
+void Graph::addCity(const std::string& cityName) {
+    if (containsCity(cityName))
+        throw std::invalid_argument("City already exists: " + cityName);
     adj[cityName];
-    return true;
 }
 
-bool Graph::addEdge(std::string city1, std::string city2, float distance) {
-    if (!containsCity(city1)) return false;
-    if (!containsCity(city2)) return false;
-    if (city1 == city2) return false;
-    if (distance <= 0) return false;
+void Graph::addEdge(const std::string& start, const std::string& end, float distance) {
+    if (!containsCity(start) || !containsCity(end))
+        throw std::invalid_argument("One or two of the cities does not exist");
 
-    for (const auto& neighbor : adj[city1]) {
-        if (neighbor.first == city2) {
-            return false;
-        }
-    }
+    if (start == end)
+        throw std::invalid_argument("Cannot add an edge between a city and itself");
 
-    adj[city1].push_back({city2, distance});
-    adj[city2].push_back({city1, distance});
-    return true;
+    if (distance <= 0)
+        throw std::invalid_argument("Invalid distance value");
+
+    if (containsEdge(start, end))
+        throw std::invalid_argument("Road already exists between those cities");
+
+    adj[start].push_back({end, distance});
+    adj[end].push_back({start, distance});
 }
 
-bool Graph::containsCity(std::string cityName) {
-    if (adj.find(cityName) != adj.end()) {
-        return true;
-    }
-
-    std::string filePath = getUserGraphPath();
-    std::ifstream file(filePath);
-    if (!file.is_open()) {
-        throw std::runtime_error("Failed to open user graph file: " + filePath);
-    }
-
-    std::unordered_set<std::string> cities;
-    std::string line;
-
-    while (std::getline(file, line)) {
-        std::stringstream ss(line);
-        std::string city1, city2;
-        float distance;
-
-        std::getline(ss, city1, ',');
-        std::getline(ss, city2, ',');
-        ss >> distance;
-
-        cities.insert(city1);
-        cities.insert(city2);
-    }
-
-    file.close();
-
-    for (const auto& city : cities) {
-        adj[city];
-    }
-
-    return cities.find(cityName) != cities.end();
+bool Graph::containsCity(const std::string& cityName) {
+    return adj.find(cityName) != adj.end();
 }
 
-bool Graph::deleteEdge(std::string city1, std::string city2) {
-    if (!containsCity(city1) || !containsCity(city2) || city1 == city2) return false;
+void Graph::deleteEdge(const std::string& start, const std::string& end) {
+    if (!containsCity(start) || !containsCity(end))
+        throw std::invalid_argument("One or two of the cities does not exist");
 
-    bool edgeRemoved = false;
+    if (!containsEdge(start, end))
+        throw std::invalid_argument("Road does not exist between those cities");
 
-    auto& neighbors1 = adj[city1];
+    auto& neighbors1 = adj[start];
     for (auto it = neighbors1.begin(); it != neighbors1.end(); ++it) {
-        if (it->first == city2) {
+        if (it->first == end) {
             neighbors1.erase(it);
-            edgeRemoved = true;
             break;
         }
     }
 
-    if (edgeRemoved) {
-        auto& neighbors2 = adj[city2];
-        for (auto it = neighbors2.begin(); it != neighbors2.end(); ++it) {
-            if (it->first == city1) {
-                neighbors2.erase(it);
-                break;
-            }
+    auto& neighbors2 = adj[end];
+    for (auto it = neighbors2.begin(); it != neighbors2.end(); ++it) {
+        if (it->first == start) {
+            neighbors2.erase(it);
+            break;
         }
     }
-
-    return edgeRemoved;
 }
 
-bool Graph::deleteCity(std::string cityName) {
-    if (!containsCity(cityName))
-        throw std::runtime_error("City does not exist in the graph.");
+bool Graph::containsEdge(const std::string& start, const std::string& end) {
+    bool edgeExists = false;
+    for (const auto& neighbor : adj[start]) {
+        if (neighbor.first == end) {
+            edgeExists = true;
+            break;
+        }
+    }
+    return edgeExists;
+}
 
+void Graph::deleteCity(const std::string& cityName) {
+    if (!containsCity(cityName))
+        throw std::invalid_argument("City does not exist in graph");
+
+    // loop through adjacency list to find neighbors
     for (auto& cityPair : adj) {
         std::string neighbour = cityPair.first;
+
         if (neighbour != cityName) {
             auto &neighborCities = cityPair.second;
+
+            // loop through neighbors vector of the neighbour city
             for (auto it = neighborCities.begin(); it != neighborCities.end();) {
                 if (it->first == cityName)
                     it = neighborCities.erase(it);
                 else
-                    ++it;
+                    it++;
             }
         }
     }
-
     adj.erase(cityName);
-    return true;
 }
 
 void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges) {
@@ -131,6 +105,11 @@ void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edg
         QString cityA = std::get<0>(edge).trimmed();
         QString cityB = std::get<1>(edge).trimmed();
         int distance = std::get<2>(edge);
+
+        if (cityA.isEmpty() || cityB.isEmpty()) {
+            qDebug() << "Invalid input: empty QString detected";
+            return; // or handle appropriately
+        }
 
         std::string s1 = cityA.toStdString();
         std::string s2 = cityB.toStdString();
@@ -217,42 +196,16 @@ std::string Graph::displayMap() {
     std::stringstream ss;
     for (auto it = adj.begin(); it != adj.end(); ++it) {
         ss << "City: " << it->first << ":\n";
+
+        if (it->second.empty())
+            continue;
+
         for (auto t : it->second) {
             ss << "  - Road to " << t.first << " (Distance: " << t.second << ")\n";
         }
         ss << std::endl;
     }
     return ss.str();
-}
-
-std::string Graph::getUserGraphPath() const {
-    if (userEmail.empty()) {
-        throw std::runtime_error("User email not set");
-    }
-
-    std::string sanitizedEmail = userEmail;
-    size_t pos = 0;
-    while ((pos = sanitizedEmail.find("@", pos)) != std::string::npos) {
-        sanitizedEmail.replace(pos, 1, "_at_");
-        pos += 4;
-    }
-    pos = 0;
-    while ((pos = sanitizedEmail.find(".", pos)) != std::string::npos) {
-        sanitizedEmail.replace(pos, 1, "_dot_");
-        pos += 5;
-    }
-
-    for (char& c : sanitizedEmail) {
-        if (!isalnum(c) && c != '_') {
-            c = '_';
-        }
-    }
-
-    // SABER_PATH
-    return "C:/Users/A/OneDrive/Documents/wasslni/maps/" + sanitizedEmail + "_graph.txt";
-
-    // YASSIN_PATH
-    // return "/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/maps/" + sanitizedEmail + "_graph.txt";
 }
 
 void Graph::BFS(const QString& startNode, QTextEdit* output) {
@@ -279,18 +232,101 @@ void Graph::BFS(const QString& startNode, QTextEdit* output) {
     output->append(result);
 }
 
-void Graph::DFS(const QString& startNode, QTextEdit* output) {
-    vis[startNode.toStdString()] = true;
-    QString result = "DFS Traversal:\n";
-    result += startNode + "\n";
+// void Graph::DFS(const QString& startNode, QTextEdit* output) {
+//     vis[startNode.toStdString()] = true;
+//     QString result = "DFS Traversal:\n";
+//     result += startNode + "\n";
 
+//     for (auto [child, weight] : adj[startNode.toStdString()]) {
+//         QString qChild = QString::fromStdString(child);
+//         result += " -> " + qChild + " (Weight: " + QString::number(weight) + ")\n";
+//         if (!vis[qChild.toStdString()]) {
+//             result += "Exploring " + qChild + "\n";
+//             DFS(qChild, output);
+//         }
+//     }
+//     output->append(result);
+// }
+
+void Graph::DFS(const QString& startNode, QTextEdit* output) {
+    static QString result = "DFS Traversal:\n"; // Static to accumulate across calls
+    vis[startNode.toStdString()] = true;
+    result += startNode + "\n";
     for (auto [child, weight] : adj[startNode.toStdString()]) {
         QString qChild = QString::fromStdString(child);
-        result += " -> " + qChild + " (Weight: " + QString::number(weight) + ")\n";
         if (!vis[qChild.toStdString()]) {
-            result += "Exploring " + qChild + "\n";
+            result += " -> " + qChild + " (Weight: " + QString::number(weight) + ")\n";
             DFS(qChild, output);
         }
     }
-    output->append(result);
+    if (startNode == startNode) { // Only append at the root call
+        output->append(result);
+        result = "DFS Traversal:\n"; // Reset for next call
+    }
+}
+
+bool Graph::isEmpty() const {
+    return adj.empty();
+}
+
+AdjacencyList Graph::getAdjacencyList() const {
+    return adj;
+}
+
+void Graph::setAdjacencyList(const AdjacencyList &adj) {
+    this->adj = adj;
+}
+
+vector<string> Graph::convertAdjListToGraphLines() {
+    vector<string> graphLines;
+
+    if (adj.empty()) {
+        cout << "WARNING: EMPTY ADJACENCY LIST!\n";
+        return graphLines;
+    }
+
+    for (const auto& [city, neighbors] : adj) {
+        string line = city;
+        for (const auto& [neighbor, distance] : neighbors) {
+            line += " (" + neighbor + ":" + to_string(distance) + ")";
+        }
+        graphLines.push_back(line);
+    }
+    return graphLines;
+}
+
+void Graph::parseGraphLines(const vector<string> &graphLines) {
+    regex pattern(R"(\(([^:]+):([0-9]+(?:\.[0-9]+)?)\))");  // matches (string:float)
+
+    for (const string& line : graphLines) {
+        if (line.empty() || line[0] == '#') {
+            continue; // Skip empty lines and comments
+        }
+
+        istringstream iss(line);
+        string city;
+        iss >> city; // Extract source city
+
+        if (city.empty()) {
+            continue;
+        }
+
+        // Ensure the city exists in adj, even if it has no edges
+        if (adj.find(city) == adj.end()) {
+            adj[city] = std::vector<std::pair<std::string, float>>();
+        }
+
+        // Extract all (destination:distance) pairs
+        auto matches_begin = sregex_iterator(line.begin(), line.end(), pattern);
+        auto matches_end = sregex_iterator();
+
+        int connectionCount = 0;
+        for (sregex_iterator i = matches_begin; i != matches_end; ++i) {
+            smatch match = *i;
+            string destCity = match[1];
+            float weight = stof(match[2]);
+            adj[city].emplace_back(destCity, weight);
+            connectionCount++;
+        }
+    }
 }
