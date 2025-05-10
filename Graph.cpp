@@ -141,6 +141,8 @@ void Graph::addGraph() {
 		}
 		adj[s1].push_back({ s2,d });
 	}
+
+	
 	// char ch;
 	// do {
 	// 	string s1, s2;
@@ -163,6 +165,8 @@ void Graph::addGraph() {
 	// 	cout << "if you want to add more enter y\n";
 	// 	cin >> ch;
 	// } while (ch == 'y' || ch == 'Y');
+
+	
 }
 
 void Graph::displayGraph() {
