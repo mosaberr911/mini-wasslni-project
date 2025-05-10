@@ -2,8 +2,9 @@
 #define LOGIN_H
 
 #include <QWidget>
-#include "register.h"
+#include "Register.h"
 #include "Map.h"
+#include "Options.h"
 #include <QString>
 #include <QMessageBox>
 #include <QDir>  
@@ -24,14 +25,13 @@ private slots:
     void onLoginClicked();
 
 private:
-    bool checkCredentials(const QString &email, const QString &password);
-    void createUserMapFile(const QString &email);  
 
     QLineEdit *emailField;
     QLineEdit *passwordField;
     QLabel *createAccountButton;
     Register *registerWindow;
     Map *mapWindow;
+    Options *optionsWindow;
 };
 
 #endif 
