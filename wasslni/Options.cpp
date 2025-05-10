@@ -1,5 +1,8 @@
 #include "Options.h"
 #include "Graph.h"
+#include "FileManager.h"
+#include "PathManager.h"
+#include "UserManager.h"
 #include <QPushButton>
 #include <QLineEdit>
 #include <QInputDialog>
@@ -24,11 +27,7 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     setFixedSize(600, 700);
     setWindowTitle("Options");
 
-    // SABER_PATH
-    QPixmap background("C:/Users/A/OneDrive/Documents/wasslni/images/Screenshot 2025-04-28 183435.png");
-
-    // YASSIN_PATH
-    // QPixmap background("/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/images/Screenshot 2025-04-28 183435.png");
+    QPixmap background(QString::fromStdString(PathManager::getBackgroundImagePath()));
     
     if (background.isNull()) {
         qDebug() << "Failed to load background image.";
@@ -234,38 +233,8 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     connect(bfsButton, &QPushButton::clicked, this, &Options::onBFSClicked);
 }
 
-void Options::setUserEmail(const QString &email)
-{
-    userEmail = email;
-    qDebug() << "User email set to:" << userEmail;
-}
-
-QString Options::getUserGraphPath() const
-{
-    if (userEmail.isEmpty()) {
-        qDebug() << "Error: User email is empty!";
-        return "";
-    }
-
-    QString sanitizedEmail = userEmail;
-    sanitizedEmail.replace("@", "_at_");
-    sanitizedEmail.replace(".", "_dot_");
-    sanitizedEmail.replace(QRegularExpression("[^a-zA-Z0-9_]"), "_");
-
-    // SABER_PATH
-    QString dirPath = "C:/Users/A/OneDrive/Documents/wasslni/maps";
-
-    // YASSIN_PATH
-    // QString dirPath = "/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/maps";
-    
-    QDir dir(dirPath);
-
-    if (!dir.exists() && !dir.mkpath(".")) {
-        qDebug() << "Failed to create maps directory";
-        return "";
-    }
-
-    return dirPath + "/" + sanitizedEmail + "_map.txt";
+void Options::setUserEmail(const string &userEmail) {
+    this->userEmail = userEmail;
 }
 
 void Options::onShowShortestPathClicked()
@@ -286,63 +255,31 @@ void Options::onShowShortestPathClicked()
 
 void Options::onShowPathClicked()
 {
-    QString startCity = startCityLineEdit->text().trimmed();
-    QString endCity = endCityLineEdit->text().trimmed();
+    try {
+        QString startCity = startCityLineEdit->text().trimmed();
+        QString endCity = endCityLineEdit->text().trimmed();
 
-    if (startCity.isEmpty() || endCity.isEmpty()) {
-        QMessageBox::warning(this, "Input Error", "Both cities must be entered!");
-        return;
+        if (startCity.isEmpty() || endCity.isEmpty()) {
+            QMessageBox::warning(this, "Input Error", "Both cities must be entered!");
+            return;
+        }
+
+        User user = UserManager::getUserByEmail(userEmail);
+        std::string result = user.showShortestPath(startCity.toStdString(), endCity.toStdString());
+        QMessageBox::information(this, "Shortest Path", QString::fromStdString(result));
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString("Failed to show shortest path: %1").arg(e.what()));
     }
-
-    QString filePath = getUserGraphPath();
-    if (filePath.isEmpty()) {
-        QMessageBox::critical(this, "Error", "Cannot determine map file path");
-        return;
-    }
-
-    Graph graph;
-    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
-    graph.addGraphFromUI(edges);
-
-    std::string result = graph.dijkstra(startCity.toStdString(), endCity.toStdString());
-    QMessageBox::information(this, "Shortest Path", QString::fromStdString(result));
 }
 
 void Options::onDisplayMapClicked()
 {
-    QString filePath = getUserGraphPath();
-    if (filePath.isEmpty()) {
-        QMessageBox::critical(this, "Error", "Cannot determine map file path");
-        return;
-    }
-
-    QFile file(filePath);
-    if (!file.exists()) {
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            QTextStream out(&file);
-            out << "// Map file created on " << QDateTime::currentDateTime().toString() << "\n";
-            out << "// Format: city1,city2,distance\n";
-            file.close();
-            QMessageBox::information(this, "New Map", "Created new empty map file");
-        } else {
-            QMessageBox::critical(this, "Error", "Failed to create map file");
-        }
-        return;
-    }
-
-    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
-    if (edges.isEmpty()) {
-        QMessageBox::warning(this, "Empty Map", "Map file contains no valid data");
-        return;
-    }
-
     try {
-        Graph graph;
-        graph.addGraphFromUI(edges);
-        QString mapContent = QString::fromStdString(graph.displayMap());
+        User user = UserManager::getUserByEmail(userEmail);
+        QString mapContent = QString::fromStdString(user.displayMap());
 
         QDialog dialog(this);
-        dialog.setWindowTitle("Map Viewer - " + QFileInfo(filePath).fileName());
+        dialog.setWindowTitle("Map Viewer - " + QString::fromStdString(user.getEmail()));
         dialog.resize(800, 600);
 
         QTextEdit *textEdit = new QTextEdit(&dialog);
@@ -375,82 +312,28 @@ void Options::onAddCityClicked()
     }
 }
 
-void Options::onSaveCityClicked()
-{
-    QString cityName = addCityLineEdit->text().trimmed();
-    if (cityName.isEmpty()) {
-        QMessageBox::warning(this, "Error", "City name cannot be empty");
-        return;
+void Options::onSaveCityClicked() {
+    try {
+        QString cityName = addCityLineEdit->text().trimmed();
+        if (cityName.isEmpty()) {
+            QMessageBox::warning(this, "Error", "City name cannot be empty");
+            return;
+        }
+        User user = UserManager::getUserByEmail(userEmail);
+        user.addCity(cityName.toStdString());
+
+        UserManager::updateUser(user);
+        UserManager::saveUserGraph(userEmail, PathManager::getGraphsFilePath());
+
+        QMessageBox::information(this, "Success", "City added successfully");
+
+        addCityLineEdit->clear();
+        addCityLineEdit->setVisible(false);
+        saveCityButton->setVisible(false);
+        addCityButton->setText("Add City");
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString("Failed to add city: %1").arg(e.what()));
     }
-
-    QString filePath = getUserGraphPath();
-    if (filePath.isEmpty()) {
-        QMessageBox::critical(this, "Error", "Cannot save city - invalid map file path");
-        return;
-    }
-
-    // Load existing edges from file to check if city already exists
-    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
-
-    // Build a set of existing cities
-    QSet<QString> cities;
-    for (const auto& edge : edges) {
-        cities.insert(std::get<0>(edge));
-        cities.insert(std::get<1>(edge));
-    }
-
-    // Check if city already exists
-    if (cities.contains(cityName)) {
-        QMessageBox::warning(this, "Exists", "City already exists");
-        return;
-    }
-
-    // Add city to file
-    QFile file(filePath);
-    if (!file.open(QIODevice::Append | QIODevice::Text)) {
-        QMessageBox::critical(this, "Error", "Failed to open map file for writing");
-        return;
-    }
-
-    QTextStream out(&file);
-    if (cities.isEmpty()) {
-        // If this is the first city, just add it with a placeholder
-        out << cityName << "," << "defult" << ",0\n";
-    } else {
-        // Connect new city to an existing city (first one in the set)
-        QString existingCity = *cities.begin();
-        out << cityName << "," << "defult" << ",0\n";
-    }
-    file.close();
-
-    QMessageBox::information(this, "Success", "City added successfully");
-    addCityLineEdit->clear();
-    addCityLineEdit->setVisible(false);
-    saveCityButton->setVisible(false);
-    addCityButton->setText("Add City");
-}
-
-void Options::saveCityToFile(const QString& cityName)
-{
-    QString filePath = getUserGraphPath();
-    QFile file(filePath);
-
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QMessageBox::critical(this, "Error", "Failed to open map file for reading");
-        return;
-    }
-
-    bool isEmpty = file.size() == 0;
-    file.close();
-
-    if (!file.open(QIODevice::Append | QIODevice::Text)) {
-        QMessageBox::critical(this, "Error", "Failed to open map file for writing");
-        return;
-    }
-
-    QTextStream out(&file);
-    out << cityName << ", ,0\n";
-    file.close();
 }
 
 void Options::onDeleteCityClicked()
@@ -468,94 +351,29 @@ void Options::onDeleteCityClicked()
 
 void Options::onConfirmDeleteCityClicked()
 {
-    QString cityName = deleteCityLineEdit->text().trimmed();
-    if (cityName.isEmpty()) {
-        QMessageBox::warning(this, "Error", "Please enter a city name");
-        return;
-    }
-
-    QString filePath = getUserGraphPath();
-    if (filePath.isEmpty()) {
-        QMessageBox::critical(this, "Error", "Cannot delete city - invalid map file path");
-        return;
-    }
-
-    // Load existing edges from file to check if city exists
-    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
-
-    // Build a set of existing cities
-    QSet<QString> cities;
-    for (const auto& edge : edges) {
-        cities.insert(std::get<0>(edge));
-        cities.insert(std::get<1>(edge));
-    }
-
-    // Check if city exists
-    if (!cities.contains(cityName)) {
-        QMessageBox::warning(this, "Error", "City does not exist");
-        return;
-    }
-
-    // Remove all edges connected to this city
-    updateFileAfterCityDeletion(cityName);
-    QMessageBox::information(this, "Success", "City deleted successfully");
-
-    // Reset UI
-    deleteCityLineEdit->clear();
-    deleteCityLineEdit->setVisible(false);
-    confirmDeleteCityButton->setVisible(false);
-    deleteCityButton->setText("Delete City");
-}
-
-void Options::updateFileAfterCityDeletion(const QString& cityName)
-{
-    QString filePath = getUserGraphPath();
-    QFile file(filePath);
-
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QMessageBox::critical(this, "Error", "Failed to open map file for reading");
-        return;
-    }
-
-    QTextStream in(&file);
-    QStringList lines;
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-
-        // Keep comments and empty lines
-        if (line.trimmed().isEmpty() || line.trimmed().startsWith("//")) {
-            lines.append(line);
-            continue;
+    try {
+        QString cityName = deleteCityLineEdit->text().trimmed();
+        if (cityName.isEmpty()) {
+            QMessageBox::warning(this, "Error", "Please enter a city name");
+            return;
         }
 
-        QStringList parts = line.split(',');
-        if (parts.size() >= 2) {
-            QString city1 = parts[0].trimmed();
-            QString city2 = parts[1].trimmed();
+        User user = UserManager::getUserByEmail(userEmail);
+        user.deleteCity(cityName.toStdString());
 
-            // Skip any line where either city is the one being deleted
-            if (city1 == cityName || city2 == cityName) {
-                continue;
-            }
+        UserManager::updateUser(user);
+        UserManager::saveUserGraph(userEmail, PathManager::getGraphsFilePath());
 
-            lines.append(line);
-        } else {
-            // Keep lines with unexpected format
-            lines.append(line);
-        }
+
+        QMessageBox::information(this, "Success", "City deleted successfully");
+        // Reset UI
+        deleteCityLineEdit->clear();
+        deleteCityLineEdit->setVisible(false);
+        confirmDeleteCityButton->setVisible(false);
+        deleteCityButton->setText("Delete City");
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString("Failed to delete city: %1").arg(e.what()));
     }
-    file.close();
-
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QMessageBox::critical(this, "Error", "Failed to open map file for writing");
-        return;
-    }
-
-    QTextStream out(&file);
-    foreach (const QString &line, lines) {
-        out << line << "\n";
-    }
-    file.close();
 }
 
 void Options::onAddRoadClicked()
@@ -578,109 +396,49 @@ void Options::onAddRoadClicked()
 
 void Options::onSaveRoadClicked()
 {
-    QString startCity = roadStartCityLineEdit->text().trimmed();
-    QString endCity = roadEndCityLineEdit->text().trimmed();
-    QString distanceStr = roadDistanceLineEdit->text().trimmed();
+    try {
+        QString startCity = roadStartCityLineEdit->text().trimmed();
+        QString endCity = roadEndCityLineEdit->text().trimmed();
+        QString distanceStr = roadDistanceLineEdit->text().trimmed();
 
-    if (startCity.isEmpty() || endCity.isEmpty() || distanceStr.isEmpty()) {
-        QMessageBox::warning(this, "Error", "All fields must be filled");
-        return;
-    }
-
-    bool ok;
-    int distance = distanceStr.toInt(&ok);
-    if (!ok || distance <= 0) {
-        QMessageBox::warning(this, "Error", "Distance must be a positive number");
-        return;
-    }
-
-    if (startCity == endCity) {
-        QMessageBox::warning(this, "Error", "Start and end cities cannot be the same");
-        return;
-    }
-
-    QString filePath = getUserGraphPath();
-    if (filePath.isEmpty()) {
-        QMessageBox::critical(this, "Error", "Cannot save road - invalid map file path");
-        return;
-    }
-
-    // Load existing graph first to check if cities exist and if road already exists
-    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
-
-    // Check if the road already exists
-    bool roadExists = false;
-    for (const auto& edge : edges) {
-        QString city1 = std::get<0>(edge);
-        QString city2 = std::get<1>(edge);
-
-        if ((city1 == startCity && city2 == endCity) ||
-            (city1 == endCity && city2 == startCity)) {
-            roadExists = true;
-            break;
+        if (startCity.isEmpty() || endCity.isEmpty() || distanceStr.isEmpty()) {
+            QMessageBox::warning(this, "Error", "All fields must be filled");
+            return;
         }
+
+        bool ok;
+        int distance = distanceStr.toInt(&ok);
+        if (!ok || distance <= 0) {
+            QMessageBox::warning(this, "Error", "Distance must be a positive number");
+            return;
+        }
+
+        if (startCity == endCity) {
+            QMessageBox::warning(this, "Error", "Start and end cities cannot be the same");
+            return;
+        }
+
+        User user = UserManager::getUserByEmail(userEmail);
+        user.addRoad(startCity.toStdString(), endCity.toStdString(), distanceStr.toFloat());
+
+        UserManager::updateUser(user);
+        UserManager::saveUserGraph(userEmail, PathManager::getGraphsFilePath());
+
+
+        QMessageBox::information(this, "Success", "Road added successfully");
+
+        // Reset UI
+        roadStartCityLineEdit->clear();
+        roadEndCityLineEdit->clear();
+        roadDistanceLineEdit->clear();
+        roadStartCityLineEdit->setVisible(false);
+        roadEndCityLineEdit->setVisible(false);
+        roadDistanceLineEdit->setVisible(false);
+        saveRoadButton->setVisible(false);
+        addRoadButton->setText("Add Road");
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString("Failed to add road: %1").arg(e.what()));
     }
-
-    if (roadExists) {
-        QMessageBox::warning(this, "Error", "Road already exists between these cities");
-        return;
-    }
-
-    // Build a set of existing cities
-    QSet<QString> cities;
-    for (const auto& edge : edges) {
-        cities.insert(std::get<0>(edge));
-        cities.insert(std::get<1>(edge));
-    }
-
-    // Check if both cities exist
-    if (!cities.contains(startCity)) {
-        QMessageBox::warning(this, "Error", "Start city '" + startCity + "' does not exist");
-        return;
-    }
-
-    if (!cities.contains(endCity)) {
-        QMessageBox::warning(this, "Error", "End city '" + endCity + "' does not exist");
-        return;
-    }
-
-    // Now add the edge to the file
-    QFile file(filePath);
-    if (!file.open(QIODevice::Append | QIODevice::Text)) {
-        QMessageBox::critical(this, "Error", "Failed to open map file for writing");
-        return;
-    }
-
-    QTextStream out(&file);
-    out << startCity << "," << endCity << "," << distance << "\n";
-    file.close();
-
-    QMessageBox::information(this, "Success", "Road added successfully");
-
-    // Reset UI
-    roadStartCityLineEdit->clear();
-    roadEndCityLineEdit->clear();
-    roadDistanceLineEdit->clear();
-    roadStartCityLineEdit->setVisible(false);
-    roadEndCityLineEdit->setVisible(false);
-    roadDistanceLineEdit->setVisible(false);
-    saveRoadButton->setVisible(false);
-    addRoadButton->setText("Add Road");
-}
-
-void Options::saveRoadToFile(const QString& city1, const QString& city2, int distance)
-{
-    QString filePath = getUserGraphPath();
-    QFile file(filePath);
-
-    if (!file.open(QIODevice::Append | QIODevice::Text)) {
-        QMessageBox::critical(this, "Error", "Failed to open map file for writing");
-        return;
-    }
-
-    QTextStream out(&file);
-    out << city1 << "," << city2 << "," << distance << "\n";
-    file.close();
 }
 
 void Options::onDeleteRoadClicked()
@@ -701,91 +459,38 @@ void Options::onDeleteRoadClicked()
 
 void Options::onConfirmDeleteClicked()
 {
-    QString startCity = deleteStartCityLineEdit->text().trimmed();
-    QString endCity = deleteEndCityLineEdit->text().trimmed();
+    try {
+        QString startCity = deleteStartCityLineEdit->text().trimmed();
+        QString endCity = deleteEndCityLineEdit->text().trimmed();
 
-    if (startCity.isEmpty() || endCity.isEmpty()) {
-        QMessageBox::warning(this, "Error", "Both cities must be entered");
-        return;
-    }
-
-    if (startCity == endCity) {
-        QMessageBox::warning(this, "Error", "Start and end cities cannot be the same");
-        return;
-    }
-
-    QString filePath = getUserGraphPath();
-    if (filePath.isEmpty()) {
-        QMessageBox::critical(this, "Error", "Cannot delete road - invalid map file path");
-        return;
-    }
-
-    Graph graph;
-    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
-    graph.addGraphFromUI(edges);
-
-    if (!graph.containsCity(startCity.toStdString())) {
-        QMessageBox::warning(this, "Error", "Start city does not exist");
-        return;
-    }
-
-    if (!graph.containsCity(endCity.toStdString())) {
-        QMessageBox::warning(this, "Error", "End city does not exist");
-        return;
-    }
-
-    if (!graph.deleteEdge(startCity.toStdString(), endCity.toStdString())) {
-        QMessageBox::warning(this, "Error", "Failed to delete road (may not exist)");
-        return;
-    }
-
-    updateFileAfterDeletion(startCity, endCity);
-    QMessageBox::information(this, "Success", "Road deleted successfully");
-
-    // Reset UI
-    deleteStartCityLineEdit->clear();
-    deleteEndCityLineEdit->clear();
-    deleteStartCityLineEdit->setVisible(false);
-    deleteEndCityLineEdit->setVisible(false);
-    confirmDeleteButton->setVisible(false);
-    deleteRoadButton->setText("Delete Road");
-}
-
-void Options::updateFileAfterDeletion(const QString& city1, const QString& city2)
-{
-    QString filePath = getUserGraphPath();
-    QFile file(filePath);
-
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QMessageBox::critical(this, "Error", "Failed to open map file for reading");
-        return;
-    }
-
-    QTextStream in(&file);
-    QStringList lines;
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-        QStringList parts = line.split(',');
-        if (parts.size() >= 2) {
-            QString a = parts[0].trimmed();
-            QString b = parts[1].trimmed();
-            if (!(a == city1 && b == city2) && !(a == city2 && b == city1)) {
-                lines.append(line);
-            }
+        if (startCity.isEmpty() || endCity.isEmpty()) {
+            QMessageBox::warning(this, "Error", "Both cities must be entered");
+            return;
         }
-    }
-    file.close();
 
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QMessageBox::critical(this, "Error", "Failed to open map file for writing");
-        return;
-    }
+        if (startCity == endCity) {
+            QMessageBox::warning(this, "Error", "Start and end cities cannot be the same");
+            return;
+        }
 
-    QTextStream out(&file);
-    foreach (const QString &line, lines) {
-        out << line << "\n";
+        User user = UserManager::getUserByEmail(userEmail);
+        user.deleteRoad(startCity.toStdString(), endCity.toStdString());
+
+        UserManager::updateUser(user);
+        UserManager::saveUserGraph(userEmail, PathManager::getGraphsFilePath());
+
+        QMessageBox::information(this, "Success", "Road deleted successfully");
+
+        // Reset UI
+        deleteStartCityLineEdit->clear();
+        deleteEndCityLineEdit->clear();
+        deleteStartCityLineEdit->setVisible(false);
+        deleteEndCityLineEdit->setVisible(false);
+        confirmDeleteButton->setVisible(false);
+        deleteRoadButton->setText("Delete Road");
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString("Failed to delete road: %1").arg(e.what()));
     }
-    file.close();
 }
 
 void Options::onTraverseMapClicked()
@@ -804,103 +509,44 @@ void Options::onTraverseMapClicked()
 
 void Options::onDFSClicked()
 {
-    QString filePath = getUserGraphPath();
-    if (filePath.isEmpty()) {
-        QMessageBox::critical(this, "Error", "Cannot determine map file path");
-        return;
+    try {
+        bool ok;
+        QString startNode = QInputDialog::getText(this, "DFS Start Node", "Enter the starting node:", QLineEdit::Normal, "", &ok);
+        if (!ok || startNode.isEmpty()) {
+            QMessageBox::critical(this, "Error", "Invalid start node");
+            return;
+        }
+
+        QTextEdit* output = new QTextEdit(this);
+        output->setReadOnly(true);
+
+        User user = UserManager::getUserByEmail(userEmail);
+        user.displayDfs(startNode, output);
+
+        QMessageBox::information(this, "DFS Traversal", output->toPlainText());
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString("Failed to traverse using DFS algorithm: %1").arg(e.what()));
     }
-
-    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
-    if (edges.isEmpty()) {
-        QMessageBox::warning(this, "Empty Map", "Map file contains no valid data");
-        return;
-    }
-
-    // الحصول على العقدة التي يبدأ منها المستخدم
-    bool ok;
-    QString startNode = QInputDialog::getText(this, "DFS Start Node", "Enter the starting node:", QLineEdit::Normal, "", &ok);
-    if (!ok || startNode.isEmpty()) {
-        QMessageBox::critical(this, "Error", "Invalid start node");
-        return;
-    }
-
-    Graph graph;
-    graph.addGraphFromUI(edges);
-
-    QTextEdit* output = new QTextEdit(this);  // Output area for DFS
-    output->setReadOnly(true);
-    graph.DFS(startNode, output);  // تنفيذ DFS من العقدة المدخلة
-
-    // عرض نتيجة DFS في مربع النص
-    QMessageBox::information(this, "DFS Traversal", output->toPlainText());
 }
-
 
 void Options::onBFSClicked()
 {
-    QString filePath = getUserGraphPath();
-    if (filePath.isEmpty()) {
-        QMessageBox::critical(this, "Error", "Cannot determine map file path");
-        return;
-    }
-
-    QVector<std::tuple<QString, QString, int>> edges = loadEdgesFromFile(filePath);
-    if (edges.isEmpty()) {
-        QMessageBox::warning(this, "Empty Map", "Map file contains no valid data");
-        return;
-    }
-
-    // الحصول على العقدة التي يبدأ منها المستخدم
-    bool ok;
-    QString startNode = QInputDialog::getText(this, "BFS Start Node", "Enter the starting node:", QLineEdit::Normal, "", &ok);
-    if (!ok || startNode.isEmpty()) {
-        QMessageBox::critical(this, "Error", "Invalid start node");
-        return;
-    }
-
-    Graph graph;
-    graph.addGraphFromUI(edges);
-
-    QTextEdit* output = new QTextEdit(this);  // Output area for BFS
-    output->setReadOnly(true);
-    graph.BFS(startNode, output);  // تنفيذ BFS من العقدة المدخلة
-
-    // عرض نتيجة BFS في مربع النص
-    QMessageBox::information(this, "BFS Traversal", output->toPlainText());
-}
-
-
-QVector<std::tuple<QString, QString, int>> Options::loadEdgesFromFile(const QString& filePath)
-{
-    QVector<std::tuple<QString, QString, int>> edges;
-
-    if (filePath.isEmpty()) {
-        qDebug() << "Error: Empty file path";
-        return edges;
-    }
-
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Failed to open file:" << filePath << "Error:" << file.errorString();
-        return edges;
-    }
-
-    QTextStream in(&file);
-    while (!in.atEnd()) {
-        QString line = in.readLine().trimmed();
-        if (line.isEmpty() || line.startsWith("//")) continue;
-
-        QStringList parts = line.split(',');
-        if (parts.size() >= 2) {
-            QString city1 = parts[0].trimmed();
-            QString city2 = parts[1].trimmed();
-            int distance = (parts.size() >= 3) ? parts[2].toInt() : 10;
-
-            if (!city1.isEmpty() && !city2.isEmpty()) {
-                edges.append(std::make_tuple(city1, city2, distance));
-            }
+    try {
+        bool ok;
+        QString startNode = QInputDialog::getText(this, "BFS Start Node", "Enter the starting node:", QLineEdit::Normal, "", &ok);
+        if (!ok || startNode.isEmpty()) {
+            QMessageBox::critical(this, "Error", "Invalid start node");
+            return;
         }
+
+        QTextEdit* output = new QTextEdit(this);
+        output->setReadOnly(true);
+
+        User user = UserManager::getUserByEmail(userEmail);
+        user.displayBfs(startNode, output);
+
+        QMessageBox::information(this, "BFS Traversal", output->toPlainText());
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString("Failed to travers using BFS algorithm: %1").arg(e.what()));
     }
-    file.close();
-    return edges;
 }
