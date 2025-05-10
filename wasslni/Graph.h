@@ -15,13 +15,13 @@
 #include <sstream>
 #include <stdexcept>
 
+using AdjacencyList = std::map<std::string, std::vector<std::pair<std::string, float> > >;
+using namespace std;
+
 class Graph
 {
 public:
-    Graph(const std::string& userEmail = "");  
-
-    void setUserEmail(const std::string& email);  
-    std::string getUserGraphPath() const;  
+    Graph();
 
     void addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges);
     std::string dijkstra(const std::string& start, const std::string& end);
@@ -29,15 +29,21 @@ public:
     void BFS(const QString& startNode, QTextEdit* output);
     void DFS(const QString& startNode, QTextEdit* output);
 
-    bool addCity(std::string cityName);
-    bool addEdge(std::string city1, std::string city2, float distance);
-    bool containsCity(std::string cityName);
-    bool deleteEdge(std::string city1, std::string city2);
-    bool deleteCity(std::string cityName);
+    void addCity(const std::string& cityName);
+    void addEdge(const std::string& start, const std::string& end, float distance);
+    bool containsCity(const std::string& cityName);
+    bool containsEdge(const std::string& start, const std::string& end);
+    void deleteEdge(const std::string& start, const std::string& end);
+    void deleteCity(const std::string& cityName);
 
+    AdjacencyList getAdjacencyList() const;
+    void setAdjacencyList(const AdjacencyList&);
+    bool isEmpty() const;
+
+    vector<string> convertAdjListToGraphLines();
+    void parseGraphLines(const vector<string>& graphLines);
 private:
-    std::string userEmail;  
-    std::map<std::string, std::vector<std::pair<std::string, float>>> adj;
+    AdjacencyList adj;
     std::map<std::string, double> dis;
     std::map<std::string, bool> vis;
     std::map<std::string, std::string> parent;
