@@ -1,4 +1,6 @@
 #include "Register.h"
+#include "UserManager.h"
+#include "PathManager.h"
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -15,11 +17,7 @@ Register::Register(QWidget *parent) : QWidget(parent)
     setFixedSize(600, 500);
     setWindowTitle("Create New Account");
 
-    // SABER_PATH
-    QPixmap background("C:/Users/A/OneDrive/Documents/wasslni/images/Screenshot 2025-04-28 183435.png");
-
-    // YASSIN_PATH
-    QPixmap background("/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/images/Screenshot 2025-04-28 183435.png");
+    QPixmap background(QString::fromStdString(PathManager::getBackgroundImagePath()));
     
     if (background.isNull()) {
         qDebug() << "Failed to load background image in Register.";
@@ -114,31 +112,32 @@ Register::Register(QWidget *parent) : QWidget(parent)
 
 void Register::onRegisterClicked()
 {
-    if (passwordField->text() != confirmPasswordField->text()) {
-        QMessageBox::warning(this, "Error", "Passwords do not match!");
-        return;
+    try {
+        QString email = emailField->text().trimmed();
+        QString password = passwordField->text();
+
+        if (passwordField->text() != confirmPasswordField->text()) {
+            QMessageBox::warning(this, "Error", "Passwords do not match!");
+            return;
+        }
+
+        if (UserManager::containsUser(email.toStdString())) {
+            QMessageBox::warning(this, "Error", "Email already exists!");
+            return;
+        }
+
+        UserManager::registerUser(email.toStdString(), password.toStdString());
+
+        // immediately save users data: prevent data loss
+        UserManager::saveUsersData();
+
+        QMessageBox::information(this, "Success", "Account created successfully!");
+
+        emit backToLoginRequested();
+        this->close();
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString("Failed to register user: %1").arg(e.what()));
     }
-
-    // SABER_PATH
-    QString filePath = "C:/Users/A/OneDrive/Documents/wasslni/users.txt";
-
-    // YASSIN_PATH
-    // QString filePath = "/Users/mohamed/CLionProjects/mini-wasslni-project/wasslni/users.txt";
-
-    QFile file(filePath);
-    if (!file.open(QIODevice::Append | QIODevice::Text)) {
-        QMessageBox::warning(this, "Error", "Failed to open file for writing.");
-        return;
-    }
-
-    QTextStream out(&file);
-    out << emailField->text() << "," << passwordField->text() << "\n";
-
-    file.close();
-
-    QMessageBox::information(this, "Success", "Account created successfully!");
-
-    emit backToLoginRequested();
 }
 
 void Register::onBackClicked()
