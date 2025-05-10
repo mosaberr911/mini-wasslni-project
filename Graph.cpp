@@ -121,10 +121,10 @@ void Graph::addGraph() {
 		// cout << "Enter the name of cities then the distance\n";
 		// cin >> s1 >> s2 >> d;
 		cout << "Enter first city name:\n";
-		cin >> ws;
+		cin >> ws; //for gui 
 		getline(cin, s1);
 		cout << "Enter second city name:\n";
-		cin >> ws;
+		cin >> ws; //for gui
 		getline(cin, s2);
 		cout << "Enter distance between them:\n";
 		cin >> d;
