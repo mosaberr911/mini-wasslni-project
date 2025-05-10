@@ -8,7 +8,7 @@
 #include <QVBoxLayout>
 #include <QVector>
 #include <tuple>
-#include "graph.h"
+#include "Graph.h"
 #include "Options.h"
 
 class Map : public QWidget
@@ -17,7 +17,7 @@ class Map : public QWidget
 
 public:
     explicit Map(QWidget *parent = nullptr);
-    void setUserEmail(const QString &email);
+    void setUserEmail(const string& userEmail);
 
 private slots:
     void onSubmitEdgeCount();
@@ -26,8 +26,6 @@ private slots:
     void onAddMapClicked();
 
 private:
-    void saveGraphData(const QVector<std::tuple<QString, QString, int>> &edges);
-    QString getUserGraphPath() const;
 
     QLineEdit *edgeCountField;
     QVBoxLayout *inputsLayout;
@@ -48,9 +46,8 @@ private:
     };
 
     QVector<EdgeInput> edgeInputs;
-    Graph graph;
-    QString userEmail;
-    bool isSaved; 
+    string userEmail;
+    bool isSaved;
 };
 
 #endif 
