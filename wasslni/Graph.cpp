@@ -195,7 +195,7 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
 std::string Graph::displayMap() {
     std::stringstream ss;
     for (auto it = adj.begin(); it != adj.end(); ++it) {
-        ss << "City: " << it->first << ":\n";
+        ss << "City: " << it->first << "\n";
 
         if (it->second.empty())
             continue;
@@ -231,22 +231,6 @@ void Graph::BFS(const QString& startNode, QTextEdit* output) {
     }
     output->append(result);
 }
-
-// void Graph::DFS(const QString& startNode, QTextEdit* output) {
-//     vis[startNode.toStdString()] = true;
-//     QString result = "DFS Traversal:\n";
-//     result += startNode + "\n";
-
-//     for (auto [child, weight] : adj[startNode.toStdString()]) {
-//         QString qChild = QString::fromStdString(child);
-//         result += " -> " + qChild + " (Weight: " + QString::number(weight) + ")\n";
-//         if (!vis[qChild.toStdString()]) {
-//             result += "Exploring " + qChild + "\n";
-//             DFS(qChild, output);
-//         }
-//     }
-//     output->append(result);
-// }
 
 void Graph::DFS(const QString& startNode, QTextEdit* output) {
     static QString result = "DFS Traversal:\n"; // Static to accumulate across calls
@@ -329,4 +313,10 @@ void Graph::parseGraphLines(const vector<string> &graphLines) {
             connectionCount++;
         }
     }
+}
+
+void Graph::clear() {
+    if (isEmpty())
+        throw std::invalid_argument("Adjacency List is already empty");
+    adj.clear();
 }
