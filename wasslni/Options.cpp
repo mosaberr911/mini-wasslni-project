@@ -17,6 +17,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QSpacerItem>
 #include <QTextEdit>
 #include <QDialog>
@@ -24,14 +25,14 @@
 
 Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
 {
-    setFixedSize(600, 700);
+    setFixedSize(600, 600);
     setWindowTitle("Options");
 
     QPixmap background(QString::fromStdString(PathManager::getBackgroundImagePath()));
     
     if (background.isNull()) {
         qDebug() << "Failed to load background image.";
-        background = QPixmap(600, 700);
+        background = QPixmap(600, 600);
         background.fill(Qt::lightGray);
     }
 
@@ -41,13 +42,28 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    mainLayout->setSpacing(15);
-    mainLayout->setContentsMargins(100, 30, 100, 30);
+    mainLayout->setSpacing(15); // 15
+    mainLayout->setContentsMargins(100, 30, 100, 30); // 100, 30, 100, 30
 
-    int elementHeight = 50;
+    // Top layout for Log Out and Add New Map buttons
+    QHBoxLayout *topButtonLayout = new QHBoxLayout();
+    topButtonLayout->setAlignment(Qt::AlignTop);
+    topButtonLayout->setSpacing(10);
+
+    int elementHeight = 40;
     int elementWidth = 350;
     QFont font;
     font.setPointSize(12);
+
+    // topButtonLayout->addStretch(); // Spacer to push Add New Map to the right
+
+    mainLayout->addLayout(topButtonLayout);
+
+    addNewMapButton = new QPushButton("Add New Map");
+    addNewMapButton->setStyleSheet("background-color: green; color: white;");
+    addNewMapButton->setFixedSize(elementWidth, elementHeight);
+    addNewMapButton->setFont(font);
+    mainLayout->addWidget(addNewMapButton, 0, Qt::AlignCenter);
 
     showShortestPathButton = new QPushButton("Show Shortest Path");
     showShortestPathButton->setStyleSheet("background-color: green; color: white;");
@@ -210,6 +226,14 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
 
     mainLayout->addLayout(traverseButtonsLayout);
 
+    mainLayout->addStretch();
+
+    logOutButton = new QPushButton("Log Out");
+    logOutButton->setStyleSheet("background-color: red; color: white;");
+    logOutButton->setFixedSize(elementWidth, elementHeight);
+    logOutButton->setFont(font);
+    mainLayout->addWidget(logOutButton, 0, Qt::AlignCenter);
+
     isTraverseInputVisible = false;
     isPathInputVisible = false;
     isAddCityInputVisible = false;
@@ -231,10 +255,45 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     connect(traverseMapButton, &QPushButton::clicked, this, &Options::onTraverseMapClicked);
     connect(dfsButton, &QPushButton::clicked, this, &Options::onDFSClicked);
     connect(bfsButton, &QPushButton::clicked, this, &Options::onBFSClicked);
+    connect(logOutButton, &QPushButton::clicked, this, &Options::onLogOutClicked);
+    connect(addNewMapButton, &QPushButton::clicked, this, &Options::onAddNewMapClicked);
 }
 
 void Options::setUserEmail(const string &userEmail) {
     this->userEmail = userEmail;
+}
+
+void Options::onLogOutClicked()
+{
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Log Out",
+        "Are you sure you want to log out? Any unsaved changes will be lost.",
+        QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        emit loggedOut();
+        this->hide();
+    }
+}
+
+void Options::onAddNewMapClicked()
+{
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Add New Map",
+        "Are you sure you want to create a new map? This will clear the current map.",
+        QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        try {
+            User user = UserManager::getUserByEmail(userEmail);
+            // Clear the current graph
+            user.clearGraph();
+            UserManager::updateUser(user);
+            UserManager::saveUserGraph(userEmail, PathManager::getGraphsFilePath());
+            emit addNewMap();
+            this->hide();
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, "Error", QString("Failed to create new map: %1").arg(e.what()));
+        }
+    }
 }
 
 void Options::onShowShortestPathClicked()
@@ -267,6 +326,8 @@ void Options::onShowPathClicked()
         User user = UserManager::getUserByEmail(userEmail);
         std::string result = user.showShortestPath(startCity.toStdString(), endCity.toStdString());
         QMessageBox::information(this, "Shortest Path", QString::fromStdString(result));
+        startCityLineEdit->clear();
+        endCityLineEdit->clear();
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString("Failed to show shortest path: %1").arg(e.what()));
     }
@@ -285,7 +346,7 @@ void Options::onDisplayMapClicked()
         QTextEdit *textEdit = new QTextEdit(&dialog);
         textEdit->setPlainText(mapContent);
         textEdit->setReadOnly(true);
-        textEdit->setStyleSheet("font-family: Consolas, monospace; font-size: 12px;");
+        textEdit->setStyleSheet("font-family: Arial, Arial Regular; font-size: 16px;");
 
         QVBoxLayout layout(&dialog);
         layout.addWidget(textEdit);
