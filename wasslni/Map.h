@@ -3,6 +3,7 @@
 
 #include <QPushButton>
 #include <QWidget>
+#include <QLabel>
 #include <QLineEdit>
 #include <QScrollArea>
 #include <QVBoxLayout>
@@ -19,11 +20,16 @@ public:
     explicit Map(QWidget *parent = nullptr);
     void setUserEmail(const string& userEmail);
 
+signals:
+    void loggedOut();
+
 private slots:
     void onSubmitEdgeCount();
     void onSaveClicked();
     void onContinueClicked();
     void onAddMapClicked();
+    void onOptionsLoggedOut();
+    void onOptionsAddMap();
 
 private:
 
