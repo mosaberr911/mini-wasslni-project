@@ -20,6 +20,10 @@ public:
     void setUserEmail(const string &email);
     QString getUserEmail() const;
 
+signals:
+    void loggedOut(); // Signal emitted when user logs out
+    void addNewMap();
+
 private slots:
     void onTraverseMapClicked();
     void onDFSClicked();
@@ -35,14 +39,16 @@ private slots:
     void onSaveRoadClicked();
     void onDeleteRoadClicked();
     void onConfirmDeleteClicked();
+    void onLogOutClicked();
+    void onAddNewMapClicked();
 
 private:
-    QString getUserGraphPath() const;
     QPushButton* traverseMapButton;
     QPushButton* dfsButton;
     QPushButton* bfsButton;
+    QPushButton* logOutButton;
+    QPushButton* addNewMapButton;
     bool isTraverseInputVisible;
-    QVector<std::tuple<QString, QString, int>> loadEdgesFromFile(const QString& filePath);
 
     string userEmail;
     bool isAddCityInputVisible = false;
