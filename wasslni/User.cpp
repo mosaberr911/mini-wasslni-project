@@ -112,6 +112,10 @@ bool User::hasGraph() {
     return !graph.isEmpty();
 }
 
+void User::clearGraph() {
+    graph.clear();
+}
+
 vector<string> User::getConvertedAdjacencyList() {
     return graph.convertAdjListToGraphLines();
 }
