@@ -36,6 +36,7 @@ public:
     void displayDfs(const QString& startNode, QTextEdit* output);
     void displayBfs(const QString& startNode, QTextEdit* output);
     bool hasGraph();
+    void clearGraph();
 
     vector<string> getConvertedAdjacencyList();
     void parseLoadedGraphLines(const vector<string>&);
