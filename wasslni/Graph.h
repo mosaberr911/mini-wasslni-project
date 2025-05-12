@@ -39,6 +39,7 @@ public:
     AdjacencyList getAdjacencyList() const;
     void setAdjacencyList(const AdjacencyList&);
     bool isEmpty() const;
+    void clear();
 
     vector<string> convertAdjListToGraphLines();
     void parseGraphLines(const vector<string>& graphLines);
