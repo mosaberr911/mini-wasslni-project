@@ -202,7 +202,19 @@ void Map::onSaveClicked() {
 void Map::onContinueClicked()
 {
     Options *optionsWindow = new Options();
+    connect(optionsWindow, &Options::loggedOut, this, &Map::onOptionsLoggedOut);
+    connect(optionsWindow, &Options::addNewMap, this, &Map::onAddMapClicked);
     optionsWindow->setUserEmail(userEmail);
     optionsWindow->show();
     this->close();
+}
+
+void Map::onOptionsLoggedOut()
+{
+    emit loggedOut();
+    this->hide();
+}
+
+void Map::onOptionsAddMap() {
+    this->hide();
 }
