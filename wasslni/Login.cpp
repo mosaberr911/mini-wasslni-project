@@ -107,9 +107,18 @@ void Login::onCreateAccountClicked()
 void Login::showLogin()
 {
     this->show();
-    if (registerWindow) {
-        registerWindow->hide();
-    }
+    // if (registerWindow) {
+    //     registerWindow->hide();
+    // }
+    // if (optionsWindow) {
+    //     optionsWindow->hide();
+    // }
+    // if (mapWindow) {
+    //     mapWindow->hide();
+    // }
+    // Clear input fields for security
+    emailField->clear();
+    passwordField->clear();
 }
 
 void Login::onLoginClicked()
@@ -121,22 +130,22 @@ void Login::onLoginClicked()
             QMessageBox::warning(this, "Error", "Please fill all fields!");
             return;
         }
-        if (UserManager::checkUserCredentials(email.toStdString(), password.toStdString())) {
+        userEmail = email.toStdString();
+        if (UserManager::checkUserCredentials(userEmail, password.toStdString())) {
 
-            UserManager::loadUserGraph(PathManager::getGraphsFilePath(), email.toStdString());
-            User user = UserManager::getUserByEmail(email.toStdString());
+            UserManager::loadUserGraph(PathManager::getGraphsFilePath(), userEmail);
+            User user = UserManager::getUserByEmail(userEmail);
 
             if (!user.hasGraph()) {
-                if (!mapWindow) {
-                    mapWindow = new Map();
-                    mapWindow->setUserEmail(email.toStdString());
-                }
-                mapWindow->show();
+                showMapWindow();
+                this->hide();
             } else {
-                Options *optionsWindow = new Options();
+                optionsWindow = new Options();
                 optionsWindow->setUserEmail(email.toStdString());
+                connect(optionsWindow, &Options::loggedOut, this, &Login::onUserLoggedOut);
+                connect(optionsWindow, &Options::addNewMap, this, &Login::onAddNewMap);
                 optionsWindow->show();
-                this->close();
+                this->hide();
             }
             this->hide();
             QMessageBox::information(this, "Success", "Login successful!");
@@ -146,4 +155,36 @@ void Login::onLoginClicked()
     } catch (const exception& e) {
         QMessageBox::critical(this, "Error", QString("Login failed: %1").arg(e.what()));
     }
+}
+
+void Login::showMapWindow() {
+    if (!mapWindow) {
+        mapWindow = new Map();
+        connect(mapWindow, &Map::loggedOut, this, &Login::onMapLoggedOut);
+        mapWindow->setUserEmail(userEmail);
+    }
+    mapWindow->show();
+}
+
+void Login::onUserLoggedOut()
+{
+    showLogin();
+}
+
+void Login::onMapLoggedOut()
+{
+    showLogin();
+}
+
+void Login::onAddNewMap() {
+    showMapWindow();
+}
+
+Login::~Login() {
+    if (registerWindow)
+        delete registerWindow;
+    if (mapWindow)
+        delete mapWindow;
+    if (optionsWindow)
+        delete optionsWindow;
 }
