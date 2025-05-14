@@ -36,7 +36,7 @@ public:
     void deleteEdge(const std::string& start, const std::string& end);
     void deleteCity(const std::string& cityName);
 
-    AdjacencyList getAdjacencyList() const;
+    AdjacencyList& getAdjacencyList();
     void setAdjacencyList(const AdjacencyList&);
     bool isEmpty() const;
     void clear();
