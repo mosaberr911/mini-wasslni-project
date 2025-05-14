@@ -26,7 +26,7 @@ void User::setPassword(const string& password) {
     this->password = password;
 }
 
-AdjacencyList User::getAdjacencyList() const {
+AdjacencyList& User::getAdjacencyList() {
     return graph.getAdjacencyList();
 }
 
