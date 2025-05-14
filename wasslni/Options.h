@@ -2,6 +2,7 @@
 #define OPTIONS_H
 
 #include "User.h"
+#include "GraphVisualizer.h"
 #include <QWidget>
 #include <QVector>
 #include <tuple>
@@ -41,6 +42,8 @@ private slots:
     void onConfirmDeleteClicked();
     void onLogOutClicked();
     void onAddNewMapClicked();
+    void onVisualizeGraphClicked();
+    void onVisualizerReturn();
 
 private:
     QPushButton* traverseMapButton;
@@ -48,6 +51,7 @@ private:
     QPushButton* bfsButton;
     QPushButton* logOutButton;
     QPushButton* addNewMapButton;
+    QPushButton* visualizeGraphButton;
     bool isTraverseInputVisible;
 
     string userEmail;
@@ -56,6 +60,8 @@ private:
     bool isAddRoadInputVisible = false;
     bool isDeleteRoadInputVisible = false;
     bool isPathInputVisible = false;
+
+    GraphVisualizer* visualizer;
 
     QPushButton *showShortestPathButton;
     QLineEdit *startCityLineEdit;
