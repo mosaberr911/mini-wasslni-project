@@ -232,6 +232,22 @@ void Graph::BFS(const QString& startNode, QTextEdit* output) {
     output->append(result);
 }
 
+// void Graph::DFS(const QString& startNode, QTextEdit* output) {
+//     vis[startNode.toStdString()] = true;
+//     QString result = "DFS Traversal:\n";
+//     result += startNode + "\n";
+
+//     for (auto [child, weight] : adj[startNode.toStdString()]) {
+//         QString qChild = QString::fromStdString(child);
+//         result += " -> " + qChild + " (Weight: " + QString::number(weight) + ")\n";
+//         if (!vis[qChild.toStdString()]) {
+//             result += "Exploring " + qChild + "\n";
+//             DFS(qChild, output);
+//         }
+//     }
+//     output->append(result);
+// }
+
 void Graph::DFS(const QString& startNode, QTextEdit* output) {
     static QString result = "DFS Traversal:\n"; // Static to accumulate across calls
     vis[startNode.toStdString()] = true;
@@ -253,7 +269,7 @@ bool Graph::isEmpty() const {
     return adj.empty();
 }
 
-AdjacencyList Graph::getAdjacencyList() const {
+AdjacencyList& Graph::getAdjacencyList() {
     return adj;
 }
 
