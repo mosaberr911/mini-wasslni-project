@@ -3,6 +3,7 @@
 #include "FileManager.h"
 #include "PathManager.h"
 #include "UserManager.h"
+#include "GraphVisualizer.h"
 #include <QPushButton>
 #include <QLineEdit>
 #include <QInputDialog>
@@ -98,6 +99,12 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     displayMapButton->setFixedSize(elementWidth, elementHeight);
     displayMapButton->setFont(font);
     mainLayout->addWidget(displayMapButton, 0, Qt::AlignHCenter);
+
+    visualizeGraphButton = new QPushButton("Visualize Graph");
+    visualizeGraphButton->setStyleSheet("background-color: green; color: white;");
+    visualizeGraphButton->setFixedSize(elementWidth, elementHeight);
+    visualizeGraphButton->setFont(font);
+    mainLayout->addWidget(visualizeGraphButton, 0, Qt::AlignCenter);
 
     addCityButton = new QPushButton("Add City");
     addCityButton->setStyleSheet("background-color: green; color: white;");
@@ -257,6 +264,7 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     connect(bfsButton, &QPushButton::clicked, this, &Options::onBFSClicked);
     connect(logOutButton, &QPushButton::clicked, this, &Options::onLogOutClicked);
     connect(addNewMapButton, &QPushButton::clicked, this, &Options::onAddNewMapClicked);
+    connect(visualizeGraphButton, &QPushButton::clicked, this, &Options::onVisualizeGraphClicked);
 }
 
 void Options::setUserEmail(const string &userEmail) {
@@ -294,6 +302,18 @@ void Options::onAddNewMapClicked()
             QMessageBox::critical(this, "Error", QString("Failed to create new map: %1").arg(e.what()));
         }
     }
+}
+
+void Options::onVisualizeGraphClicked() {
+    User user = UserManager::getUserByEmail(userEmail);
+    GraphVisualizer* visualizerWindow = new GraphVisualizer(user.getAdjacencyList());
+    connect(visualizerWindow, &GraphVisualizer::returnToOptionsWindow, this, &Options::onVisualizerReturn);
+    visualizerWindow->show();
+    this->hide();
+}
+
+void Options::onVisualizerReturn() {
+    this->show();
 }
 
 void Options::onShowShortestPathClicked()
@@ -353,7 +373,6 @@ void Options::onDisplayMapClicked()
         dialog.setLayout(&layout);
 
         dialog.exec();
-
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString("Failed to display map: %1").arg(e.what()));
     }
