@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Graph.h"
+#include "GraphVisualizer.h"
 using namespace std;
 
 using AdjacencyList = map<string, vector<pair<string, float> > >;
@@ -20,7 +21,7 @@ public:
     string getPassword() const;
     void setEmail(const string&);
     void setPassword(const string&);
-    AdjacencyList getAdjacencyList() const;
+    AdjacencyList& getAdjacencyList();
     void setAdjacencyList(const AdjacencyList&);
 
     // Graph manipulation/display functions
