@@ -12,16 +12,16 @@
 
 // Force-directed layout parameters
 // Increased REPULSION to push nodes further apart
-const double REPULSION = 40000.0;  // Increased from 15000.0
+const double REPULSION = 100000.0;
 // Decreased ATTRACTION to reduce the pull between connected nodes
-const double ATTRACTION = 0.02;    // Decreased from 0.04
-const double DAMPING = 0.85;
+const double ATTRACTION = 0.01;
+const double DAMPING = 0.80;
 
 GraphVisualizer::GraphVisualizer(const AdjacencyList& adjacencyList, QWidget* parent)
     : QMainWindow(parent) {
 
     setWindowTitle("Roads Graph Visualization");
-    resize(1000, 800);
+    resize(1200, 900);
     setAdjacencyList(adjacencyList);
     // Main widget and layout
     QWidget* centralWidget = new QWidget(this);
@@ -30,8 +30,15 @@ GraphVisualizer::GraphVisualizer(const AdjacencyList& adjacencyList, QWidget* pa
     // Create top layout for button
     QHBoxLayout* topLayout = new QHBoxLayout();
     returnButton = new QPushButton("Return to Options", this);
+    zoomInButton = new QPushButton("+", this);
+    zoomOutButton = new QPushButton("-", this);
+    resetZoomButton = new QPushButton("Reset View", this);
+
     topLayout->addWidget(returnButton);
     topLayout->addStretch(); // Pushes button to left
+    topLayout->addWidget(zoomInButton);
+    topLayout->addWidget(zoomOutButton);
+    topLayout->addWidget(resetZoomButton);
     mainLayout->addLayout(topLayout);
 
     // Graphics scene setup
@@ -43,6 +50,12 @@ GraphVisualizer::GraphVisualizer(const AdjacencyList& adjacencyList, QWidget* pa
     view->setRenderHint(QPainter::Antialiasing);
     view->setDragMode(QGraphicsView::ScrollHandDrag);
     view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    // Add zoom capability
+    view->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    view->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
+    view->setInteractive(true);
+    view->setSceneRect(-600, -450, 1200, 900);
+    view->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 
     mainLayout->addWidget(view);
 
@@ -55,6 +68,10 @@ GraphVisualizer::GraphVisualizer(const AdjacencyList& adjacencyList, QWidget* pa
     animationTimer = new QTimer(this);
     connect(animationTimer, &QTimer::timeout, this, &GraphVisualizer::updateForceLayout);
     connect(returnButton, &QPushButton::clicked, this, &GraphVisualizer::onReturnClicked);
+    connect(zoomInButton, &QPushButton::clicked, this, &GraphVisualizer::onZoomIn);
+    connect(zoomOutButton, &QPushButton::clicked, this, &GraphVisualizer::onZoomOut);
+    connect(resetZoomButton, &QPushButton::clicked, this, &GraphVisualizer::onResetZoom);
+
     // Automatically start force layout when visualization is shown
     QTimer::singleShot(100, this, &GraphVisualizer::startForceLayout);
 }
@@ -65,6 +82,19 @@ void GraphVisualizer::setAdjacencyList(const AdjacencyList &adj) {
 
 GraphVisualizer::~GraphVisualizer() {
     // Qt will handle deletion of UI elements
+}
+
+void GraphVisualizer::onZoomIn() {
+    view->scale(1.25, 1.25);
+}
+
+void GraphVisualizer::onZoomOut() {
+    view->scale(0.8, 0.8);
+}
+
+void GraphVisualizer::onResetZoom() {
+    view->resetTransform();
+    view->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void GraphVisualizer::createInitialGraph() {
@@ -165,7 +195,7 @@ void GraphVisualizer::drawEdges() {
 
             // Add distance label
             QGraphicsTextItem* distLabel = scene->addText(QString::number(distance, 'f', 2));
-            distLabel->setDefaultTextColor(Qt::green);
+            distLabel->setDefaultTextColor(QColor("#D3D3D3"));
             distLabel->setPos(
                 (source.x + destination.x) / 2 - distLabel->boundingRect().width() / 2,
                 (source.y + destination.y) / 2 - distLabel->boundingRect().height() / 2
@@ -175,8 +205,6 @@ void GraphVisualizer::drawEdges() {
         }
     }
 }
-
-// Remove the addConnection method since we don't need it anymore
 
 void GraphVisualizer::startForceLayout() {
     // Reset velocities
