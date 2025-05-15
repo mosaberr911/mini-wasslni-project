@@ -100,6 +100,9 @@ void Graph::deleteCity(const std::string& cityName) {
     adj.erase(cityName);
 }
 
+
+
+
 void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges) {
     for (const auto& edge : edges) {
         QString cityA = std::get<0>(edge).trimmed();
@@ -130,6 +133,9 @@ void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edg
         }
     }
 }
+
+
+
 
 std::string Graph::dijkstra(const std::string& start, const std::string& end) {
     if (adj.find(start) == adj.end() || adj.find(end) == adj.end()) {
