@@ -140,6 +140,7 @@ void Graph::addGraph() {
 			}
 		}
 		adj[s1].push_back({ s2,d });
+		adj[s2].push_back({ s1,d });
 	}
 
 	
@@ -287,11 +288,22 @@ void Graph::modify_distance(string city1, string city2) {
 	cout << "Enter the new distance\n";
 	float dist;
 	cin >> dist;
+	bool found1 = false, found2 = false;
 	for (auto& t : adj[city1]) {
 		if (t.first == city2) {
 			t.second = dist;
-			break;
+			found1=true;
 		}
+	}
+	for (auto& t : adj[city2]) {
+		if (t.first == city1) {
+			t.second = dist;
+			found2 = true;
+		}
+	}
+
+	if (!found1 || !found2) {
+		throw runtime_error("edge does not exist between the cities");
 	}
 }
 
