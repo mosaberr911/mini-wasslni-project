@@ -26,24 +26,34 @@ greaterThan(QT_MAJOR_VERSION, 5): QT += quick
 
 # ملفات المصدر
 SOURCES += \
-    graph.cpp \
-    main.cpp \
-    login.cpp \
-    map.cpp \
-    options.cpp \
-    register.cpp
+    FileManager.cpp \
+    Graph.cpp \
+    GraphVisualizer.cpp \
+    Login.cpp \
+    Map.cpp \
+    Options.cpp \
+    PathManager.cpp \
+    Register.cpp \
+    User.cpp \
+    UserManager.cpp \
+    main.cpp
 
 # ملفات الرؤوس
 HEADERS += \
-    graph.h \
-    login.h \
-    map.h \
-    options.h \
-    register.h
+    FileManager.h \
+    Graph.h \
+    GraphVisualizer.h \
+    Login.h \
+    Map.h \
+    Options.h \
+    PathManager.h \
+    Register.h \
+    User.h \
+    UserManager.h
 
 # واجهات المستخدم
 FORMS += \
-    login.ui
+    Login.ui
 
 # ملفات الموارد
 RESOURCES += \
