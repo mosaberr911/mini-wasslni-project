@@ -32,6 +32,9 @@ private slots:
     void startForceLayout();
     void updateForceLayout();
     void onReturnClicked();
+    void onZoomIn();
+    void onZoomOut();
+    void onResetZoom();
 
 private:
     // Node representation
@@ -54,9 +57,9 @@ private:
     QPushButton* returnButton;
     QGraphicsScene* scene;
     QGraphicsView* view;
-    QLineEdit* sourceCity;
-    QLineEdit* destCity;
-    QDoubleSpinBox* distance;
+    QPushButton* zoomInButton;
+    QPushButton* zoomOutButton;
+    QPushButton* resetZoomButton;
     QTimer* animationTimer;
 
     // Functions
