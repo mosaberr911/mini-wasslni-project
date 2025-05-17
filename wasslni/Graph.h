@@ -23,7 +23,7 @@ class Graph
 public:
     Graph();
 
-    void addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges);
+    void addGraphFromUI(const QVector<std::tuple<QString, QString, float>>& edges);
     std::string dijkstra(const std::string& start, const std::string& end);
     std::string displayMap();
     void BFS(const QString& startNode, QTextEdit* output);
