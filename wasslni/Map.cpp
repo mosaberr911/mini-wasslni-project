@@ -110,6 +110,27 @@ void Map::setUserEmail(const string& userEmail)
 
 void Map::onAddMapClicked()
 {
+    // Reset UI and state to initial configuration
+    title->hide();
+    edgeCountField->clear();
+    edgeCountField->hide();
+    submitButton->hide();
+    scrollArea->hide();
+    saveButton->hide();
+    saveButton->setEnabled(true);
+    saveButton->setStyleSheet("padding: 8px; background-color: #4CAF50; color: white; font-weight: bold;");
+    addMapButton->show();
+    isSaved = false;
+
+    // Clear existing input fields and layout
+    QLayoutItem *child;
+    while ((child = inputsLayout->takeAt(0)) != nullptr) {
+        delete child->widget();
+        delete child;
+    }
+    edgeInputs.clear();
+
+    // Now show the elements needed for adding a new map/
     title->show();
     edgeCountField->show();
     submitButton->show();
@@ -170,16 +191,19 @@ void Map::onSaveClicked() {
             QMessageBox::information(this, "Info", "You have already saved the roads.");
             return;
         }
-        QVector<std::tuple<QString, QString, int>> edges;
+        QVector<std::tuple<QString, QString, float>> edges;
         for (auto& input : edgeInputs) {
             QString start = input.cityA->text().trimmed();
             QString end = input.cityB->text().trimmed();
-            int dis = input.distance->text().toInt();
+            float dis = input.distance->text().toFloat();
             if (start.isEmpty() || end.isEmpty() || dis <= 0) {
                 QMessageBox::warning(this, "Error", "Please fill all fields correctly.");
                 return;
             }
             edges.push_back({start, end, dis});
+            input.cityA->clear();
+            input.cityB->clear();
+            input.distance->clear();
         }
         User user = UserManager::getUserByEmail(userEmail);
         user.addGraph(edges);
@@ -201,9 +225,29 @@ void Map::onSaveClicked() {
 
 void Map::onContinueClicked()
 {
+    // Reset the page to its original state
+    title->hide();
+    edgeCountField->clear();
+    edgeCountField->hide();
+    submitButton->hide();
+    scrollArea->hide();
+    saveButton->hide();
+    saveButton->setEnabled(true);
+    saveButton->setStyleSheet("padding: 8px; background-color: #4CAF50; color: white; font-weight: bold;");
+    addMapButton->show();
+    isSaved = false;
+
+    QLayoutItem *child;
+    while ((child = inputsLayout->takeAt(0)) != nullptr) {
+        delete child->widget();
+        delete child;
+    }
+    edgeInputs.clear();
+
+    // Proceed to the Options window
     Options *optionsWindow = new Options();
     connect(optionsWindow, &Options::loggedOut, this, &Map::onOptionsLoggedOut);
-    connect(optionsWindow, &Options::addNewMap, this, &Map::onAddMapClicked);
+    connect(optionsWindow, &Options::addNewMap, this, &Map::onOptionsAddMap);
     optionsWindow->setUserEmail(userEmail);
     optionsWindow->show();
     this->close();
@@ -216,5 +260,5 @@ void Map::onOptionsLoggedOut()
 }
 
 void Map::onOptionsAddMap() {
-    this->hide();
+    this->show();
 }
