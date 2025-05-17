@@ -100,14 +100,11 @@ void Graph::deleteCity(const std::string& cityName) {
     adj.erase(cityName);
 }
 
-
-
-
-void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edges) {
+void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, float>>& edges) {
     for (const auto& edge : edges) {
         QString cityA = std::get<0>(edge).trimmed();
         QString cityB = std::get<1>(edge).trimmed();
-        int distance = std::get<2>(edge);
+        float distance = std::get<2>(edge);
 
         if (cityA.isEmpty() || cityB.isEmpty()) {
             qDebug() << "Invalid input: empty QString detected";
@@ -128,14 +125,11 @@ void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, int>>& edg
         }
 
         if (!edgeExists) {
-            adj[s1].push_back({s2, static_cast<float>(distance)});
-            adj[s2].push_back({s1, static_cast<float>(distance)});
+            adj[s1].push_back({s2, distance});
+            adj[s2].push_back({s1, distance});
         }
     }
 }
-
-
-
 
 std::string Graph::dijkstra(const std::string& start, const std::string& end) {
     if (adj.find(start) == adj.end() || adj.find(end) == adj.end()) {
@@ -238,37 +232,45 @@ void Graph::BFS(const QString& startNode, QTextEdit* output) {
     output->append(result);
 }
 
-// void Graph::DFS(const QString& startNode, QTextEdit* output) {
-//     vis[startNode.toStdString()] = true;
-//     QString result = "DFS Traversal:\n";
-//     result += startNode + "\n";
-
-//     for (auto [child, weight] : adj[startNode.toStdString()]) {
-//         QString qChild = QString::fromStdString(child);
-//         result += " -> " + qChild + " (Weight: " + QString::number(weight) + ")\n";
-//         if (!vis[qChild.toStdString()]) {
-//             result += "Exploring " + qChild + "\n";
-//             DFS(qChild, output);
-//         }
-//     }
-//     output->append(result);
-// }
-
 void Graph::DFS(const QString& startNode, QTextEdit* output) {
-    static QString result = "DFS Traversal:\n"; // Static to accumulate across calls
-    vis[startNode.toStdString()] = true;
-    result += startNode + "\n";
-    for (auto [child, weight] : adj[startNode.toStdString()]) {
-        QString qChild = QString::fromStdString(child);
-        if (!vis[qChild.toStdString()]) {
-            result += " -> " + qChild + " (Weight: " + QString::number(weight) + ")\n";
-            DFS(qChild, output);
+    if (!output) {
+        throw std::invalid_argument("Output widget is null");
+    }
+    if (adj.find(startNode.toStdString()) == adj.end()) {
+        throw std::invalid_argument("Start node not found in graph");
+    }
+
+    // Use a stack to track recursion depth and accumulate result
+    QString result = "DFS Traversal:\n";
+    std::stack<std::pair<QString, int>> callStack;
+    callStack.push({startNode, 0}); // Node and depth (0 for root)
+    vis.clear(); // Reset visited map
+
+    while (!callStack.empty()) {
+        auto [node, depth] = callStack.top();
+        callStack.pop();
+
+        if (!vis[node.toStdString()]) {
+            vis[node.toStdString()] = true;
+            result += node + "\n";
+
+            // Push children in reverse order to maintain DFS order
+            std::vector<std::pair<QString, float>> children;
+            for (const auto& [child, weight] : adj[node.toStdString()]) {
+                QString qChild = QString::fromStdString(child);
+                if (!vis[qChild.toStdString()]) {
+                    children.emplace_back(qChild, weight);
+                }
+            }
+            for (auto it = children.rbegin(); it != children.rend(); ++it) {
+                result += " -> " + it->first + " (Weight: " + QString::number(it->second, 'f', 2) + ")\n";
+                callStack.push({it->first, depth + 1});
+            }
         }
     }
-    if (startNode == startNode) { // Only append at the root call
-        output->append(result);
-        result = "DFS Traversal:\n"; // Reset for next call
-    }
+
+    // Append result only once after traversal
+    output->append(result);
 }
 
 bool Graph::isEmpty() const {
