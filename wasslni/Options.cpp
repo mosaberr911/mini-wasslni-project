@@ -26,7 +26,7 @@
 
 Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
 {
-    setFixedSize(600, 600);
+    setFixedSize(600, 675);
     setWindowTitle("Options");
 
     QPixmap background(QString::fromStdString(PathManager::getBackgroundImagePath()));
@@ -43,7 +43,7 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    mainLayout->setSpacing(15); // 15
+    mainLayout->setSpacing(20); // 15
     mainLayout->setContentsMargins(100, 30, 100, 30); // 100, 30, 100, 30
 
     // Top layout for Log Out and Add New Map buttons
@@ -72,22 +72,27 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     showShortestPathButton->setFont(font);
     mainLayout->addWidget(showShortestPathButton, 0, Qt::AlignHCenter);
 
+    QHBoxLayout *showShortestPathLayout = new QHBoxLayout();
+    showShortestPathLayout->setSpacing(10);
+
     startCityLineEdit = new QLineEdit();
     startCityLineEdit->setPlaceholderText("Enter Start City");
     startCityLineEdit->setVisible(false);
-    startCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    startCityLineEdit->setFixedSize(elementWidth/2 - 5, elementHeight);
     startCityLineEdit->setFont(font);
-    mainLayout->addWidget(startCityLineEdit, 0, Qt::AlignHCenter);
+    showShortestPathLayout->addWidget(startCityLineEdit);
 
     endCityLineEdit = new QLineEdit();
     endCityLineEdit->setPlaceholderText("Enter End City");
     endCityLineEdit->setVisible(false);
-    endCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    endCityLineEdit->setFixedSize(elementWidth/2 - 5, elementHeight);
     endCityLineEdit->setFont(font);
-    mainLayout->addWidget(endCityLineEdit, 0, Qt::AlignHCenter);
+    showShortestPathLayout->addWidget(endCityLineEdit);
+
+    mainLayout->addLayout(showShortestPathLayout);
 
     showPathButton = new QPushButton("Show Path");
-    showPathButton->setStyleSheet("background-color: blue; color: white;");
+    showPathButton->setStyleSheet("background-color: #0D47A1; color: white;");
     showPathButton->setVisible(false);
     showPathButton->setEnabled(false);
     showPathButton->setFixedSize(elementWidth, elementHeight);
@@ -120,7 +125,7 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     mainLayout->addWidget(addCityLineEdit, 0, Qt::AlignHCenter);
 
     saveCityButton = new QPushButton("Save City");
-    saveCityButton->setStyleSheet("background-color: blue; color: white;");
+    saveCityButton->setStyleSheet("background-color: #0D47A1; color: white;");
     saveCityButton->setFixedSize(elementWidth, elementHeight);
     saveCityButton->setFont(font);
     saveCityButton->setVisible(false);
@@ -140,7 +145,7 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     mainLayout->addWidget(deleteCityLineEdit, 0, Qt::AlignHCenter);
 
     confirmDeleteCityButton = new QPushButton("Confirm Delete");
-    confirmDeleteCityButton->setStyleSheet("background-color: red; color: white;");
+    confirmDeleteCityButton->setStyleSheet("background-color: #D32F2F; color: white;");
     confirmDeleteCityButton->setFixedSize(elementWidth, elementHeight);
     confirmDeleteCityButton->setFont(font);
     confirmDeleteCityButton->setVisible(false);
@@ -152,29 +157,34 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     addRoadButton->setFont(font);
     mainLayout->addWidget(addRoadButton, 0, Qt::AlignHCenter);
 
+    QHBoxLayout *addRoadLayout = new QHBoxLayout();
+    addRoadLayout->setSpacing(12);
+
     roadStartCityLineEdit = new QLineEdit();
     roadStartCityLineEdit->setPlaceholderText("Start City");
     roadStartCityLineEdit->setVisible(false);
-    roadStartCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    roadStartCityLineEdit->setFixedSize(elementWidth/3 - 4, elementHeight);
     roadStartCityLineEdit->setFont(font);
-    mainLayout->addWidget(roadStartCityLineEdit, 0, Qt::AlignHCenter);
+    addRoadLayout->addWidget(roadStartCityLineEdit);
 
     roadEndCityLineEdit = new QLineEdit();
     roadEndCityLineEdit->setPlaceholderText("End City");
     roadEndCityLineEdit->setVisible(false);
-    roadEndCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    roadEndCityLineEdit->setFixedSize(elementWidth/3 - 4, elementHeight);
     roadEndCityLineEdit->setFont(font);
-    mainLayout->addWidget(roadEndCityLineEdit, 0, Qt::AlignHCenter);
+    addRoadLayout->addWidget(roadEndCityLineEdit);
 
     roadDistanceLineEdit = new QLineEdit();
     roadDistanceLineEdit->setPlaceholderText("Distance");
     roadDistanceLineEdit->setVisible(false);
-    roadDistanceLineEdit->setFixedSize(elementWidth, elementHeight);
+    roadDistanceLineEdit->setFixedSize(elementWidth/3 - 4, elementHeight);
     roadDistanceLineEdit->setFont(font);
-    mainLayout->addWidget(roadDistanceLineEdit, 0, Qt::AlignHCenter);
+    addRoadLayout->addWidget(roadDistanceLineEdit);
+
+    mainLayout->addLayout(addRoadLayout);
 
     saveRoadButton = new QPushButton("Save Road");
-    saveRoadButton->setStyleSheet("background-color: blue; color: white;");
+    saveRoadButton->setStyleSheet("background-color: #0D47A1; color: white;");
     saveRoadButton->setFixedSize(elementWidth, elementHeight);
     saveRoadButton->setFont(font);
     saveRoadButton->setVisible(false);
@@ -186,22 +196,27 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     deleteRoadButton->setFont(font);
     mainLayout->addWidget(deleteRoadButton, 0, Qt::AlignHCenter);
 
+    QHBoxLayout *deleteRoadLayout = new QHBoxLayout();
+    deleteRoadLayout->setSpacing(10);
+
     deleteStartCityLineEdit = new QLineEdit();
     deleteStartCityLineEdit->setPlaceholderText("Start City");
     deleteStartCityLineEdit->setVisible(false);
-    deleteStartCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    deleteStartCityLineEdit->setFixedSize(elementWidth/2 - 5, elementHeight);
     deleteStartCityLineEdit->setFont(font);
-    mainLayout->addWidget(deleteStartCityLineEdit, 0, Qt::AlignHCenter);
+    deleteRoadLayout->addWidget(deleteStartCityLineEdit);
 
     deleteEndCityLineEdit = new QLineEdit();
     deleteEndCityLineEdit->setPlaceholderText("End City");
     deleteEndCityLineEdit->setVisible(false);
-    deleteEndCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    deleteEndCityLineEdit->setFixedSize(elementWidth/2 - 5, elementHeight);
     deleteEndCityLineEdit->setFont(font);
-    mainLayout->addWidget(deleteEndCityLineEdit, 0, Qt::AlignHCenter);
+    deleteRoadLayout->addWidget(deleteEndCityLineEdit);
+
+    mainLayout->addLayout(deleteRoadLayout);
 
     confirmDeleteButton = new QPushButton("Confirm Delete");
-    confirmDeleteButton->setStyleSheet("background-color: red; color: white;");
+    confirmDeleteButton->setStyleSheet("background-color: #D32F2F; color: white;");
     confirmDeleteButton->setFixedSize(elementWidth, elementHeight);
     confirmDeleteButton->setFont(font);
     confirmDeleteButton->setVisible(false);
@@ -236,7 +251,7 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     mainLayout->addStretch();
 
     logOutButton = new QPushButton("Log Out");
-    logOutButton->setStyleSheet("background-color: red; color: white;");
+    logOutButton->setStyleSheet("background-color: #D32F2F; color: white;");
     logOutButton->setFixedSize(elementWidth, elementHeight);
     logOutButton->setFont(font);
     mainLayout->addWidget(logOutButton, 0, Qt::AlignCenter);
@@ -292,8 +307,9 @@ void Options::onAddNewMapClicked()
     if (reply == QMessageBox::Yes) {
         try {
             User user = UserManager::getUserByEmail(userEmail);
-            // Clear the current graph
-            user.clearGraph();
+            // Clear the current graph if not empty
+            if (user.hasGraph())
+                user.clearGraph();
             UserManager::updateUser(user);
             UserManager::saveUserGraph(userEmail, PathManager::getGraphsFilePath());
             emit addNewMap();
@@ -487,7 +503,7 @@ void Options::onSaveRoadClicked()
         }
 
         bool ok;
-        int distance = distanceStr.toInt(&ok);
+        float distance = distanceStr.toFloat(&ok);
         if (!ok || distance <= 0) {
             QMessageBox::warning(this, "Error", "Distance must be a positive number");
             return;
