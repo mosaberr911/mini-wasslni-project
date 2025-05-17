@@ -34,7 +34,7 @@ void User::setAdjacencyList(const AdjacencyList& adj) {
     graph.setAdjacencyList(adj);
 }
 
-void User::addGraph(const QVector<std::tuple<QString, QString, int>>& edges) {
+void User::addGraph(const QVector<std::tuple<QString, QString, float>>& edges) {
     try {
         graph.addGraphFromUI(edges);
     } catch (const std::exception& e) {
@@ -105,6 +105,9 @@ void User::displayDfs(const QString& startNode, QTextEdit* output) {
 }
 
 void User::displayBfs(const QString& startNode, QTextEdit* output) {
+    if (startNode.isEmpty() || !output) {
+        throw std::invalid_argument("Invalid start node or output widget");
+    }
     graph.BFS(startNode, output);
 }
 
