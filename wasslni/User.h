@@ -25,7 +25,7 @@ public:
     void setAdjacencyList(const AdjacencyList&);
 
     // Graph manipulation/display functions
-    void addGraph(const QVector<std::tuple<QString, QString, int>>& edges);
+    void addGraph(const QVector<std::tuple<QString, QString, float>>& edges);
     string displayMap();
     string showShortestPath(const string&, const string&);
     void addCity(const string&);
