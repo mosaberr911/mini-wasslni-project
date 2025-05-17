@@ -19,7 +19,6 @@ class Login : public QWidget
 
 public:
     explicit Login(QWidget *parent = nullptr);
-    virtual ~Login();
 
 private slots:
     void onCreateAccountClicked();
