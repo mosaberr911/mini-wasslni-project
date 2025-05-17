@@ -107,15 +107,6 @@ void Login::onCreateAccountClicked()
 void Login::showLogin()
 {
     this->show();
-    // if (registerWindow) {
-    //     registerWindow->hide();
-    // }
-    // if (optionsWindow) {
-    //     optionsWindow->hide();
-    // }
-    // if (mapWindow) {
-    //     mapWindow->hide();
-    // }
     // Clear input fields for security
     emailField->clear();
     passwordField->clear();
@@ -178,13 +169,4 @@ void Login::onMapLoggedOut()
 
 void Login::onAddNewMap() {
     showMapWindow();
-}
-
-Login::~Login() {
-    if (registerWindow)
-        delete registerWindow;
-    if (mapWindow)
-        delete mapWindow;
-    if (optionsWindow)
-        delete optionsWindow;
 }
