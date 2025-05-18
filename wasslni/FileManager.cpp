@@ -29,10 +29,6 @@ void FileManager::saveGraphToFile(const string &filePath, User& targetUser) {
         // Try creating the directory if it doesn't exist
         string dirPath = filePath.substr(0, filePath.find_last_of("/\\"));
 
-        // This is a simple placeholder - you'll need to implement directory creation
-        // based on your platform (mkdir on Unix/Linux, _mkdir on Windows)
-        // For now, just try opening the file with different modes
-
         // Try opening with create flag
         ofstream createFile(filePath, ios::app | ios::out);
         if (!createFile) {
@@ -177,6 +173,7 @@ void FileManager::loadGraphFromFile(const string &filePath, const string& email)
     targetUser.parseLoadedGraphLines(graphLines);
     UserManager::updateUser(targetUser);
 }
+
 unordered_map<string, User> FileManager::loadUsers(const string &filePath) {
     unordered_map<string, User> users;
     ifstream file(filePath);
