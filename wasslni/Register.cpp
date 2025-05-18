@@ -143,4 +143,5 @@ void Register::onRegisterClicked()
 void Register::onBackClicked()
 {
     emit backToLoginRequested();
+    this->close();
 }
