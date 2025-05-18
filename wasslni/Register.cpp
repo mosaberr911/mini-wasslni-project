@@ -116,6 +116,11 @@ void Register::onRegisterClicked()
         QString email = emailField->text().trimmed();
         QString password = passwordField->text();
 
+        if (email.isEmpty() || password.isEmpty()) {
+            QMessageBox::warning(this, "Error", "Please fill all fields");
+            return;
+        }
+
         if (passwordField->text() != confirmPasswordField->text()) {
             QMessageBox::warning(this, "Error", "Passwords do not match!");
             return;
@@ -137,6 +142,15 @@ void Register::onRegisterClicked()
         this->close();
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString("Failed to register user: %1").arg(e.what()));
+    }
+}
+
+void Register::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+        onRegisterClicked();
+    } else {
+        QWidget::keyPressEvent(event); // Pass the event to the base class for default handling
     }
 }
 

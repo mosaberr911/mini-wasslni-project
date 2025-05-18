@@ -15,36 +15,36 @@ using namespace std;
 
 Graph::Graph() : adj({}) {}
 
-void Graph::addCity(const std::string& cityName) {
+void Graph::addCity(const string& cityName) {
     if (containsCity(cityName))
-        throw std::invalid_argument("City already exists: " + cityName);
+        throw invalid_argument("City already exists: " + cityName);
     adj[cityName];
 }
 
-void Graph::addEdge(const std::string& start, const std::string& end, float distance) {
+void Graph::addEdge(const string& start, const string& end, float distance) {
     if (start == end)
-        throw std::invalid_argument("Cannot add an edge between a city and itself");
+        throw invalid_argument("Cannot add an edge between a city and itself");
 
     if (distance <= 0)
-        throw std::invalid_argument("Invalid distance value");
+        throw invalid_argument("Invalid distance value");
 
     if (containsEdge(start, end))
-        throw std::invalid_argument("Road already exists between those cities");
+        throw invalid_argument("Road already exists between those cities");
 
     adj[start].push_back({end, distance});
     adj[end].push_back({start, distance});
 }
 
-bool Graph::containsCity(const std::string& cityName) {
+bool Graph::containsCity(const string& cityName) {
     return adj.find(cityName) != adj.end();
 }
 
-void Graph::deleteEdge(const std::string& start, const std::string& end) {
+void Graph::deleteEdge(const string& start, const string& end) {
     if (!containsCity(start) || !containsCity(end))
-        throw std::invalid_argument("One or both of the cities does not exist");
+        throw invalid_argument("One or both of the cities does not exist");
 
     if (!containsEdge(start, end))
-        throw std::invalid_argument("Road does not exist between those cities");
+        throw invalid_argument("Road does not exist between those cities");
 
     auto& neighbors1 = adj[start];
     for (auto it = neighbors1.begin(); it != neighbors1.end(); ++it) {
@@ -63,7 +63,7 @@ void Graph::deleteEdge(const std::string& start, const std::string& end) {
     }
 }
 
-bool Graph::containsEdge(const std::string& start, const std::string& end) {
+bool Graph::containsEdge(const string& start, const string& end) {
     bool edgeExists = false;
     for (const auto& neighbor : adj[start]) {
         if (neighbor.first == end) {
@@ -74,12 +74,12 @@ bool Graph::containsEdge(const std::string& start, const std::string& end) {
     return edgeExists;
 }
 
-void Graph::deleteCity(const std::string& cityName) {
+void Graph::deleteCity(const string& cityName) {
     if (!containsCity(cityName))
-        throw std::invalid_argument("City does not exist in graph");
+        throw invalid_argument("City does not exist in graph");
 
     for (auto& cityPair : adj) {
-        std::string neighbour = cityPair.first;
+        string neighbour = cityPair.first;
 
         if (neighbour != cityName) {
             auto &neighborCities = cityPair.second;
@@ -95,11 +95,11 @@ void Graph::deleteCity(const std::string& cityName) {
     adj.erase(cityName);
 }
 
-void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, float>>& edges) {
+void Graph::addGraphFromUI(const QVector<tuple<QString, QString, float>>& edges) {
     for (const auto& edge : edges) {
-        QString cityA = std::get<0>(edge).trimmed();
-        QString cityB = std::get<1>(edge).trimmed();
-        float distance = std::get<2>(edge);
+        QString cityA = get<0>(edge).trimmed();
+        QString cityB = get<1>(edge).trimmed();
+        float distance = get<2>(edge);
 
         if (cityA.isEmpty() || cityB.isEmpty()) {
             throw std::invalid_argument("Empty city field");
@@ -114,23 +114,15 @@ void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, float>>& e
         if (distance <= 0)
             throw std::invalid_argument("Distance must be a positive number");
 
-        bool edgeExists = false;
-        for (const auto& neighbor : adj[s1]) {
-            if (neighbor.first == s2) {
-                edgeExists = true;
-                break;
-            }
-        }
-
-        if (!edgeExists) {
+        if (!containsEdge(s1, s2)) {
             adj[s1].push_back({s2, distance});
             adj[s2].push_back({s1, distance});
         }
     }
 }
 
-std::string Graph::dijkstra(const std::string& start, const std::string& end) {
-    if (adj.find(start) == adj.end() || adj.find(end) == adj.end()) {
+string Graph::dijkstra(const string& start, const string& end) {
+    if (!containsCity(start) || !containsCity(end)) {
         return "Error: One or both cities do not exist in the graph.";
     }
 
@@ -140,9 +132,9 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
         parent[node] = "";
     }
 
-    std::priority_queue<std::pair<double, std::string>,
-                        std::vector<std::pair<double, std::string>>,
-                        std::greater<std::pair<double, std::string>>> pq;
+    priority_queue<pair<double, string>,
+                        vector<pair<double, string>>,
+                        greater<pair<double, string>>> pq;
 
     pq.push({0.0, start});
     dis[start] = 0.0;
@@ -163,23 +155,23 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
         }
     }
 
-    if (dis[end] == std::numeric_limits<double>::infinity()) {
+    if (dis[end] == numeric_limits<double>::infinity()) {
         return "No path from " + start + " to " + end + ".";
     }
 
-    std::string finalDistance = std::to_string(dis[end]);
+    string finalDistance = to_string(dis[end]);
     size_t dot_pos = finalDistance.find('.');
-    if (dot_pos != std::string::npos) {
-        size_t end_pos = std::min(dot_pos + 3, finalDistance.size());
+    if (dot_pos != string::npos) {
+        size_t end_pos = min(dot_pos + 3, finalDistance.size());
         finalDistance = finalDistance.substr(0, end_pos);
     }
 
-    std::string result = "Distance from " + start + " to " + end + " is: " + finalDistance + "\n";
+    string result = "Distance from " + start + " to " + end + " is: " + finalDistance + "\n";
 
-    std::vector<std::string> path;
-    for (std::string at = end; !at.empty(); at = parent[at])
+    vector<string> path;
+    for (string at = end; !at.empty(); at = parent[at])
         path.push_back(at);
-    std::reverse(path.begin(), path.end());
+    reverse(path.begin(), path.end());
 
     result += "Path: ";
     for (size_t i = 0; i < path.size(); ++i) {
@@ -190,32 +182,30 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
     return result;
 }
 
-std::string Graph::kruskal() {
+string Graph::kruskal() {
     if (isEmpty()) {
         return "Empty graph";
     }
 
-    std::stringstream result;
+    stringstream result;
     struct Edge {
-        std::string src, dest;
+        string src, dest;
         float weight;
-        Edge(const std::string& s, const std::string& d, float w) : src(s), dest(d), weight(w) {}
+        Edge(const string& s, const string& d, float w) : src(s), dest(d), weight(w) {}
         bool operator<(const Edge& other) const { return weight < other.weight; }
     };
 
-    std::vector<Edge> edges;
-    std::unordered_map<std::string, std::string> parent;
+    vector<Edge> edges;
+    unordered_map<string, string> parent;
 
-    // Initialize parent map
     for (const auto& node : adj) {
         parent[node.first] = node.first;
     }
 
-    // Collect edges
     for (const auto& node : adj) {
-        const std::string& u = node.first;
+        const string& u = node.first;
         for (const auto& neighbor : node.second) {
-            if (u < neighbor.first) { // Undirected graph: avoid duplicates
+            if (u < neighbor.first) {
                 if (neighbor.second < 0) {
                     return "Error: Negative weights not allowed";
                 }
@@ -224,16 +214,16 @@ std::string Graph::kruskal() {
         }
     }
 
-    std::sort(edges.begin(), edges.end());
+    sort(edges.begin(), edges.end());
 
-    auto findRoot = [&parent](std::string x) -> std::string {
-        std::string root = x;
+    auto findRoot = [&parent](string x) -> string {
+        string root = x;
         while (root != parent[root]) {
             root = parent[root];
         }
-        std::string current = x;
+        string current = x;
         while (current != root) {
-            std::string next = parent[current];
+            string next = parent[current];
             parent[current] = root;
             current = next;
         }
@@ -241,10 +231,10 @@ std::string Graph::kruskal() {
     };
 
     float totalCost = 0;
-    std::vector<Edge> mst_edges; // Store MST edges
+    vector<Edge> mst_edges;
     for (const auto& edge : edges) {
-        std::string rootSrc = findRoot(edge.src);
-        std::string rootDest = findRoot(edge.dest);
+        string rootSrc = findRoot(edge.src);
+        string rootDest = findRoot(edge.dest);
         if (rootSrc != rootDest) {
             mst_edges.push_back(edge);
             totalCost += edge.weight;
@@ -252,14 +242,12 @@ std::string Graph::kruskal() {
         }
     }
 
-    // Check connectivity
-    std::set<std::string> components;
+    set<string> components;
     for (const auto& node : adj) {
         components.insert(findRoot(node.first));
     }
 
-    // Format output
-    result << std::fixed << std::setprecision(2);
+    result << fixed << setprecision(2);
     for (const auto& edge : mst_edges) {
         result << edge.src << " -- " << edge.dest << " (Weight: " << edge.weight << ")\n";
     }
@@ -271,8 +259,8 @@ std::string Graph::kruskal() {
     return result.str();
 }
 
-std::string Graph::displayMap() {
-    std::stringstream ss;
+string Graph::displayMap() {
+    stringstream ss;
     for (auto it = adj.begin(); it != adj.end(); ++it) {
         ss << "City: " << it->first << "\n";
 
@@ -282,14 +270,14 @@ std::string Graph::displayMap() {
         for (auto t : it->second) {
             ss << "  - Road to " << t.first << " (Distance: " << t.second << ")\n";
         }
-        ss << std::endl;
+        ss << endl;
     }
     return ss.str();
 }
 
 string Graph::bfs(const string& startNode) {
     if (!containsCity(startNode)) {
-        throw std::invalid_argument("Start not not found in graph");
+        throw invalid_argument("Start not not found in graph");
     }
 
     queue<string> q;
@@ -310,7 +298,7 @@ string Graph::bfs(const string& startNode) {
         }
     }
 
-    std::stringstream ss;
+    stringstream ss;
     for (const auto& node : traversal_order) {
         ss << node << "\n";
     }
@@ -319,9 +307,9 @@ string Graph::bfs(const string& startNode) {
     return ss.str();
 }
 
-std::string Graph::dfs(const string& startNode) {
+string Graph::dfs(const string& startNode) {
     if (!containsCity(startNode))
-        throw std::invalid_argument("Start node not found in graph");
+        throw invalid_argument("Start node not found in graph");
 
     vis.clear();
     vector<string> traversal_order;
@@ -341,7 +329,7 @@ std::string Graph::dfs(const string& startNode) {
         }
     }
 
-    std::stringstream ss;
+    stringstream ss;
     for (const auto& node : traversal_order) {
         ss << node << "\n";
     }
@@ -380,27 +368,25 @@ vector<string> Graph::convertAdjListToGraphLines() {
 }
 
 void Graph::parseGraphLines(const vector<string> &graphLines) {
-    regex pattern(R"(\(([^:]+):([0-9]+(?:\.[0-9]+)?)\))");  // matches (string:float)
+    regex pattern(R"(\(([^:]+):([0-9]+(?:\.[0-9]+)?)\))");
 
     for (const string& line : graphLines) {
         if (line.empty() || line[0] == '#') {
-            continue; // Skip empty lines and comments
+            continue;
         }
 
         istringstream iss(line);
         string city;
-        iss >> city; // Extract source city
+        iss >> city;
 
         if (city.empty()) {
             continue;
         }
 
-        // Ensure the city exists in adj, even if it has no edges
         if (adj.find(city) == adj.end()) {
-            adj[city] = std::vector<std::pair<std::string, float>>();
+            adj[city] = vector<pair<string, float>>();
         }
 
-        // Extract all (destination:distance) pairs
         auto matches_begin = sregex_iterator(line.begin(), line.end(), pattern);
         auto matches_end = sregex_iterator();
 
@@ -417,6 +403,6 @@ void Graph::parseGraphLines(const vector<string> &graphLines) {
 
 void Graph::clear() {
     if (isEmpty())
-        throw std::invalid_argument("Graph is already empty");
+        throw invalid_argument("Graph is already empty");
     adj.clear();
 }

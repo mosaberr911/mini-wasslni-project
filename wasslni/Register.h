@@ -2,6 +2,7 @@
 #define REGISTER_H
 
 #include <QWidget>
+#include <QKeyEvent>
 
 class QLineEdit;
 class QPushButton;
@@ -14,7 +15,9 @@ public:
     explicit Register(QWidget *parent = nullptr);
 
 signals:
-    void backToLoginRequested();  
+    void backToLoginRequested();
+protected:
+    void keyPressEvent(QKeyEvent *event);
 private slots:
     void onRegisterClicked();
     void onBackClicked();
