@@ -325,20 +325,31 @@ string Graph::dfs(const string& startNode) {
     while (!s.empty()) {
         string node = s.top();
         s.pop();
-        traversal_order.push_back(node);
+
+        if (node != startNode) {
+            traversal_order.push_back(node);
+        }
+
+        vector<string> neighbors;
         for (const auto& [child, weight] : adj[node]) {
             if (!vis[child]) {
+                neighbors.push_back(child);
                 vis[child] = true;
-                s.push(child);
             }
+        }
+        std::reverse(neighbors.begin(), neighbors.end());
+        for (const auto& child : neighbors) {
+            s.push(child);
         }
     }
 
     stringstream ss;
+    ss << "DFS Traversal from city \"" << startNode << "\":\n\n";
+    int count = 1;
     for (const auto& node : traversal_order) {
-        ss << node << "\n";
+        ss << count++ << ". " << node << "\n";
     }
-    ss << endl;
+    ss << "\nTraversal complete.\n";
 
     return ss.str();
 }
