@@ -4,7 +4,7 @@
 #include <QString>
 #include <QVector>
 #include <tuple>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <string>
 #include <functional>
@@ -15,7 +15,7 @@
 #include <sstream>
 #include <stdexcept>
 
-using AdjacencyList = std::map<std::string, std::vector<std::pair<std::string, float> > >;
+using AdjacencyList = std::unordered_map<std::string, std::vector<std::pair<std::string, float> > >;
 using namespace std;
 
 class Graph
@@ -25,9 +25,10 @@ public:
 
     void addGraphFromUI(const QVector<std::tuple<QString, QString, float>>& edges);
     std::string dijkstra(const std::string& start, const std::string& end);
+    std::string kruskal();
     std::string displayMap();
-    void BFS(const QString& startNode, QTextEdit* output);
-    void DFS(const QString& startNode, QTextEdit* output);
+    std::string bfs(const string&);
+    std::string dfs(const string&);
 
     void addCity(const std::string& cityName);
     void addEdge(const std::string& start, const std::string& end, float distance);
