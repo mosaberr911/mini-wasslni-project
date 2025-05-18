@@ -97,7 +97,7 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     showPathButton->setFont(font);
     mainLayout->addWidget(showPathButton, 0, Qt::AlignHCenter);
 
-    showMinimumSpanningTreeButton = new QPushButton("Show Minimum Spanning Tree");
+    showMinimumSpanningTreeButton = new QPushButton("Map Tour");
     showMinimumSpanningTreeButton->setStyleSheet("background-color: green; color: white;");
     showMinimumSpanningTreeButton->setFixedSize(elementWidth, elementHeight);
     showMinimumSpanningTreeButton->setFont(font);
