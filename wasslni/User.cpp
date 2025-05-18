@@ -38,7 +38,7 @@ void User::addGraph(const QVector<std::tuple<QString, QString, float>>& edges) {
     try {
         graph.addGraphFromUI(edges);
     } catch (const std::exception& e) {
-        qWarning() << "Error in User::addGraph:" << e.what();
+        qWarning() << "Error in User::addGraph: " << e.what();
         throw;
     }
 }
@@ -51,7 +51,16 @@ string User::showShortestPath(const string& start, const string& end) {
     try {
         return graph.dijkstra(start, end);
     } catch (const std::exception& e) {
-        qWarning() << "Error in User::showShortesPath:" << e.what();
+        qWarning() << "Error in User::showShortesPath: " << e.what();
+        throw;
+    }
+}
+
+string User::showMinimumSpanningTree() {
+    try {
+        return graph.kruskal();
+    } catch (const std::exception& e) {
+        qWarning() << "Error in User::showMinimumSpanningTree: " << e.what();
         throw;
     }
 }
@@ -60,7 +69,7 @@ void User::addCity(const string& city) {
     try {
         graph.addCity(city);
     } catch (const std::exception& e) {
-        qWarning() << "Error in User::addCity:" << e.what();
+        qWarning() << "Error in User::addCity: " << e.what();
         throw;
     }
 }
@@ -69,7 +78,7 @@ void User::deleteCity(const string& city) {
     try {
         graph.deleteCity(city);
     } catch (const std::exception& e) {
-        qWarning() << "Error in User::deleteCity:" << e.what();
+        qWarning() << "Error in User::deleteCity: " << e.what();
         throw;
     }
 }
@@ -78,7 +87,7 @@ void User::addRoad(const string& startCity, const string& endCity, float distanc
     try {
         graph.addEdge(startCity, endCity, distance);
     } catch (const std::exception& e) {
-        qWarning() << "Error in User::addRoad:" << e.what();
+        qWarning() << "Error in User::addRoad: " << e.what();
         throw;
     }
 }
@@ -87,7 +96,7 @@ void User::deleteRoad(const string& startCity, const string& endCity) {
     try {
         graph.deleteEdge(startCity, endCity);
     } catch (const std::exception& e) {
-        qWarning() << "Error in User::deleteRoad:" << e.what();
+        qWarning() << "Error in User::deleteRoad: " << e.what();
         throw;
     }
 }
@@ -100,15 +109,12 @@ void User::setGraph(const Graph& graph) {
     this->graph = graph;
 }
 
-void User::displayDfs(const QString& startNode, QTextEdit* output) {
-    graph.DFS(startNode, output);
+string User::displayDfs(const string& startNode) {
+    return graph.dfs(startNode);
 }
 
-void User::displayBfs(const QString& startNode, QTextEdit* output) {
-    if (startNode.isEmpty() || !output) {
-        throw std::invalid_argument("Invalid start node or output widget");
-    }
-    graph.BFS(startNode, output);
+string User::displayBfs(const string& startNode) {
+    return graph.bfs(startNode);
 }
 
 bool User::hasGraph() {
