@@ -15,6 +15,7 @@
 #include <QDir>
 #include <QTextStream>
 #include <iostream>
+#include <QKeyEvent>
 
 Map::Map(QWidget *parent) : QWidget(parent), userEmail(""), isSaved(false)
 {
@@ -203,6 +204,7 @@ void Map::onSubmitEdgeCount()
     saveButton->show();
     submitButton->hide();
 }
+
 void Map::onSaveClicked() {
     try {
         if (isSaved) {
@@ -214,9 +216,16 @@ void Map::onSaveClicked() {
             QString start = input.cityA->text().trimmed();
             QString end = input.cityB->text().trimmed();
             float dis = input.distance->text().toFloat();
-            if (start.isEmpty() || end.isEmpty() || dis <= 0) {
-                QMessageBox::warning(this, "Error", "Please fill all fields correctly.");
+            if (start.isEmpty() || end.isEmpty()) {
+                QMessageBox::warning(this, "Error", "Empty city field");
                 return;
+            }
+            if (start == end) {
+                QMessageBox::warning(this, "Error", "Cannot add an edge between a city and itself");
+                return;
+            }
+            if (dis <= 0) {
+                QMessageBox::warning(this, "Error", "Distance must be a positive number");
             }
             edges.push_back({start, end, dis});
             input.cityA->clear();
@@ -238,6 +247,15 @@ void Map::onSaveClicked() {
         QMessageBox::information(this, "Success", "Roads saved successfully!");
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString("Failed to add new map: %1").arg(e.what()));
+    }
+}
+
+void Map::keyPressEvent(QKeyEvent *event)
+{
+    if (saveButton->isVisible() && (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)) {
+        onSaveClicked();
+    } else {
+        QWidget::keyPressEvent(event); // Pass the event to the base class for default handling
     }
 }
 
