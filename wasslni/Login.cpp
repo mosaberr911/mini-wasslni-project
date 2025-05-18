@@ -92,6 +92,8 @@ Login::Login(QWidget *parent) : QWidget(parent), registerWindow(nullptr), mapWin
 
     connect(createAccountButton, &QLabel::linkActivated, this, &Login::onCreateAccountClicked);
     connect(loginButton, &QPushButton::clicked, this, &Login::onLoginClicked);
+    connect(emailField, &QLineEdit::returnPressed, this, &Login::onLoginClicked);
+    connect(passwordField, &QLineEdit::returnPressed, this, &Login::onLoginClicked);
 }
 
 void Login::onCreateAccountClicked()
@@ -139,7 +141,6 @@ void Login::onLoginClicked()
                 this->hide();
             }
             this->hide();
-            QMessageBox::information(this, "Success", "Login successful!");
         } else {
             QMessageBox::warning(this, "Error", "Invalid email or password!");
         }
