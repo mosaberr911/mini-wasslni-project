@@ -2,7 +2,7 @@
 #ifndef GRAPHVISUALIZER_H
 #define GRAPHVISUALIZER_H
 
-#include<QPushButton>
+#include <QPushButton>
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -15,7 +15,7 @@
 #include <vector>
 #include <string>
 
-using AdjacencyList = std::map<std::string, std::vector<std::pair<std::string, float>>>;
+using AdjacencyList = std::unordered_map<std::string, std::vector<std::pair<std::string, float>>>;
 
 class GraphVisualizer : public QMainWindow {
     Q_OBJECT
