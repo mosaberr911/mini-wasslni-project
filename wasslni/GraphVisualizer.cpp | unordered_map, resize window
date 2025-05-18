@@ -12,16 +12,16 @@
 
 // Force-directed layout parameters
 // Increased REPULSION to push nodes further apart
-const double REPULSION = 100000.0;
+const double REPULSION = 100000.0;  // Increased from 15000.0
 // Decreased ATTRACTION to reduce the pull between connected nodes
-const double ATTRACTION = 0.01;
+const double ATTRACTION = 0.01;    // Decreased from 0.04
 const double DAMPING = 0.80;
 
 GraphVisualizer::GraphVisualizer(const AdjacencyList& adjacencyList, QWidget* parent)
     : QMainWindow(parent) {
 
-    setWindowTitle("Roads Graph Visualization");
-    resize(1200, 900);
+    setWindowTitle("Graph Visualization");
+    resize(1200, 650);
     setAdjacencyList(adjacencyList);
     // Main widget and layout
     QWidget* centralWidget = new QWidget(this);
