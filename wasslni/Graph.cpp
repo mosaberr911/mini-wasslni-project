@@ -43,8 +43,11 @@ bool Graph::containsCity(const std::string& cityName) {
 }
 
 void Graph::deleteEdge(const std::string& start, const std::string& end) {
-    if (!containsCity(start) || !containsCity(end))
-        throw std::invalid_argument("One or two of the cities does not exist");
+    if (!containsCity(start))
+        addCity(start);
+
+    if (!containsCity(end))
+        addCity(end);
 
     if (!containsEdge(start, end))
         throw std::invalid_argument("Road does not exist between those cities");
@@ -192,6 +195,87 @@ std::string Graph::dijkstra(const std::string& start, const std::string& end) {
     return result;
 }
 
+std::string Graph::kruskal() {
+    if (isEmpty()) {
+        return "Empty graph";
+    }
+
+    std::stringstream result;
+    struct Edge {
+        std::string src, dest;
+        float weight;
+        Edge(const std::string& s, const std::string& d, float w) : src(s), dest(d), weight(w) {}
+        bool operator<(const Edge& other) const { return weight < other.weight; }
+    };
+
+    std::vector<Edge> edges;
+    std::unordered_map<std::string, std::string> parent;
+
+    // Initialize parent map
+    for (const auto& node : adj) {
+        parent[node.first] = node.first;
+    }
+
+    // Collect edges
+    for (const auto& node : adj) {
+        const std::string& u = node.first;
+        for (const auto& neighbor : node.second) {
+            if (u < neighbor.first) { // Undirected graph: avoid duplicates
+                if (neighbor.second < 0) {
+                    return "Error: Negative weights not allowed";
+                }
+                edges.emplace_back(u, neighbor.first, neighbor.second);
+            }
+        }
+    }
+
+    std::sort(edges.begin(), edges.end());
+
+    auto findRoot = [&parent](std::string x) -> std::string {
+        std::string root = x;
+        while (root != parent[root]) {
+            root = parent[root];
+        }
+        std::string current = x;
+        while (current != root) {
+            std::string next = parent[current];
+            parent[current] = root;
+            current = next;
+        }
+        return root;
+    };
+
+    float totalCost = 0;
+    std::vector<Edge> mst_edges; // Store MST edges
+    for (const auto& edge : edges) {
+        std::string rootSrc = findRoot(edge.src);
+        std::string rootDest = findRoot(edge.dest);
+        if (rootSrc != rootDest) {
+            mst_edges.push_back(edge);
+            totalCost += edge.weight;
+            parent[rootSrc] = rootDest;
+        }
+    }
+
+    // Check connectivity
+    std::set<std::string> components;
+    for (const auto& node : adj) {
+        components.insert(findRoot(node.first));
+    }
+
+    // Format output
+    result << std::fixed << std::setprecision(2);
+    for (const auto& edge : mst_edges) {
+        result << edge.src << " -- " << edge.dest << " (Weight: " << edge.weight << ")\n";
+    }
+    if (components.size() > 1) {
+        result << "\nNote: Graph has " << components.size() << " components. Created a minimum spanning forest.\n";
+    }
+    result << "\nTotal MST Cost: " << totalCost << "\n";
+
+    return result.str();
+}
+
 std::string Graph::displayMap() {
     std::stringstream ss;
     for (auto it = adj.begin(); it != adj.end(); ++it) {
@@ -208,69 +292,67 @@ std::string Graph::displayMap() {
     return ss.str();
 }
 
-void Graph::BFS(const QString& startNode, QTextEdit* output) {
-    std::queue<QString> q;
+string Graph::bfs(const string& startNode) {
+    if (!containsCity(startNode)) {
+        throw std::invalid_argument("Start not not found in graph");
+    }
+
+    queue<string> q;
     vis.clear();
+    vector<string> traversal_order; // Store traversal order
     q.push(startNode);
-   vis[startNode.toStdString()] = true;
-    QString result = "BFS Traversal:\n";
+    vis[startNode] = true;
 
     while (!q.empty()) {
-        QString node = q.front();
+        string node = q.front();
         q.pop();
-        result += node + "\n";
-
-        for (auto [child, weight] : adj[node.toStdString()]) {
-            QString qChild = QString::fromStdString(child);
-            if (!vis[qChild.toStdString()]) {
-                vis[qChild.toStdString()] = true;
-                q.push(qChild);
-                result += " -> " + qChild + " (Weight: " + QString::number(weight) + ")\n";
+        traversal_order.push_back(node); // Store node
+        for (const auto& [child, weight] : adj[node]) {
+            if (!vis[child]) {
+                vis[child] = true;
+                q.push(child);
             }
         }
     }
-    output->append(result);
+
+    std::stringstream ss;
+    for (const auto& node : traversal_order) {
+        ss << node << "\n"; // Print with space
+    }
+    ss << endl;
+
+    return ss.str();
 }
 
-void Graph::DFS(const QString& startNode, QTextEdit* output) {
-    if (!output) {
-        throw std::invalid_argument("Output widget is null");
-    }
-    if (adj.find(startNode.toStdString()) == adj.end()) {
+std::string Graph::dfs(const string& startNode) {
+    if (!containsCity(startNode))
         throw std::invalid_argument("Start node not found in graph");
-    }
 
-    // Use a stack to track recursion depth and accumulate result
-    QString result = "DFS Traversal:\n";
-    std::stack<std::pair<QString, int>> callStack;
-    callStack.push({startNode, 0}); // Node and depth (0 for root)
-    vis.clear(); // Reset visited map
+    vis.clear();
+    vector<string> traversal_order;
+    stack<string> s;
+    s.push(startNode);
+    vis[startNode] = true;
 
-    while (!callStack.empty()) {
-        auto [node, depth] = callStack.top();
-        callStack.pop();
-
-        if (!vis[node.toStdString()]) {
-            vis[node.toStdString()] = true;
-            result += node + "\n";
-
-            // Push children in reverse order to maintain DFS order
-            std::vector<std::pair<QString, float>> children;
-            for (const auto& [child, weight] : adj[node.toStdString()]) {
-                QString qChild = QString::fromStdString(child);
-                if (!vis[qChild.toStdString()]) {
-                    children.emplace_back(qChild, weight);
-                }
-            }
-            for (auto it = children.rbegin(); it != children.rend(); ++it) {
-                result += " -> " + it->first + " (Weight: " + QString::number(it->second, 'f', 2) + ")\n";
-                callStack.push({it->first, depth + 1});
+    while (!s.empty()) {
+        string node = s.top();
+        s.pop();
+        traversal_order.push_back(node); // Store node
+        for (const auto& [child, weight] : adj[node]) {
+            if (!vis[child]) {
+                vis[child] = true;
+                s.push(child);
             }
         }
     }
 
-    // Append result only once after traversal
-    output->append(result);
+    std::stringstream ss;
+    for (const auto& node : traversal_order) {
+        ss << node << "\n"; // Print with space
+    }
+    ss << endl;
+
+    return ss.str();
 }
 
 bool Graph::isEmpty() const {
@@ -289,7 +371,6 @@ vector<string> Graph::convertAdjListToGraphLines() {
     vector<string> graphLines;
 
     if (adj.empty()) {
-        cout << "WARNING: EMPTY ADJACENCY LIST!\n";
         return graphLines;
     }
 
@@ -341,6 +422,6 @@ void Graph::parseGraphLines(const vector<string> &graphLines) {
 
 void Graph::clear() {
     if (isEmpty())
-        throw std::invalid_argument("Adjacency List is already empty");
+        throw std::invalid_argument("Graph is already empty");
     adj.clear();
 }
