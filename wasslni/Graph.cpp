@@ -22,9 +22,6 @@ void Graph::addCity(const std::string& cityName) {
 }
 
 void Graph::addEdge(const std::string& start, const std::string& end, float distance) {
-    if (!containsCity(start) || !containsCity(end))
-        throw std::invalid_argument("One or two of the cities does not exist");
-
     if (start == end)
         throw std::invalid_argument("Cannot add an edge between a city and itself");
 
@@ -43,11 +40,8 @@ bool Graph::containsCity(const std::string& cityName) {
 }
 
 void Graph::deleteEdge(const std::string& start, const std::string& end) {
-    if (!containsCity(start))
-        addCity(start);
-
-    if (!containsCity(end))
-        addCity(end);
+    if (!containsCity(start) || !containsCity(end))
+        throw std::invalid_argument("One or both of the cities does not exist");
 
     if (!containsEdge(start, end))
         throw std::invalid_argument("Road does not exist between those cities");
@@ -84,14 +78,12 @@ void Graph::deleteCity(const std::string& cityName) {
     if (!containsCity(cityName))
         throw std::invalid_argument("City does not exist in graph");
 
-    // loop through adjacency list to find neighbors
     for (auto& cityPair : adj) {
         std::string neighbour = cityPair.first;
 
         if (neighbour != cityName) {
             auto &neighborCities = cityPair.second;
 
-            // loop through neighbors vector of the neighbour city
             for (auto it = neighborCities.begin(); it != neighborCities.end();) {
                 if (it->first == cityName)
                     it = neighborCities.erase(it);
@@ -110,14 +102,17 @@ void Graph::addGraphFromUI(const QVector<std::tuple<QString, QString, float>>& e
         float distance = std::get<2>(edge);
 
         if (cityA.isEmpty() || cityB.isEmpty()) {
-            qDebug() << "Invalid input: empty QString detected";
-            return; // or handle appropriately
+            throw std::invalid_argument("Empty city field");
         }
 
         std::string s1 = cityA.toStdString();
         std::string s2 = cityB.toStdString();
 
-        if (s1 == s2 || distance <= 0) continue;
+        if (s1 == s2)
+            throw std::invalid_argument("Cannot add an edge between a city and itself");
+
+        if (distance <= 0)
+            throw std::invalid_argument("Distance must be a positive number");
 
         bool edgeExists = false;
         for (const auto& neighbor : adj[s1]) {
@@ -299,14 +294,14 @@ string Graph::bfs(const string& startNode) {
 
     queue<string> q;
     vis.clear();
-    vector<string> traversal_order; // Store traversal order
+    vector<string> traversal_order;
     q.push(startNode);
     vis[startNode] = true;
 
     while (!q.empty()) {
         string node = q.front();
         q.pop();
-        traversal_order.push_back(node); // Store node
+        traversal_order.push_back(node);
         for (const auto& [child, weight] : adj[node]) {
             if (!vis[child]) {
                 vis[child] = true;
@@ -317,7 +312,7 @@ string Graph::bfs(const string& startNode) {
 
     std::stringstream ss;
     for (const auto& node : traversal_order) {
-        ss << node << "\n"; // Print with space
+        ss << node << "\n";
     }
     ss << endl;
 
@@ -337,7 +332,7 @@ std::string Graph::dfs(const string& startNode) {
     while (!s.empty()) {
         string node = s.top();
         s.pop();
-        traversal_order.push_back(node); // Store node
+        traversal_order.push_back(node);
         for (const auto& [child, weight] : adj[node]) {
             if (!vis[child]) {
                 vis[child] = true;
@@ -348,7 +343,7 @@ std::string Graph::dfs(const string& startNode) {
 
     std::stringstream ss;
     for (const auto& node : traversal_order) {
-        ss << node << "\n"; // Print with space
+        ss << node << "\n";
     }
     ss << endl;
 
