@@ -44,6 +44,7 @@ private slots:
     void onAddNewMapClicked();
     void onVisualizeGraphClicked();
     void onVisualizerReturn();
+    void onShowMinimumSpanningTreeClicked();
 
 private:
     QPushButton* traverseMapButton;
@@ -52,6 +53,7 @@ private:
     QPushButton* logOutButton;
     QPushButton* addNewMapButton;
     QPushButton* visualizeGraphButton;
+    QPushButton* showMinimumSpanningTreeButton;
     bool isTraverseInputVisible;
 
     string userEmail;
