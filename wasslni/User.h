@@ -36,8 +36,6 @@ public:
     void deleteRoad(const string&, const string&);
     const Graph &getGraph() const;
     void setGraph(const Graph&);
-    // void displayDfs(const QString& startNode, QTextEdit* output);
-    // void displayBfs(const QString& startNode, QTextEdit* output);
     string displayDfs(const string&);
     string displayBfs(const string&);
     bool hasGraph();
