@@ -277,7 +277,7 @@ string Graph::displayMap() {
 
 string Graph::bfs(const string& startNode) {
     if (!containsCity(startNode)) {
-        throw invalid_argument("Start not not found in graph");
+        throw invalid_argument("Start city not found in graph");
     }
 
     queue<string> q;
@@ -289,7 +289,11 @@ string Graph::bfs(const string& startNode) {
     while (!q.empty()) {
         string node = q.front();
         q.pop();
-        traversal_order.push_back(node);
+
+        if (node != startNode) {
+            traversal_order.push_back(node);
+        }
+
         for (const auto& [child, weight] : adj[node]) {
             if (!vis[child]) {
                 vis[child] = true;
@@ -299,14 +303,15 @@ string Graph::bfs(const string& startNode) {
     }
 
     stringstream ss;
+    ss << "BFS Traversal from city \"" << startNode << "\":\n\n";
+    int count = 1;
     for (const auto& node : traversal_order) {
-        ss << node << "\n";
+        ss << count++ << ". " << node << "\n";
     }
-    ss << endl;
+    ss << "\nTraversal complete.\n";
 
     return ss.str();
 }
-
 string Graph::dfs(const string& startNode) {
     if (!containsCity(startNode))
         throw invalid_argument("Start node not found in graph");
