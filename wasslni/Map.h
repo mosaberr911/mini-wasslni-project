@@ -23,6 +23,9 @@ public:
 signals:
     void loggedOut();
 
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+
 private slots:
     void onSubmitEdgeCount();
     void onSaveClicked();
