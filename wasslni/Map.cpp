@@ -136,8 +136,8 @@ void Map::onAddMapClicked()
     submitButton->show();
     addMapButton->hide();
     isSaved = false;
-    saveButton->setEnabled(true); 
-    saveButton->setStyleSheet("padding: 8px; background-color: #4CAF50; color: white; font-weight: bold;"); 
+    saveButton->setEnabled(true);
+    saveButton->setStyleSheet("padding: 8px; background-color: #4CAF50; color: white; font-weight: bold;");
 }
 
 void Map::onSubmitEdgeCount()
@@ -150,13 +150,32 @@ void Map::onSubmitEdgeCount()
         return;
     }
 
-    QLayoutItem *child;
-    while ((child = inputsLayout->takeAt(0)) != nullptr) {
-        delete child->widget();
-        delete child;
+    // Complete recreation approach
+    // Remove the current scroll widget and all its contents
+    QWidget *oldScrollContent = scrollArea->takeWidget();
+    if (oldScrollContent) {
+        delete oldScrollContent; // This deletes the widget and all its children
     }
+
+    // Clear the tracking vector
     edgeInputs.clear();
 
+    // Create a completely new scroll content widget
+    QWidget *newScrollContent = new QWidget(scrollArea);
+    newScrollContent->setStyleSheet("background-color: white;");
+
+    // Create a new layout for the content
+    QVBoxLayout *newLayout = new QVBoxLayout(newScrollContent);
+    newLayout->setSpacing(10);
+    newLayout->setContentsMargins(10, 10, 10, 10);
+
+    // Store the new layout for future use
+    inputsLayout = newLayout;
+
+    // Set the new widget to the scroll area
+    scrollArea->setWidget(newScrollContent);
+
+    // Create new input fields
     for (int i = 0; i < count; ++i) {
         QHBoxLayout *row = new QHBoxLayout();
         QLineEdit *cityA = new QLineEdit();
@@ -184,7 +203,6 @@ void Map::onSubmitEdgeCount()
     saveButton->show();
     submitButton->hide();
 }
-
 void Map::onSaveClicked() {
     try {
         if (isSaved) {
@@ -260,5 +278,25 @@ void Map::onOptionsLoggedOut()
 }
 
 void Map::onOptionsAddMap() {
+    // Reset UI and state to initial configuration
+    title->hide();
+    edgeCountField->clear();
+    edgeCountField->hide();
+    submitButton->hide();
+    scrollArea->hide();
+    saveButton->hide();
+    saveButton->setEnabled(true);
+    saveButton->setStyleSheet("padding: 8px; background-color: #4CAF50; color: white; font-weight: bold;");
+    addMapButton->show();
+    isSaved = false;
+
+    // Clear existing input fields and layout
+    QLayoutItem *child;
+    while ((child = inputsLayout->takeAt(0)) != nullptr) {
+        delete child->widget();
+        delete child;
+    }
+    edgeInputs.clear();
+
     this->show();
 }
