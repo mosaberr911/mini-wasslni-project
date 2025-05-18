@@ -109,7 +109,7 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     displayMapButton->setFont(font);
     mainLayout->addWidget(displayMapButton, 0, Qt::AlignHCenter);
 
-    visualizeGraphButton = new QPushButton("Visualize Graph");
+    visualizeGraphButton = new QPushButton("Visualize Map");
     visualizeGraphButton->setStyleSheet("background-color: green; color: white;");
     visualizeGraphButton->setFixedSize(elementWidth, elementHeight);
     visualizeGraphButton->setFont(font);
