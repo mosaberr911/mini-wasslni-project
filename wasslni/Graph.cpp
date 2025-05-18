@@ -254,7 +254,7 @@ string Graph::kruskal() {
     if (components.size() > 1) {
         result << "\nNote: Graph has " << components.size() << " components. Created a minimum spanning forest.\n";
     }
-    result << "\nTotal MST Cost: " << totalCost << "\n";
+    //result << "\nTotal MST Cost: " << totalCost << "\n";
 
     return result.str();
 }
