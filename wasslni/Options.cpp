@@ -43,8 +43,8 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    mainLayout->setSpacing(20); // 15
-    mainLayout->setContentsMargins(100, 30, 100, 30); // 100, 30, 100, 30
+    mainLayout->setSpacing(20);
+    mainLayout->setContentsMargins(100, 30, 100, 30);
 
     // Top layout for Log Out and Add New Map buttons
     QHBoxLayout *topButtonLayout = new QHBoxLayout();
@@ -55,8 +55,6 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     int elementWidth = 350;
     QFont font;
     font.setPointSize(12);
-
-    // topButtonLayout->addStretch(); // Spacer to push Add New Map to the right
 
     mainLayout->addLayout(topButtonLayout);
 
@@ -99,6 +97,12 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     showPathButton->setFont(font);
     mainLayout->addWidget(showPathButton, 0, Qt::AlignHCenter);
 
+    showMinimumSpanningTreeButton = new QPushButton("Show Minimum Spanning Tree");
+    showMinimumSpanningTreeButton->setStyleSheet("background-color: green; color: white;");
+    showMinimumSpanningTreeButton->setFixedSize(elementWidth, elementHeight);
+    showMinimumSpanningTreeButton->setFont(font);
+    mainLayout->addWidget(showMinimumSpanningTreeButton, 0, Qt::AlignHCenter);
+
     displayMapButton = new QPushButton("Display Map");
     displayMapButton->setStyleSheet("background-color: green; color: white;");
     displayMapButton->setFixedSize(elementWidth, elementHeight);
@@ -120,7 +124,7 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     addCityLineEdit = new QLineEdit();
     addCityLineEdit->setPlaceholderText("Enter City Name");
     addCityLineEdit->setVisible(false);
-    addCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    addCityLineEdit->setFixedSize(elementWidth, elementHeight - 10);
     addCityLineEdit->setFont(font);
     mainLayout->addWidget(addCityLineEdit, 0, Qt::AlignHCenter);
 
@@ -140,7 +144,7 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     deleteCityLineEdit = new QLineEdit();
     deleteCityLineEdit->setPlaceholderText("Enter City Name");
     deleteCityLineEdit->setVisible(false);
-    deleteCityLineEdit->setFixedSize(elementWidth, elementHeight);
+    deleteCityLineEdit->setFixedSize(elementWidth, elementHeight - 10);
     deleteCityLineEdit->setFont(font);
     mainLayout->addWidget(deleteCityLineEdit, 0, Qt::AlignHCenter);
 
@@ -163,21 +167,21 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     roadStartCityLineEdit = new QLineEdit();
     roadStartCityLineEdit->setPlaceholderText("Start City");
     roadStartCityLineEdit->setVisible(false);
-    roadStartCityLineEdit->setFixedSize(elementWidth/3 - 4, elementHeight);
+    roadStartCityLineEdit->setFixedSize(elementWidth/3 - 4, elementHeight - 10);
     roadStartCityLineEdit->setFont(font);
     addRoadLayout->addWidget(roadStartCityLineEdit);
 
     roadEndCityLineEdit = new QLineEdit();
     roadEndCityLineEdit->setPlaceholderText("End City");
     roadEndCityLineEdit->setVisible(false);
-    roadEndCityLineEdit->setFixedSize(elementWidth/3 - 4, elementHeight);
+    roadEndCityLineEdit->setFixedSize(elementWidth/3 - 4, elementHeight - 10);
     roadEndCityLineEdit->setFont(font);
     addRoadLayout->addWidget(roadEndCityLineEdit);
 
     roadDistanceLineEdit = new QLineEdit();
     roadDistanceLineEdit->setPlaceholderText("Distance");
     roadDistanceLineEdit->setVisible(false);
-    roadDistanceLineEdit->setFixedSize(elementWidth/3 - 4, elementHeight);
+    roadDistanceLineEdit->setFixedSize(elementWidth/3 - 4, elementHeight - 10);
     roadDistanceLineEdit->setFont(font);
     addRoadLayout->addWidget(roadDistanceLineEdit);
 
@@ -202,14 +206,14 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     deleteStartCityLineEdit = new QLineEdit();
     deleteStartCityLineEdit->setPlaceholderText("Start City");
     deleteStartCityLineEdit->setVisible(false);
-    deleteStartCityLineEdit->setFixedSize(elementWidth/2 - 5, elementHeight);
+    deleteStartCityLineEdit->setFixedSize(elementWidth/2 - 5, elementHeight - 10);
     deleteStartCityLineEdit->setFont(font);
     deleteRoadLayout->addWidget(deleteStartCityLineEdit);
 
     deleteEndCityLineEdit = new QLineEdit();
     deleteEndCityLineEdit->setPlaceholderText("End City");
     deleteEndCityLineEdit->setVisible(false);
-    deleteEndCityLineEdit->setFixedSize(elementWidth/2 - 5, elementHeight);
+    deleteEndCityLineEdit->setFixedSize(elementWidth/2 - 5, elementHeight - 10);
     deleteEndCityLineEdit->setFont(font);
     deleteRoadLayout->addWidget(deleteEndCityLineEdit);
 
@@ -264,6 +268,7 @@ Options::Options(QWidget *parent) : QWidget(parent), userEmail("")
     isDeleteRoadInputVisible = false;
 
     connect(showShortestPathButton, &QPushButton::clicked, this, &Options::onShowShortestPathClicked);
+    connect(showMinimumSpanningTreeButton, &QPushButton::clicked, this, &Options::onShowMinimumSpanningTreeClicked);
     connect(showPathButton, &QPushButton::clicked, this, &Options::onShowPathClicked);
     connect(displayMapButton, &QPushButton::clicked, this, &Options::onDisplayMapClicked);
     connect(addCityButton, &QPushButton::clicked, this, &Options::onAddCityClicked);
@@ -366,6 +371,16 @@ void Options::onShowPathClicked()
         endCityLineEdit->clear();
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString("Failed to show shortest path: %1").arg(e.what()));
+    }
+}
+
+void Options::onShowMinimumSpanningTreeClicked() {
+    try {
+        User user = UserManager::getUserByEmail(userEmail);
+        std::string result = user.showMinimumSpanningTree();
+        QMessageBox::information(this, "Minimum Spanning Tree", QString::fromStdString(result));
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Error", QString("Failed to show minimum spanning tree: %1").arg(e.what()));
     }
 }
 
@@ -608,18 +623,23 @@ void Options::onDFSClicked()
     try {
         bool ok;
         QString startNode = QInputDialog::getText(this, "DFS Start Node", "Enter the starting node:", QLineEdit::Normal, "", &ok);
-        if (!ok || startNode.isEmpty()) {
-            QMessageBox::critical(this, "Error", "Invalid start node");
-            return;
-        }
-
-        QTextEdit* output = new QTextEdit(this);
-        output->setReadOnly(true);
-
         User user = UserManager::getUserByEmail(userEmail);
-        user.displayDfs(startNode, output);
+        QString dfsTraversal = QString::fromStdString(user.displayDfs(startNode.toStdString()));
 
-        QMessageBox::information(this, "DFS Traversal", output->toPlainText());
+        QDialog dialog(this);
+        dialog.setWindowTitle("Traverse Viewer - " + QString::fromStdString(user.getEmail()));
+        dialog.resize(800, 600);
+
+        QTextEdit *textEdit = new QTextEdit(&dialog);
+        textEdit->setPlainText(dfsTraversal);
+        textEdit->setReadOnly(true);
+        textEdit->setStyleSheet("font-family: Arial, Arial Regular; font-size: 16px;");
+
+        QVBoxLayout layout(&dialog);
+        layout.addWidget(textEdit);
+        dialog.setLayout(&layout);
+
+        dialog.exec();
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString("Failed to traverse using DFS algorithm: %1").arg(e.what()));
     }
@@ -629,19 +649,24 @@ void Options::onBFSClicked()
 {
     try {
         bool ok;
-        QString startNode = QInputDialog::getText(this, "BFS Start Node", "Enter the starting node:", QLineEdit::Normal, "", &ok);
-        if (!ok || startNode.isEmpty()) {
-            QMessageBox::critical(this, "Error", "Invalid start node");
-            return;
-        }
-
-        QTextEdit* output = new QTextEdit(this);
-        output->setReadOnly(true);
-
+        QString startNode = QInputDialog::getText(this, "DFS Start Node", "Enter the starting node:", QLineEdit::Normal, "", &ok);
         User user = UserManager::getUserByEmail(userEmail);
-        user.displayBfs(startNode, output);
+        QString dfsTraversal = QString::fromStdString(user.displayBfs(startNode.toStdString()));
 
-        QMessageBox::information(this, "BFS Traversal", output->toPlainText());
+        QDialog dialog(this);
+        dialog.setWindowTitle("Traverse Viewer - " + QString::fromStdString(user.getEmail()));
+        dialog.resize(800, 600);
+
+        QTextEdit *textEdit = new QTextEdit(&dialog);
+        textEdit->setPlainText(dfsTraversal);
+        textEdit->setReadOnly(true);
+        textEdit->setStyleSheet("font-family: Arial, Arial Regular; font-size: 16px;");
+
+        QVBoxLayout layout(&dialog);
+        layout.addWidget(textEdit);
+        dialog.setLayout(&layout);
+
+        dialog.exec();
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString("Failed to travers using BFS algorithm: %1").arg(e.what()));
     }
