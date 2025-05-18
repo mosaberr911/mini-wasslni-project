@@ -249,7 +249,7 @@ string Graph::kruskal() {
 
     result << fixed << setprecision(2);
     for (const auto& edge : mst_edges) {
-        result << edge.src << " -- " << edge.dest << " (Weight: " << edge.weight << ")\n";
+        result << edge.src << " --> " << edge.dest << " (Weight: " << edge.weight << ")\n";
     }
     if (components.size() > 1) {
         result << "\nNote: Graph has " << components.size() << " components. Created a minimum spanning forest.\n";
