@@ -25,7 +25,7 @@ public:
 
     void addGraphFromUI(const QVector<std::tuple<QString, QString, float>>& edges);
     std::string dijkstra(const std::string& start, const std::string& end);
-    std::string kruskal();
+    pair<AdjacencyList, float> kruskal();
     std::string displayMap();
     std::string bfs(const string&);
     std::string dfs(const string&);
