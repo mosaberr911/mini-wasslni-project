@@ -56,7 +56,7 @@ string User::showShortestPath(const string& start, const string& end) {
     }
 }
 
-string User::showMinimumSpanningTree() {
+pair<AdjacencyList, float> User::showMinimumSpanningTree() {
     try {
         return graph.kruskal();
     } catch (const std::exception& e) {
