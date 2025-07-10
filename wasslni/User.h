@@ -29,7 +29,7 @@ public:
     void addGraph(const QVector<std::tuple<QString, QString, float>>& edges);
     string displayMap();
     string showShortestPath(const string&, const string&);
-    string showMinimumSpanningTree();
+    pair<AdjacencyList, float> showMinimumSpanningTree();
     void addCity(const string&);
     void deleteCity(const string&);
     void addRoad(const string&, const string&, float);
