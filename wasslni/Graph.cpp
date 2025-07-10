@@ -182,12 +182,14 @@ string Graph::dijkstra(const string& start, const string& end) {
     return result;
 }
 
-string Graph::kruskal() {
+pair<AdjacencyList, float> Graph::kruskal() {
+    AdjacencyList mst_adj;
+    float totalCost = 0;
+
     if (isEmpty()) {
-        return "Empty graph";
+        return {mst_adj, totalCost};
     }
 
-    stringstream result;
     struct Edge {
         string src, dest;
         float weight;
@@ -207,7 +209,7 @@ string Graph::kruskal() {
         for (const auto& neighbor : node.second) {
             if (u < neighbor.first) {
                 if (neighbor.second < 0) {
-                    return "Error: Negative weights not allowed";
+                    return {mst_adj, totalCost};
                 }
                 edges.emplace_back(u, neighbor.first, neighbor.second);
             }
@@ -230,7 +232,6 @@ string Graph::kruskal() {
         return root;
     };
 
-    float totalCost = 0;
     vector<Edge> mst_edges;
     for (const auto& edge : edges) {
         string rootSrc = findRoot(edge.src);
@@ -242,22 +243,19 @@ string Graph::kruskal() {
         }
     }
 
-    set<string> components;
-    for (const auto& node : adj) {
-        components.insert(findRoot(node.first));
-    }
+    sort(mst_edges.begin(), mst_edges.end(), [](const Edge& a, const Edge& b) {
+        if (a.src != b.src) return a.src < b.src;
+        return a.dest < b.dest;
+    });
 
-    result << fixed << setprecision(2);
     for (const auto& edge : mst_edges) {
-        result << edge.src << " --> " << edge.dest << " (distance: " << edge.weight << ")\n";
+        mst_adj[edge.src].push_back({edge.dest, edge.weight});
+        mst_adj[edge.dest].push_back({edge.src, edge.weight});
     }
-    if (components.size() > 1) {
-        result << "\nNote: Graph has " << components.size() << " components. Created a minimum spanning forest.\n";
-    }
-    result << "\nTotal distance: " << totalCost << "\n";
 
-    return result.str();
+    return {mst_adj, totalCost};
 }
+
 
 string Graph::displayMap() {
     stringstream ss;
