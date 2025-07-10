@@ -377,8 +377,18 @@ void Options::onShowPathClicked()
 void Options::onShowMinimumSpanningTreeClicked() {
     try {
         User user = UserManager::getUserByEmail(userEmail);
-        std::string result = user.showMinimumSpanningTree();
-        QMessageBox::information(this, "Minimum Spanning Tree", QString::fromStdString(result));
+        AdjacencyList adj = user.showMinimumSpanningTree().first;
+        float totalCost = user.showMinimumSpanningTree().second;
+        QMessageBox::StandardButton reply = QMessageBox::question(this, "Map Tour",
+                                                                  "Total Cost = " + QString::number(totalCost, 'f', 2) + "\n\nDo you want a Visualization?",
+                                                                  QMessageBox::Yes | QMessageBox::No);
+
+        if (reply == QMessageBox::Yes) {
+            GraphVisualizer* visualizerWindow = new GraphVisualizer(adj);
+            connect(visualizerWindow, &GraphVisualizer::returnToOptionsWindow, this, &Options::onVisualizerReturn);
+            visualizerWindow->show();
+            this->hide();
+        }
     } catch (const std::exception& e) {
         QMessageBox::critical(this, "Error", QString("Failed to show minimum spanning tree: %1").arg(e.what()));
     }
